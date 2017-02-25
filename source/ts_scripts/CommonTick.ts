@@ -8,12 +8,15 @@ class CommonTick {
 	public timeRatio:number;
 	public tickFps:number;
 
-	constructor( fps ){
+	private parent:any;
+
+	constructor( parent, fps ){
 		this.fps = fps;
 		this.paused = false;
 		this.lastTick = 0;
 		this.timeRatio = 1;
 		this.tickFps = 1000/fps;
+		this.parent = parent;
 
 	}
 
@@ -45,7 +48,7 @@ class CommonTick {
 		var time = Date.now();
 		var delta = time - this.lastTick;
 		// protection for jumping in time;
-		if (delta > this.tickFps*2 || delta <= 0)
+		if ( delta > this.tickFps*2 || delta <= 0 )
 		{
 			delta = this.tickFps;
 		}
@@ -54,7 +57,7 @@ class CommonTick {
 		if (delta >= this.tickFps)
 		{
 			delta *= this.timeRatio;
-			//update(delta);
+			this.parent.update( delta );
 
 			this.lastTick = time;
 			

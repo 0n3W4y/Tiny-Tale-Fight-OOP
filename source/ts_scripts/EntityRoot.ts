@@ -1,8 +1,11 @@
 class EntityRoot {
 	public entities:Array<any>;
 
-	constructor(){
+	private parent;
+	
+	constructor( parent ){
 		this.entities = new Array();
+		this.parent = parent;
 	}
 
 	public createEntity( type ):any{

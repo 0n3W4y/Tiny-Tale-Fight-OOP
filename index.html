@@ -7,8 +7,8 @@
 		<link href="favicon.ico" rel="shortcut icon">
 		<style>
 			body { margin: 0; background-color: #111111; }
-			input { position: absolute; width:70px; height:20px; text-align:center; overflow: hide; }
-			.buttons { position:absolute; width:200px; height:200px; overflow:hide; }
+			input { position: relative; text-align:center; overflow: hide; }
+			.game-control-buttons {display:inline; width:100px; height:20px; overflow:hide; }
 			#fighting-log { overflow:auto; width:400px; height:400px; border:1px black solid; padding:1px; border-radius:4px; background: #fff; }
 			#fighting-log li{ text-align:left; font-size:12px; }
 		</style>
@@ -21,8 +21,10 @@
 		
 		</ul>
 		</div>
-		<div class="buttons">
-		<input></input>
+		<div class="game-control-buttons">
+		<input type="button" id="StartButton" value="Start Game" onClick="game.start()"></input>
+		<input type="button" id="PauseButton" value="Pause Game" onClick="game.pause()"></input>
+		<input type="button" id="StopButton" value="Stop Game" onClick="game.stop()"></input>
 		</div>
 		<script>
 		document.getElementById("fighting-log").appendChild(string2);

@@ -4,8 +4,14 @@ var __extends = (this && this.__extends) || function (d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 var Game = (function () {
-    function Game() {
+    function Game(fps) {
+        this.fps = fps;
     }
+    Game.prototype.init = function () {
+        this.commonTick = new CommonTick(this, this.fps);
+        this.entityRoot = new EntityRoot(this);
+        this.battleRoot = new BattleRoot(this);
+    };
     Game.prototype.start = function () {
         this.commonTick.startLoop();
     };
@@ -15,11 +21,74 @@ var Game = (function () {
     Game.prototype.pause = function () {
         this.commonTick.togglePause();
     };
+    Game.prototype.update = function (delta) {
+        this.battleRoot.update(delta);
+    };
     return Game;
 }());
+var BattleRoot = (function () {
+    function BattleRoot(parent) {
+        this.parent = parent;
+        this.isFighting = false;
+        this.isFightEnd = true;
+    }
+    BattleRoot.prototype.addPlayersToFight = function (team1, team2) {
+        this.teamOne = team1;
+        this.teamTwo = team2;
+    };
+    BattleRoot.prototype.beginFight = function () {
+        this.isFighting = true;
+        this.isFightEnd = false;
+    };
+    BattleRoot.prototype.stopFight = function () {
+        this.isFighting = false;
+    };
+    BattleRoot.prototype.fight = function (delta) {
+        var p1Attack = this.teamOne.getComponent("FightingStats");
+        var p2Attack = this.teamTwo.getComponent("FightingStats");
+        if (p1Attack.checkAttack(delta))
+            this.attack(this.teamOne, this.teamTwo);
+        if (p2Attack.checkAttack(delta))
+            this.attack(this.teamTwo, this.teamOne);
+        if (this.isFightEnd)
+            this.isFighting = false;
+    };
+    BattleRoot.prototype.attack = function (player, target) {
+        var targetFightStats = target.getComponent("FightingStats");
+        var targetDefense = targetFightStats.getCurrentStat("END");
+        var targetChanceToEvade = targetFightStats.getCurrentStat("AGI") / 100;
+        var randomNum = Math.random();
+        if (targetChanceToEvade >= randomNum) {
+            console.log(target.getComponent("Name").name + " dodge the attack!");
+            return;
+        }
+        var playerFightStats = player.getComponent("FightingStats");
+        var playerDamage = playerFightStats.getCurrentStat("STR");
+        var playerMaxDamage = playerDamage * 2;
+        var playerMinDamage = playerDamage / 2;
+        playerDamage = Math.round(playerMinDamage + Math.random() * (playerMaxDamage - playerMinDamage));
+        var damage = playerDamage - targetDefense;
+        var hp = targetFightStats.getCurrentStat("HP");
+        hp -= damage;
+        targetFightStats.setStats("current", { "HP": hp });
+        console.log(player.getComponent("Name").name + " attacking " + target.getComponent("Name").name + " on " + damage);
+        if (hp <= 0) {
+            console.log(target.getComponent("Name").name + " - Dead!");
+            this.isFightEnd = true;
+            ;
+        }
+    };
+    BattleRoot.prototype.update = function (delta) {
+        if (this.isFighting) {
+            this.fight(delta);
+        }
+    };
+    return BattleRoot;
+}());
 var EntityRoot = (function () {
-    function EntityRoot() {
+    function EntityRoot(parent) {
         this.entities = new Array();
+        this.parent = parent;
     }
     EntityRoot.prototype.createEntity = function (type) {
         var id = this.createId();
@@ -41,12 +110,13 @@ var EntityRoot = (function () {
     return EntityRoot;
 }());
 var CommonTick = (function () {
-    function CommonTick(fps) {
+    function CommonTick(parent, fps) {
         this.fps = fps;
         this.paused = false;
         this.lastTick = 0;
         this.timeRatio = 1;
         this.tickFps = 1000 / fps;
+        this.parent = parent;
     }
     CommonTick.prototype.startLoop = function () {
         if (this.loopId) {
@@ -78,7 +148,7 @@ var CommonTick = (function () {
         }
         if (delta >= this.tickFps) {
             delta *= this.timeRatio;
-            //update(delta);
+            this.parent.update(delta);
             this.lastTick = time;
         }
     };
@@ -143,13 +213,15 @@ var FightingStats = (function (_super) {
     __extends(FightingStats, _super);
     function FightingStats(parent) {
         var _this = _super.call(this, "FightingStats", parent) || this;
+        _this.timeToNextAttack = 0;
         _this.currentStats = {
             HP: 0,
             SP: 0,
             STR: 0,
             AGI: 0,
             END: 0,
-            INT: 0
+            INT: 0,
+            ASPD: 0
         };
         _this.staticStats = {
             HP: 0,
@@ -157,7 +229,8 @@ var FightingStats = (function (_super) {
             STR: 0,
             AGI: 0,
             END: 0,
-            INT: 0
+            INT: 0,
+            ASPD: 0
         };
         return _this;
     }
@@ -169,7 +242,7 @@ var FightingStats = (function (_super) {
             }
         }
     };
-    FightingStats.prototype.getCurentStat = function (stat) {
+    FightingStats.prototype.getCurrentStat = function (stat) {
         return this.currentStats[stat];
     };
     FightingStats.prototype.getStaticStat = function (stat) {
@@ -183,6 +256,17 @@ var FightingStats = (function (_super) {
             if (!(container[key] === undefined))
                 container[key] = stat[key];
         }
+    };
+    FightingStats.prototype.checkAttack = function (time) {
+        this.timeToNextAttack += time;
+        var timeToNextAttack = this.getCurrentStat("ASPD");
+        timeToNextAttack = 1000 / timeToNextAttack;
+        if (this.timeToNextAttack >= timeToNextAttack) {
+            this.timeToNextAttack = 0;
+            return true;
+        }
+        else
+            return false;
     };
     return FightingStats;
 }(Component));
@@ -218,7 +302,7 @@ var Stats = (function (_super) {
         }
     };
     Stats.prototype.getFullTime = function () {
-        var string = this.age + " age, " + this.month + " month, " + this.days + " days.";
+        var string = this.age + " age, " + this.month + " month, " + this.day + " days.";
         return string;
     };
     return Stats;
