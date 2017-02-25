@@ -63,7 +63,10 @@ class BattleRoot {
 		var hp = targetFightStats.getCurrentStat( "HP" );
 		hp -= damage;
 		targetFightStats.setStats( "current", { "HP":hp } );
-		console.log( player.getComponent( "Name" ).name + " attacking " + target.getComponent( "Name" ).name + " on " + damage );
+		if( damage > 0 )
+			console.log( player.getComponent( "Name" ).name + " attacking " + target.getComponent( "Name" ).name + " on " + damage );
+		else
+			console.log( player.getComponent( "Name" ).name + " attacking " + target.getComponent( "Name" ).name + ", but can't avoid the defense" );
 
 		if( hp <= 0 ){
 			console.log( target.getComponent( "Name" ).name + " - Dead!" );
