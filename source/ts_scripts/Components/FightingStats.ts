@@ -83,6 +83,11 @@ class FightingStats extends Component{
 	}
 
 	public checkAttack( time ):boolean{
+		var result = this.checkTimeToAttack( time );
+		return result;		
+	}
+
+	private checkTimeToAttack( time ){
 		this.timeToNextAttack += time;
 		var timeToNextAttack = this.getCurrentStat( "ASPD" );
 		timeToNextAttack = (1000/timeToNextAttack)*100;
@@ -104,6 +109,5 @@ class FightingStats extends Component{
 		}else
 			console.log( "Error with Level up stats, level = " + level + ". Error in FightingStats/updateStatsWithLevelUp" );	
 	}
-
 
 }
