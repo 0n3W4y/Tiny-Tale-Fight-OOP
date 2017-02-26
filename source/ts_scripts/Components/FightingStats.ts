@@ -1,8 +1,9 @@
 class FightingStats extends Component{
-	public currentStats:any; 
-	public staticStats:any;
+	private currentStats:any;
+	private staticStats:any;
+	private levelUpStats:any;
 
-	public timeToNextAttack:number;
+	private timeToNextAttack:number;
 
 	constructor( parent ){
 		super( "FightingStats", parent );
@@ -27,13 +28,37 @@ class FightingStats extends Component{
 			ASPD:0
 		}
 
+		this.levelUpStats = {
+			HP:0,
+			SP:0,
+			STR:0,
+			AGI:0,
+			END:0,
+			INT:0,
+			ASPD:0
+		}
+
 	}
 
 	public init( params ){
 		for( var key in params ){
-			if ( !( this.currentStats[key] === undefined) ){
-				this.currentStats[key] = params[key];
-				this.staticStats[key] = params[key];
+			var container = params[key];
+			if( key == "stats" ){
+				for( var newKey in container ){
+					if ( !( this.currentStats[newKey] === undefined) ){
+						this.currentStats[newKey] = container[newKey];
+						this.staticStats[newKey] = container[newKey];
+					}else
+						console.log( "Error, no key with name: " + newKey + ". Error in FightingStats/init." );
+				}
+			}
+			else{
+				for( var newKey in container ){
+					if ( !( this.levelUpStats[newKey] === undefined) ){
+						this.levelUpStats[newKey] = container[newKey];
+					}else
+						console.log( "Error, no key with name: " + newKey + ". Error in FightingStats/init." );
+				}
 			}
 		}
 	}
@@ -60,13 +85,24 @@ class FightingStats extends Component{
 	public checkAttack( time ):boolean{
 		this.timeToNextAttack += time;
 		var timeToNextAttack = this.getCurrentStat( "ASPD" );
-		timeToNextAttack = 1000/timeToNextAttack;
+		timeToNextAttack = (1000/timeToNextAttack)*100;
 		if ( this.timeToNextAttack >= timeToNextAttack ){
 			this.timeToNextAttack = 0;
 			return true;
 		}
 		else
 			return false;
+	}
+
+	public updateStatsWithLevelUp(){
+		var level = this.parent.getComponent( "ExperienceStats" ).lvl;
+		if( level != null ){
+			for( var key in this.levelUpStats ){
+				var stat = this.levelUpStats[key] * level + this.staticStats[key];
+				this.currentStats[key] = stat;
+			}
+		}else
+			console.log( "Error with Level up stats, level = " + level + ". Error in FightingStats/updateStatsWithLevelUp" );	
 	}
 
 

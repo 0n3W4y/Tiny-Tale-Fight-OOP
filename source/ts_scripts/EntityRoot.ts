@@ -1,11 +1,24 @@
 class EntityRoot {
 	public entities:Array<any>;
 
+	public entityParametersGenerator:any;
+
 	private parent;
 	
 	constructor( parent ){
 		this.entities = new Array();
 		this.parent = parent;
+	}
+
+	public init( creaturesData, humanoidsData ){
+		this.entityParametersGenerator = new EntityParametersGenerator( creaturesData, humanoidsData );
+	}
+
+	public generateEntity( type ):any{
+		var entity = this.createEntity( "Mob" );
+		var params = this.entityParametersGenerator.generate( type );
+		entity.createComponentsWithParams( params );
+		return entity;
 	}
 
 	public createEntity( type ):any{

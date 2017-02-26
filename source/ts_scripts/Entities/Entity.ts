@@ -17,10 +17,12 @@ class Entity {
 			component = new FightingStats( this );
 		else if( name == "Name" )
 			component = new Name( this );
-		else if( name == "Stats" )
-			component = new Stats( this );
+		else if( name == "AgeStats" )
+			component = new AgeStats( this );
 		else if( name == "Type" )
 			component = new Type( this );
+		else if( name == "ExperienceStats" )
+			component = new ExperienceStats( this );
 		else
 			console.log( "Error with add components, component with name: " + name + " not found. Erorr in Entity/createComponent." );
 

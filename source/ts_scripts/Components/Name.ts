@@ -7,16 +7,14 @@ class Name extends Component{
 	}
 
 	public init( params ){
-		this.generateName( params[0] );
-		this.generateSurname( params[1] );
-	}
-
-	private generateName( namesArray ){
-		this.name = namesArray;
-	}
-
-	private generateSurname( surnamesArray ){
-		this.surname = surnamesArray;
+		for( var key in params ){
+			if( key == "name" )
+				this.name = params[key];
+			else if( key == "surname" )
+				this.surname = params[key];
+			else
+				console.log( "Error, no key with name: " + key + ". Error in Name/init." );
+		}
 	}
 
 	public getFullName():string{

@@ -1,11 +1,11 @@
-class Stats extends Component{
+class AgeStats extends Component{
 
 	 public age:number;
 	 public month:number;
 	 public day:number;
 
 	 constructor( parent ){
-	 	super( "Stats", parent );
+	 	super( "AgeStats", parent );
 
 	 }
 

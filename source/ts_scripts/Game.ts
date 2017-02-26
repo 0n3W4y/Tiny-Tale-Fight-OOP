@@ -9,9 +9,10 @@ class Game {
 		this.fps = fps;
 	}
 
-	public init(){
+	public init( creaturesData, humanoidsData ){
 		this.commonTick = new CommonTick( this, this.fps );
 		this.entityRoot = new EntityRoot( this );
+		this.entityRoot.init( creaturesData, humanoidsData );
 		this.battleRoot = new BattleRoot( this );
 	}
 

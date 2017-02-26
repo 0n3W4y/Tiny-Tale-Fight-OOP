@@ -59,20 +59,22 @@ class BattleRoot {
 		playerDamage = Math.round( playerMinDamage + Math.random()*( playerMaxDamage - playerMinDamage ) );
 
 		var damage = playerDamage - targetDefense;
-
 		var hp = targetFightStats.getCurrentStat( "HP" );
-		hp -= damage;
-		targetFightStats.setStats( "current", { "HP":hp } );
-		if( damage > 0 )
-			console.log( player.getComponent( "Name" ).name + " attacking " + target.getComponent( "Name" ).name + " on " + damage );
-		else
+		if( damage > 0 ){
+			hp -= damage;
+			targetFightStats.setStats( "current", { "HP":hp } );
+			console.log( player.getComponent( "Name" ).name + " attacking " + target.getComponent( "Name" ).name + " on " + damage + "; Attack: " + playerDamage + "; TargetDefense: " + targetDefense );
+		}
+		else{
 			console.log( player.getComponent( "Name" ).name + " attacking " + target.getComponent( "Name" ).name + ", but can't avoid the defense" );
+		}
 
 		if( hp <= 0 ){
 			console.log( target.getComponent( "Name" ).name + " - Dead!" );
 			this.isFightEnd = true;;
 		}
 
+		console.log( target.getComponent( "Name" ).name + " now have " + hp + " HP" );
 
 	}
 
