@@ -60,7 +60,7 @@ var BattleRoot = (function () {
         var targetChanceToEvade = targetFightStats.getCurrentStat("AGI") / 100;
         var randomNum = Math.random();
         if (targetChanceToEvade >= randomNum) {
-            console.log(target.getComponent("Name").name + " dodge the attack!");
+            console.log(target.getComponent("Name").getFullName() + " dodge the attack!");
             return;
         }
         var playerFightStats = player.getComponent("FightingStats");
@@ -73,17 +73,17 @@ var BattleRoot = (function () {
         if (damage > 0) {
             hp -= damage;
             targetFightStats.setStats("current", { "HP": hp });
-            console.log(player.getComponent("Name").name + " attacking " + target.getComponent("Name").name + " on " + damage + "; Attack: " + playerDamage + "; TargetDefense: " + targetDefense);
+            console.log(player.getComponent("Name").getFullName() + " attacking " + target.getComponent("Name").getFullName() + " on " + damage + "; Attack: " + playerDamage + "; TargetDefense: " + targetDefense);
         }
         else {
-            console.log(player.getComponent("Name").name + " attacking " + target.getComponent("Name").name + ", but can't avoid the defense");
+            console.log(player.getComponent("Name").getFullName() + " attacking " + target.getComponent("Name").getFullName() + ", but can't avoid the defense");
         }
         if (hp <= 0) {
-            console.log(target.getComponent("Name").name + " - Dead!");
+            console.log(target.getComponent("Name").getFullName() + " - Dead!");
             this.isFightEnd = true;
             ;
         }
-        console.log(target.getComponent("Name").name + " now have " + hp + " HP");
+        console.log(target.getComponent("Name").getFullName() + " now have " + hp + " HP");
     };
     BattleRoot.prototype.update = function (delta) {
         if (this.isFighting) {
@@ -515,6 +515,10 @@ var FightingStats = (function (_super) {
         }
     };
     FightingStats.prototype.checkAttack = function (time) {
+        var result = this.checkTimeToAttack(time);
+        return result;
+    };
+    FightingStats.prototype.checkTimeToAttack = function (time) {
         this.timeToNextAttack += time;
         var timeToNextAttack = this.getCurrentStat("ASPD");
         timeToNextAttack = (1000 / timeToNextAttack) * 100;
