@@ -5,30 +5,72 @@
 		<meta charset=utf-8>
 		<title>Tiny Tale Fight</title>
 		<link href="favicon.ico" rel="shortcut icon">
-		<style>
-			body { margin: 0; background-color: #111111; }
-			input { position: relative; text-align:center; overflow: hide; }
-			.game-control-buttons {display:inline; width:50px; height:20px; overflow:hide; }
-			#upper-control-panel { position:fixed; width:100%; height:30px; background-color:#333355; margin:0px; padding:0px; overflow:hide; display:block; }
-			#fighting-log { overflow:auto; width:400px; height:400px; border:1px black solid; padding:1px; border-radius:4px; background: #fff; }
-			#fighting-log li{ text-align:left; font-size:12px; }
-		</style>
+		<link rel="stylesheet" href="style.css"> 
 		<script type="text/javascript" src="game.js"></script>
 		<script type="text/javascript" src="main.js"></script>
 	</head>
 	<body>
 		<div id="upper-control-panel">
-			<input type="button" id="StartButton" class="game-control-buttons" value="Start" onClick="game.start()"></input>
-			<input type="button" id="PauseButton" class="game-control-buttons" value="Pause" onClick="game.pause()"></input>
-			<input type="button" id="StopButton" class="game-control-buttons" value="Stop" onClick="game.stop()"></input>
+			<input type="button" id="StartButton" class="game-control-buttons" value="Start" onClick="game.start()">
+			<input type="button" id="PauseButton" class="game-control-buttons" value="Pause" onClick="game.pause()">
+			<input type="button" id="StopButton" class="game-control-buttons" value="Stop" onClick="game.stop()">
 		</div>
-		<table id="primary-frame">
-		</table>
-		<div>
-		<ul id="fighting-log">
 		
-		</ul>
+		<div id="character-main-frame">
+			<table id="Player-main-frame" align="left" cellspacing="0" border=1 bordercolor="blue" width="100%" height="100%">
+				<tr>
+					<td>
+					<div class="avatar" align="left"><img src=""></img></div>
+					<div class="statstext" align="left">
+						<div id="name"><b>Name Surname</b></div>
+						<div class="bar" title="Health points"><span class="red">0/0</span></div>
+						<div class="bar" title="Stamina points"><span class="green">0/0</span></div>
+						<div class="bar" title="Experience"><span class="violet">0/0</span></div>
+						<div class="lvl">12 lvl</div>
+						2<br>
+						3<br>
+						4
+					</div>
+					</td>
+				</tr>
+			</table>
 		</div>
+			
+		<div id="character-main-frame">
+			<table id="Enemy-main-frame" align="left" cellspacing="0" border=1 bordercolor="blue" width="100%" height="100%">
+				<tr>
+					<td>
+						
+					<div class="avatar" align="left"><img src=""></img></div>
+					<div class="statstext" align="left">
+						<b>Name Surname</b> <br>
+						Health:  ----------- 100/100 <br>
+						Stamina: -------- 100/100 <br>
+						Experience: --------- 989/1000 <br>
+						1<br>
+						2<br>
+						3<br>
+						4
+					</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+
+		<div id="fighting-log-block">
+			<div id="statustext">
+				<center>
+				<p>Fightning log</p>
+				<ul id="fighting-log"></ul>
+				</center>
+			</div>
+		</div>
+
+		<div id="enemy-list">
+			<ul id="list-of-enemies"
+			</ul>
+		</div>
+
 		<script>
 			//fillStats();
 		</script>

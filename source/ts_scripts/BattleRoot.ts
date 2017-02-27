@@ -72,6 +72,7 @@ class BattleRoot {
 		if( hp <= 0 ){
 			console.log( target.getComponent( "Name" ).getFullName() + " - Dead!" );
 			this.isFightEnd = true;;
+			return;
 		}
 
 		console.log( target.getComponent( "Name" ).getFullName() + " now have " + hp + " HP" );
