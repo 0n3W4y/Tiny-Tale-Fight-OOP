@@ -14,10 +14,7 @@ class EntityRoot {
 		this.entityParametersGenerator = new EntityParametersGenerator( creaturesData, humanoidsData );
 	}
 
-	public generateEntity( type ):any{
-		var entityType = null;
-		if( type == "Humanoid" || "Creature" )
-			entityType = "Character";
+	public generateEntity( entityType, type ):any{
 
 		var entity = this.createEntity( entityType );
 		var params = this.entityParametersGenerator.generate( type );
@@ -25,9 +22,11 @@ class EntityRoot {
 		return entity;
 	}
 
-	public createEntity( newType ):any{
+	public createEntity( type ):any{
+		if( type != "Player" && type != "Mob" )
+			console.log( "Error, no type with name: " + type + ". Error in EntityRoot/createEntity" );
+
 		var id = this.createId();
-		var type = newType;
 
 		var entity = new Entity( id, type );
 		this.entities.push( entity );
@@ -40,5 +39,12 @@ class EntityRoot {
 
 	public createId():string{
 		return "0";
+	}
+
+	public removeEntity( entity ){
+		for( var i = 0; i < this.entities.length; i++ ){
+			if( entity.getComponent( "Name" ).getFullName() == this.entities[i].getComponent( "Name" ).getFullName() )
+				this.entities.splice(i, 1);
+		}
 	}
 }

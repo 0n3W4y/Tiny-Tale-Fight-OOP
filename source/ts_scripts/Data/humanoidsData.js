@@ -14,11 +14,11 @@ var humanoidsData = {
 			day: [1, 30]
 		},
 		FightingStats: { 
-			stats: {HP:50, SP:50, STR:10, AGI:10, END:10, INT:10, ASPD:50},
-			lvlUp: {HP:5, SP:5, STR:1, AGI:1, END:1, INT:1, ASPD:0} 
+			stats: {HP:[45,50], SP:[45,50], STR:[9,11], AGI:[9,11], END:[9,11], INT:[9,11], ASPD:[45,55]},
+			lvlup: {HP:5, SP:5, STR:1, AGI:1, END:1, INT:1, ASPD:1} 
 		},
 		ExperienceStats: {
-			exp:[8, 10]
+			exp:[4, 6]
 		}
 	}
 }

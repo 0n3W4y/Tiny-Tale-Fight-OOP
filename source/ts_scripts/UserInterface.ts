@@ -99,7 +99,11 @@ class UserInterface {
 		return data;
 	}
 
-	public updateCharacterBlock( blockName, entity ){
+	public updateCharacterBlock( entity ){
+		var blockName = "Right";
+		if( entity.type == "Player" )
+			blockName = "Left";
+
 		var data = this.collectDataFromEntity( entity );
 		var container = this.getContainer( blockName );
 
@@ -121,9 +125,15 @@ class UserInterface {
 		var staticSp = staticStatsContainer["SP"] + lvlUpStatsContainer["SP"]*lvl;
 
 		container.getElementsByClassName("red")[0].innerHTML = hp + "/" + staticHp;
-		container.getElementsByClassName("red")[0].style.width = Math.round( ( hp/staticHp ) * 100 ) + "%";
+		var hpBar = Math.round( ( hp/staticHp ) * 100 );
+		if( hpBar < 0 )
+			hpBar = 0;
+		container.getElementsByClassName("red")[0].style.width = hpBar + "%";
 		container.getElementsByClassName("green")[0].innerHTML = sp + "/" + staticSp;
-		container.getElementsByClassName("green")[0].style.width = Math.round( ( sp/staticSp ) * 100 ) + "%";
+		var spBar = Math.round( ( sp/staticSp ) * 100 );
+		if( spBar < 0 )
+			spBar = 0;
+		container.getElementsByClassName("green")[0].style.width = spBar + "%";
 		container.getElementsByClassName("violet")[0].innerHTML = exp + "/" + expToNextLvl;
 		var percent = Math.floor( (exp/expToNextLvl) *100 );
 		var stringPercent = percent+ "%";

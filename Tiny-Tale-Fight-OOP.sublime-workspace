@@ -4,8 +4,12 @@
 		"selected_items":
 		[
 			[
+				"get",
+				"getContainer\tmethod"
+			],
+			[
 				"en",
-				"entityParametersGenerator\tproperty"
+				"entities\tproperty"
 			],
 			[
 				"cre",
@@ -126,10 +130,6 @@
 			[
 				"_move",
 				"_moveLeft\tBool"
-			],
-			[
-				"get",
-				"getTileIndex(...)\tInt"
 			],
 			[
 				"tiles",
@@ -523,16 +523,7 @@
 			"file": "source/ts_scripts/Game.ts",
 			"settings":
 			{
-				"buffer_size": 611,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "source/ts_scripts/BattleRoot.ts",
-			"settings":
-			{
-				"buffer_size": 2446,
+				"buffer_size": 881,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -541,7 +532,16 @@
 			"file": "main.js",
 			"settings":
 			{
-				"buffer_size": 849,
+				"buffer_size": 763,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "convert.bat",
+			"settings":
+			{
+				"buffer_size": 962,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -550,7 +550,16 @@
 			"file": "index.html",
 			"settings":
 			{
-				"buffer_size": 1370,
+				"buffer_size": 3372,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "source/ts_scripts/Battle.ts",
+			"settings":
+			{
+				"buffer_size": 3595,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -559,7 +568,16 @@
 			"file": "source/ts_scripts/EntityRoot.ts",
 			"settings":
 			{
-				"buffer_size": 918,
+				"buffer_size": 1205,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "source/ts_scripts/Data/humanoidsData.js",
+			"settings":
+			{
+				"buffer_size": 446,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -568,16 +586,7 @@
 			"file": "source/ts_scripts/EntityParametersGenerator.ts",
 			"settings":
 			{
-				"buffer_size": 6240,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "source/ts_scripts/Data/HumanoidsData.ts",
-			"settings":
-			{
-				"buffer_size": 1052,
+				"buffer_size": 6246,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -592,28 +601,10 @@
 			}
 		},
 		{
-			"file": "source/ts_scripts/Data/creaturesData.ts",
+			"file": "source/ts_scripts/UserInterface.ts",
 			"settings":
 			{
-				"buffer_size": 570,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "source/ts_scripts/Components/FightingStats.ts",
-			"settings":
-			{
-				"buffer_size": 2428,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "source/ts_scripts/Components/Name.ts",
-			"settings":
-			{
-				"buffer_size": 471,
+				"buffer_size": 5744,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -660,14 +651,21 @@
 	],
 	"file_history":
 	[
+		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Data/humanoidsData.js",
+		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Data/HumanoidsData.js",
+		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Data/creaturesData.js",
+		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Data/creaturesData.json",
+		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Data/HumanoidsData.json",
+		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Data/creaturesData.ts",
+		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Components/FightingStats.ts",
+		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Components/Name.ts",
+		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/BattleRoot.ts",
 		"/C/projects/Tiny-Tale-Fight-OOP/convert.bat",
 		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Components/AgeStats.ts",
-		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Components/FightingStats.ts",
 		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Data/HumanoidsData.ts",
 		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Data/humanoidsDataLvlUp.ts",
 		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Components/Type.ts",
 		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Components/Stats.ts",
-		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Components/Name.ts",
 		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Components/Component.ts",
 		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/CommonTick.ts",
 		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Components/ExperianceStats.ts",
@@ -780,14 +778,7 @@
 		"/C/projects/DieAnotherDay/project.xml",
 		"/C/Users/Admin/Documents/GitHub/roaches-box2d-haxe/source/UserInterface.hx",
 		"/C/Users/Admin/Documents/GitHub/roaches-box2d-haxe/source/Scene.hx",
-		"/C/Users/Admin/Documents/GitHub/roaches-box2d-haxe/source/Game.hx",
-		"/C/Users/Admin/Documents/GitHub/roaches-box2d-haxe/source/ScenePlayerActor.hx",
-		"/C/projects/openfl-samples-master/demos/TextAlignment/Source/Main.hx",
-		"/C/projects/openfl-samples-master/demos/BunnyMark/Source/Bunny.hx",
-		"/C/projects/openfl-samples-master/demos/PiratePig/Source/piratepig/PiratePig.hx",
-		"/C/Users/Admin/Documents/GitHub/roaches-box2d-haxe/source/GameTurnControl.hx",
-		"/C/projects/DieAnotherDay/source/Tile.hx",
-		"/C/Users/Admin/Documents/GitHub/roaches-box2d-haxe/source/ContactListener.hx"
+		"/C/Users/Admin/Documents/GitHub/roaches-box2d-haxe/source/Game.hx"
 	],
 	"find":
 	{
@@ -871,7 +862,7 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 9,
 			"sheets":
 			[
 				{
@@ -880,15 +871,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 611,
+						"buffer_size": 881,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								342,
-								342
+								547,
+								547
 							]
 						],
 						"settings":
@@ -906,53 +897,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 8,
+					"stack_index": 9,
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "source/ts_scripts/BattleRoot.ts",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2446,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1240,
-								1240
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/TypeScript/TypeScript.tmLanguage",
-							"use_tab_stops": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 315.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
 					"file": "main.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 849,
+						"buffer_size": 763,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								547,
-								547
+								575,
+								575
 							]
 						],
 						"settings":
@@ -967,20 +929,48 @@
 					"type": "text"
 				},
 				{
-					"buffer": 3,
-					"file": "index.html",
+					"buffer": 2,
+					"file": "convert.bat",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1370,
+						"buffer_size": 962,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1341,
-								1341
+								947,
+								947
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Batch File/Batch File.sublime-syntax"
+						},
+						"translation.x": 5382.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "index.html",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3372,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3343,
+								3343
 							]
 						],
 						"settings":
@@ -989,91 +979,62 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 10,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "source/ts_scripts/EntityRoot.ts",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 918,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								481,
-								481
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/TypeScript/TypeScript.tmLanguage",
-							"use_tab_stops": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1170.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 7,
 					"type": "text"
 				},
 				{
-					"buffer": 5,
-					"file": "source/ts_scripts/EntityParametersGenerator.ts",
+					"buffer": 4,
+					"file": "source/ts_scripts/Battle.ts",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 6240,
+						"buffer_size": 3595,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								5216,
-								5216
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/TypeScript/TypeScript.tmLanguage",
-							"use_tab_stops": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1575.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "source/ts_scripts/Data/HumanoidsData.ts",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1052,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								349,
-								349
+								2791,
+								2791
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/TypeScript/TypeScript.tmLanguage",
 							"translate_tabs_to_spaces": false,
+							"use_tab_stops": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 921.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "source/ts_scripts/EntityRoot.ts",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1205,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								643,
+								643
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/TypeScript/TypeScript.tmLanguage",
 							"use_tab_stops": false
 						},
 						"translation.x": 0.0,
@@ -1084,7 +1045,65 @@
 					"type": "text"
 				},
 				{
+					"buffer": 6,
+					"file": "source/ts_scripts/Data/humanoidsData.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 446,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								397,
+								397
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
 					"buffer": 7,
+					"file": "source/ts_scripts/EntityParametersGenerator.ts",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6246,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5062,
+								5062
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/TypeScript/TypeScript.tmLanguage",
+							"use_tab_stops": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2324.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
 					"file": "source/ts_scripts/Entities/Entity.ts",
 					"semi_transient": false,
 					"settings":
@@ -1096,8 +1115,8 @@
 						"selection":
 						[
 							[
-								437,
-								437
+								1207,
+								1207
 							]
 						],
 						"settings":
@@ -1110,59 +1129,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "source/ts_scripts/Data/creaturesData.ts",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 570,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								274,
-								288
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/TypeScript/TypeScript.tmLanguage",
-							"typescript_plugin_format_options":
-							{
-								"convertTabsToSpaces": false,
-								"indentSize": 4,
-								"tabSize": 4
-							},
-							"use_tab_stops": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
 					"buffer": 9,
-					"file": "source/ts_scripts/Components/FightingStats.ts",
+					"file": "source/ts_scripts/UserInterface.ts",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2428,
+						"buffer_size": 5744,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1991,
-								1991
+								5211,
+								5211
 							]
 						],
 						"settings":
@@ -1172,46 +1156,10 @@
 							"use_tab_stops": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1543.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 10,
-					"file": "source/ts_scripts/Components/Name.ts",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 471,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								385,
-								385
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/TypeScript/TypeScript.tmLanguage",
-							"translate_tabs_to_spaces": false,
-							"typescript_plugin_format_options":
-							{
-								"convertTabsToSpaces": false,
-								"indentSize": 4,
-								"tabSize": 4
-							},
-							"use_tab_stops": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 9,
+					"stack_index": 0,
 					"type": "text"
 				}
 			]

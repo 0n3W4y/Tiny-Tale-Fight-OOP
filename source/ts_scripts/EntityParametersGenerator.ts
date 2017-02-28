@@ -18,7 +18,7 @@ class EntityParametersGenerator {
 		var container = this.creaturesDataArray;
 		var data = this.creaturesData;
 
-		if ( type == "Humaniod" ){
+		if ( type == "Humanoid" ){
 			container = this.humanoidsDataArray;
 			data = this.humanoidsData
 		}
@@ -186,8 +186,8 @@ class EntityParametersGenerator {
 			else if( key == "lvlup" ){
 				for( var newKey in container ){
 					var innerContainer = container[newKey];
-					if( typeof container[key] === "number" )
-						lvlup[newKey] = container[key];
+					if( typeof container[newKey] === "number" )
+						lvlup[newKey] = container[newKey];
 					else{
 						min = innerContainer[0];
 						max = innerContainer[1];

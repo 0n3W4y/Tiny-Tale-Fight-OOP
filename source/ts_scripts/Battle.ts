@@ -79,11 +79,11 @@ class Battle {
 
 		if( hp <= 0 ){
 			this.parent.userInterface.addLineToJournal( target.getComponent( "Name" ).getFullName() + " - Dead!" );
-			this.isFightEnd = true;;
+			this.isFightEnd = true;
+			this.parent.userInterface.updateCharacterBlock( target );
 			return;
 		}
 
-		this.parent.userInterface.addLineToJournal( target.getComponent( "Name" ).getFullName() + " now have " + hp + " HP" );
 		this.parent.userInterface.updateCharacterBlock( target );
 
 	}
@@ -95,11 +95,12 @@ class Battle {
 	}
 
 	private prepareFight(){
-		var fullNamePlayer = this.teamOne[0].getComponent("Name").getFullname();
+		var fullNamePlayer = this.teamOne[0].getComponent("Name").getFullName();
 		var fullNameEnemy = this.teamTwo[0].getComponent("Name").getFullName();
 		var enemyHp = this.teamTwo[0].getComponent("FightingStats").getCurrentStat("HP");
 		var damage = this.teamTwo[0].getComponent("FightingStats").getCurrentStat("STR");
 		var stringDamage = Math.round( damage/2 ) + " - " + Math.round( damage*2 );
-		var string = fullNamePlayer + " found new troubles. " + fullNameEnemy + " on the road! It have: " + enemyHp + ", and can attack on: " + stringDamage + " phisical damage! Prepare to battle!";
+		var string = fullNamePlayer + " found new troubles. " + fullNameEnemy + " on the road! It have: " + enemyHp + " Health Points, and can attack on: " + stringDamage + " phisical damage! Prepare to battle!";
+		this.parent.userInterface.addLineToJournal( string );
 	}
 }
