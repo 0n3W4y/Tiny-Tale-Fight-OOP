@@ -37,4 +37,9 @@ class ExperienceStats extends Component {
 			this.isLevelUpped = true;
 		}
 	}
+
+	public exportDataToObject():any{
+		var result = { "exp": this.exp, "lvl": this.lvl, "expToNextLvl": this.expToNextLvl };
+		return result;
+	}
 }

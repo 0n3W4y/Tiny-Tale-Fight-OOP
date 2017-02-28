@@ -20,5 +20,11 @@ class Name extends Component{
 	public getFullName():string{
 		return this.name + " " + this.surname;
 	}
+
+	public exportDataToObject():any{
+		var fullName = this.getFullName();
+		var result = { "name": this.name, "surname": this.surname, "fullname": fullName };
+		return result;
+	}
 }
 

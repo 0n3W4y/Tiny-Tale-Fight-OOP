@@ -14,5 +14,8 @@ class Type extends Component {
 		}
 	}
 
-	
+	public exportDataToObject():any{
+		var result = { "sex": this.sex, "race": this.race };
+		return result;
+	}
 }

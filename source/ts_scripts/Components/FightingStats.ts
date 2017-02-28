@@ -110,4 +110,9 @@ class FightingStats extends Component{
 			console.log( "Error with Level up stats, level = " + level + ". Error in FightingStats/updateStatsWithLevelUp" );	
 	}
 
+	public exportDataToObject():any{
+		var result = { "currentStats": this.currentStats, "staticStats": this.staticStats, "levelUpStats": this.levelUpStats };
+		return result;
+	}
+
 }

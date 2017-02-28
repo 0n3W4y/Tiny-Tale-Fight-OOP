@@ -7,11 +7,13 @@ var Game = (function () {
     function Game(fps) {
         this.fps = fps;
     }
-    Game.prototype.init = function (creaturesData, humanoidsData) {
+    Game.prototype.init = function (creaturesData, humanoidsData, leftBlock, rightBlock, journal) {
         this.commonTick = new CommonTick(this, this.fps);
         this.entityRoot = new EntityRoot(this);
         this.entityRoot.init(creaturesData, humanoidsData);
-        this.battleRoot = new BattleRoot(this);
+        this.battle = new Battle(this);
+        this.userInterface = new UserInterface(this);
+        this.userInterface.init(leftBlock, rightBlock, journal);
     };
     Game.prototype.start = function () {
         this.commonTick.startLoop();
@@ -23,28 +25,107 @@ var Game = (function () {
         this.commonTick.togglePause();
     };
     Game.prototype.update = function (delta) {
-        this.battleRoot.update(delta);
+        this.battle.update(delta);
     };
     return Game;
 }());
-var BattleRoot = (function () {
-    function BattleRoot(parent) {
+var UserInterface = (function () {
+    function UserInterface(parent) {
+        this.parent = parent;
+    }
+    UserInterface.prototype.init = function (leftBlock, rightBlock, journal) {
+        this.leftCharacterBlock = leftBlock;
+        this.rightCharacterBlock = rightBlock;
+        this.journal = journal;
+    };
+    UserInterface.prototype.fillCharacterBlock = function (blockName, entity) {
+        //params { name:"full name", hp:100, sp:100, exp:[0,100], lvl: str:1, end:1, int:1 };
+        var params = this.collectDataFromEntity(entity);
+        var nameContainer = params["Name"];
+        var name = nameContainer["fullname"];
+        var fightingStatsContainer = params["FightingStats"];
+        var currentStatsContainer = fightingStatsContainer["currentStats"];
+        var hp = currentStatsContainer["HP"];
+        var sp = currentStatsContainer["SP"];
+        var str = currentStatsContainer["STR"];
+        var end = currentStatsContainer["END"];
+        var int = currentStatsContainer["INT"];
+        var experienceStats = params["ExperienceStats"];
+        var exp = experienceStats["exp"];
+        var expToNextLvl = experienceStats["expToNextLvl"];
+        var lvl = experienceStats["lvl"];
+        var container = this.getContainer(blockName);
+        container.getElementsByClassName("name")[0].innerHTML = name;
+        container.getElementsByClassName("red")[0].innerHTML = hp + "/" + hp;
+        container.getElementsByClassName("green")[0].innerHTML = sp + "/" + sp;
+        container.getElementsByClassName("violet")[0].innerHTML = exp + "/" + expToNextLvl;
+        var percent = Math.floor((exp / expToNextLvl) * 100);
+        var stringPercent = percent + "%";
+        container.getElementsByClassName("violet")[0].style.width = stringPercent;
+        container.getElementsByClassName("level")[0].innerHTML = lvl;
+        container.getElementsByClassName("phisic-attack")[0].innerHTML = str;
+        container.getElementsByClassName("defense")[0].innerHTML = end;
+        container.getElementsByClassName("magic-attack")[0].innerHTML = int;
+    };
+    UserInterface.prototype.addLineToJournal = function (string) {
+        var container = document.getElementById(this.journal);
+        var li = document.createElement("li");
+        li.innerHTML = string;
+        container.insertBefore(li, container.firstChild);
+    };
+    UserInterface.prototype.getContainer = function (blockName) {
+        if (blockName == "Left")
+            return document.getElementById(this.leftCharacterBlock);
+        else if (blockName == "Right")
+            return document.getElementById(this.rightCharacterBlock);
+        else
+            return document.getElementById(this.journal);
+    };
+    UserInterface.prototype.fillBlock = function (blockName, entity) {
+        if (blockName == "Left")
+            this.fillCharacterBlock(blockName, entity);
+        else if (blockName == "Right")
+            this.fillCharacterBlock(blockName, entity);
+        else
+            console.log("Error no key with name: " + blockName + ". Error in UserInterface/fillBlock");
+    };
+    UserInterface.prototype.drawAvatar = function (blockName, params) {
+        var container = this.rightCharacterBlock;
+        if (blockName == "Left")
+            container = this.leftCharacterBlock;
+        var avatar = container.getElementsByClassName("avatar");
+        //img.src= params;
+    };
+    UserInterface.prototype.collectDataFromEntity = function (entity) {
+        var name = entity.getComponent("Name").exportDataToObject();
+        var type = entity.getComponent("Type").exportDataToObject();
+        var fightingStats = entity.getComponent("FightingStats").exportDataToObject();
+        var experienceStats = entity.getComponent("ExperienceStats").exportDataToObject();
+        var ageStats = entity.getComponent("AgeStats").exportDataToObject();
+        //if params == null, collect all data;
+        var data = { "Name": name, "Type": type, "FightingStats": fightingStats, "ExperienceStats": experienceStats, "AgeStats": ageStats };
+        return data;
+    };
+    return UserInterface;
+}());
+var Battle = (function () {
+    function Battle(parent) {
         this.parent = parent;
         this.isFighting = false;
         this.isFightEnd = true;
     }
-    BattleRoot.prototype.addPlayersToFight = function (team1, team2) {
+    Battle.prototype.addPlayersToFight = function (team1, team2) {
         this.teamOne = team1;
         this.teamTwo = team2;
     };
-    BattleRoot.prototype.beginFight = function () {
+    Battle.prototype.beginFight = function () {
         this.isFighting = true;
         this.isFightEnd = false;
     };
-    BattleRoot.prototype.stopFight = function () {
+    Battle.prototype.stopFight = function () {
         this.isFighting = false;
     };
-    BattleRoot.prototype.fight = function (delta) {
+    Battle.prototype.fight = function (delta) {
         var p1Attack = this.teamOne.getComponent("FightingStats");
         var p2Attack = this.teamTwo.getComponent("FightingStats");
         if (p1Attack.checkAttack(delta))
@@ -54,13 +135,13 @@ var BattleRoot = (function () {
         if (this.isFightEnd)
             this.isFighting = false;
     };
-    BattleRoot.prototype.attack = function (player, target) {
+    Battle.prototype.attack = function (player, target) {
         var targetFightStats = target.getComponent("FightingStats");
         var targetDefense = targetFightStats.getCurrentStat("END");
         var targetChanceToEvade = targetFightStats.getCurrentStat("AGI") / 100;
         var randomNum = Math.random();
         if (targetChanceToEvade >= randomNum) {
-            console.log(target.getComponent("Name").getFullName() + " dodge the attack!");
+            this.parent.userInterface.addLineToJournal(target.getComponent("Name").getFullName() + " dodge the attack!");
             return;
         }
         var playerFightStats = player.getComponent("FightingStats");
@@ -73,24 +154,25 @@ var BattleRoot = (function () {
         if (damage > 0) {
             hp -= damage;
             targetFightStats.setStats("current", { "HP": hp });
-            console.log(player.getComponent("Name").getFullName() + " attacking " + target.getComponent("Name").getFullName() + " on " + damage + "; Attack: " + playerDamage + "; TargetDefense: " + targetDefense);
+            this.parent.userInterface.addLineToJournal(player.getComponent("Name").getFullName() + " attacking " + target.getComponent("Name").getFullName() + " on " + damage + "; Attack: " + playerDamage + "; TargetDefense: " + targetDefense);
         }
         else {
-            console.log(player.getComponent("Name").getFullName() + " attacking " + target.getComponent("Name").getFullName() + ", but can't avoid the defense");
+            this.parent.userInterface.addLineToJournal(player.getComponent("Name").getFullName() + " attacking " + target.getComponent("Name").getFullName() + ", but can't avoid the defense");
         }
         if (hp <= 0) {
-            console.log(target.getComponent("Name").getFullName() + " - Dead!");
+            this.parent.userInterface.addLineToJournal(target.getComponent("Name").getFullName() + " - Dead!");
             this.isFightEnd = true;
             ;
+            return;
         }
-        console.log(target.getComponent("Name").getFullName() + " now have " + hp + " HP");
+        this.parent.userInterface.addLineToJournal(target.getComponent("Name").getFullName() + " now have " + hp + " HP");
     };
-    BattleRoot.prototype.update = function (delta) {
+    Battle.prototype.update = function (delta) {
         if (this.isFighting) {
             this.fight(delta);
         }
     };
-    return BattleRoot;
+    return Battle;
 }());
 var EntityRoot = (function () {
     function EntityRoot(parent) {
@@ -540,6 +622,10 @@ var FightingStats = (function (_super) {
         else
             console.log("Error with Level up stats, level = " + level + ". Error in FightingStats/updateStatsWithLevelUp");
     };
+    FightingStats.prototype.exportDataToObject = function () {
+        var result = { "currentStats": this.currentStats, "staticStats": this.staticStats, "levelUpStats": this.levelUpStats };
+        return result;
+    };
     return FightingStats;
 }(Component));
 var Name = (function (_super) {
@@ -560,12 +646,19 @@ var Name = (function (_super) {
     Name.prototype.getFullName = function () {
         return this.name + " " + this.surname;
     };
+    Name.prototype.exportDataToObject = function () {
+        var fullName = this.getFullName();
+        var result = { "name": this.name, "surname": this.surname, "fullname": fullName };
+        return result;
+    };
     return Name;
 }(Component));
 var AgeStats = (function (_super) {
     __extends(AgeStats, _super);
     function AgeStats(parent) {
-        return _super.call(this, "AgeStats", parent) || this;
+        var _this = _super.call(this, "AgeStats", parent) || this;
+        _this.time = 0;
+        return _this;
     }
     AgeStats.prototype.init = function (params) {
         for (var key in params) {
@@ -576,6 +669,13 @@ var AgeStats = (function (_super) {
     AgeStats.prototype.getFullTime = function () {
         var string = this.age + " age, " + this.month + " month, " + this.day + " days.";
         return string;
+    };
+    AgeStats.prototype.update = function (time) {
+        this.time += time;
+    };
+    AgeStats.prototype.exportDataToObject = function () {
+        var result = { "age": this.age, "month": this.month, "day": this.day, "time": this.time };
+        return result;
     };
     return AgeStats;
 }(Component));
@@ -589,6 +689,10 @@ var Type = (function (_super) {
             if (key == "sex" || key == "race")
                 this[key] = params[key];
         }
+    };
+    Type.prototype.exportDataToObject = function () {
+        var result = { "sex": this.sex, "race": this.race };
+        return result;
     };
     return Type;
 }(Component));
@@ -622,6 +726,10 @@ var ExperienceStats = (function (_super) {
             this.isLevelUpped = true;
         }
     };
+    ExperienceStats.prototype.exportDataToObject = function () {
+        var result = { "exp": this.exp, "lvl": this.lvl, "expToNextLvl": this.expToNextLvl };
+        return result;
+    };
     return ExperienceStats;
 }(Component));
 var creaturesData = {
@@ -630,7 +738,7 @@ var creaturesData = {
         Type: { sex: ["Man", "Woman"], race: "Scorpicores" },
         AgeStats: { age: [10, 100], month: [1, 12], day: [1, 30] },
         FightingStats: {
-            stats: { HP: [30, 60], SP: [10, 40], STR: [8, 16], AGI: [4, 8], END: [4, 6], INT: [4, 5], ASPD: [100, 100] },
+            stats: { HP: [30, 60], SP: [10, 40], STR: [8, 16], AGI: [4, 8], END: [4, 6], INT: [4, 5], ASPD: [50, 55] },
             lvlup: { HP: [5, 6], SP: [1, 2], STR: [1, 2], AGI: [1, 2], END: [1, 2], INT: [1, 2], ASPD: [0, 0] }
         },
         ExperienceStats: { exp: [10, 12] } // [ min, max ];
@@ -647,7 +755,7 @@ var humanoidsData = {
             race: "Human"
         },
         AgeStats: {
-            age: [16, 100],
+            age: [14, 100],
             month: [1, 12],
             day: [1, 30]
         },
@@ -658,69 +766,5 @@ var humanoidsData = {
         ExperienceStats: {
             exp: [8, 10]
         }
-    },
-    "Elf": { HP: 45,
-        SP: 55,
-        STR: 9,
-        AGI: 11,
-        END: 9,
-        INT: 11,
-        ASPD: 100
-    },
-    "Dwarf": { HP: 0,
-        SP: 0,
-        STR: 0,
-        AGI: 0,
-        END: 0,
-        INT: 0,
-        ASPD: 0
-    },
-    "Troll": { HP: 0,
-        SP: 0,
-        STR: 0,
-        AGI: 0,
-        END: 0,
-        INT: 0,
-        ASPD: 0
-    },
-    "Gnome": { HP: 0,
-        SP: 0,
-        STR: 0,
-        AGI: 0,
-        END: 0,
-        INT: 0,
-        ASPD: 0
-    },
-    "Orc": { HP: 0,
-        SP: 0,
-        STR: 0,
-        AGI: 0,
-        END: 0,
-        INT: 0,
-        ASPD: 0
-    },
-    "Goblin": { HP: 0,
-        SP: 0,
-        STR: 0,
-        AGI: 0,
-        END: 0,
-        INT: 0,
-        ASPD: 0
-    },
-    "Udead": { HP: 0,
-        SP: 0,
-        STR: 0,
-        AGI: 0,
-        END: 0,
-        INT: 0,
-        ASPD: 0
-    },
-    "Ogre": { HP: 0,
-        SP: 0,
-        STR: 0,
-        AGI: 0,
-        END: 0,
-        INT: 0,
-        ASPD: 0
     }
 };

@@ -26,6 +26,13 @@ body {
   margin:5px; 
   font-size: 14px; 
 }
+.name {
+  text-overflow: clip;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+}
 .bar {
   width:310px;
   height:12px;
@@ -59,7 +66,7 @@ body {
   -moz-box-shadow: inset 0 2px 9px  rgba(255,255,255,0.3), inset 0 -2px 6px rgba(0,0,0,0.4);
   position: relative;
   text-align:right;
-  overflow: hidden;
+  overflow: visible;
   width:100%;
   font-family: Georgia, fantasy;
   font-weight:bolder;
@@ -84,7 +91,7 @@ body {
   -moz-box-shadow: inset 0 2px 9px  rgba(255,255,255,0.3), inset 0 -2px 6px rgba(0,0,0,0.4);
   position: relative;
   text-align:right;
-  overflow: hidden;
+  overflow: visible;
   width:100%;
   font-family: Georgia, fantasy;
   font-weight:bolder;
@@ -108,7 +115,7 @@ body {
   padding: 0;
   margin:0;
   text-align:right;
-  overflow: hidden;
+  overflow: visible;
   width:100%;
   font-family: Georgia, fantasy;
   font-weight:bolder;
@@ -136,31 +143,40 @@ body {
   color: white;
 }
 
-#primary-frame { 
-  position:relative; 
-  width:100%; 
-  height:80%; 
-  top:25px; 
-  overflow: hide;
-}
-#character-main-frame { 
+#left-character-main-frame { 
   display:block; 
-  float:left; 
   width:450px; 
   height:150px; 
   margin:10px; 
-  position:relative; 
+  position:absolute; 
   overflow:hide; 
+  top:0px;
+  left:0px;
   background: #999999; 
 }
-#enemy-list { 
+
+#right-character-main-frame { 
   display:block; 
-  float:left; 
+  width:450px; 
+  height:150px; 
+  margin:10px; 
+  position:absolute; 
+  overflow:hide; 
+  top:0px;
+  left:590px;
+  background: #999999; 
+}
+
+#enemy-list { 
+  position: absolute;
+  display:block; 
   width:150px; 
-  height:600px; 
+  height:680px; 
   background: #999999; 
   border:1px blue solid; 
-  margin:5px; 
+  margin:10px; 
+  top:0px;
+  right:0px;
   overflow:auto;
 }
 #upper-control-panel { 
@@ -170,36 +186,137 @@ body {
   padding:0px; 
   overflow:hide;
 }
-#fighting-log-block{
+#center-block{
   display:block; 
-  float:left; 
-  width:600px; 
+  width:1040px; 
   height:500px; 
   margin:10px; 
-  position:relative; 
+  position:absolute; 
+  left:0px;
+  top:180px;
   overflow:hide; 
   background: #999999; 
 }
-#fighting-log { 
-  overflow:auto; 
-  width:400px; 
-  height:400px; 
-  border:1px black solid; 
-  padding:1px; 
-  border-radius:4px; 
-  background: #fff; 
-}
+
 #fighting-log li{ 
   text-align:left; 
   font-size:16px; 
 }
-#inventory { 
-  overflow:auto; 
-  width:400px; 
-  height:400px; 
+
+#left-center-block { 
+  position: absolute;
+  display:block;
+  overflow:hidden; 
+  width:450px; 
+  height:450px; 
   border:1px black solid; 
-  padding:1px; 
+  padding:10px; 
+  margin:10px;
   border-radius:4px; 
-  background: #fff; 
-  position:relative; 
+  background: #bbbbbb; 
+}
+
+#right-center-block{
+  display:block;
+  position: absolute;
+  overflow: hidden;
+  width:450px;
+  height:450px;
+  border:1px black solid; 
+  padding:10px; 
+  margin:10px;
+  right:0px;
+  border-radius:4px; 
+  background: #bbbbbb;
+}
+
+#wrapper{
+  display:block;
+  position:absolute;
+  width:1200px;
+  height:700px;
+  border: 1px black solid;
+  background-color: #aaaaaa;
+  padding:10px;
+  margin:10px;
+  overflow:hidden;
+}
+
+.level{
+  display:block;
+  position: absolute;
+  top:10px;
+  left:10px;
+  width:24px;
+  height:24px;
+  overflow: show;
+  text-align: center;
+  color:orange;
+  font-size: 24px;
+  font-weight: bold;
+  text-shadow: 1px 1px #000000;
+  user-select: none;
+  cursor:default;
+}
+
+.phisic-attack{
+  display:block;
+  position: absolute;
+  top:120px;
+  left:10px;
+  width:16px;
+  height:16px;
+  overflow: show;
+  text-align: center;
+  color:red;
+  font-size: 16px;
+  font-weight: bold;
+  text-shadow: 1px 1px #000000;
+  user-select: none;
+  cursor:default;
+}
+
+.defense{
+  display:block;
+  position: absolute;
+  top:120px;
+  left:30px;
+  width:16px;
+  height:16px;
+  overflow: show;
+  text-align: center;
+  color:green;
+  font-size: 16px;
+  font-weight: bold;
+  text-shadow: 1px 1px #000000;
+  user-select: none;
+  cursor:default;
+}
+
+.magic-attack{
+  display:block;
+  position: absolute;
+  top:120px;
+  left:50px;
+  width:16px;
+  height:16px;
+  overflow: show;
+  text-align: center;
+  color:blue;
+  font-size: 16px;
+  font-weight: bold;
+  text-shadow: 1px 1px #000000;
+  user-select: none;
+  cursor:default;
+}
+
+#fighting-log{
+  display:block;
+  position:absolute;
+  width:86%;
+  height:86%;
+  border:1px black solid;
+  background: white;
+  border-radius: 4px;
+  overflow: auto;
 }

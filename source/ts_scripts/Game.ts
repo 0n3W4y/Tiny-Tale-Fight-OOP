@@ -3,17 +3,20 @@ class Game {
 	public fps;
 	public commonTick:any;
 	public entityRoot:any;
-	public battleRoot:any;
+	public battle:any;
+	public userInterface:any;
 
 	constructor( fps ){
 		this.fps = fps;
 	}
 
-	public init( creaturesData, humanoidsData ){
+	public init( creaturesData, humanoidsData, leftBlock, rightBlock, journal ){
 		this.commonTick = new CommonTick( this, this.fps );
 		this.entityRoot = new EntityRoot( this );
 		this.entityRoot.init( creaturesData, humanoidsData );
-		this.battleRoot = new BattleRoot( this );
+		this.battle = new Battle( this );
+		this.userInterface = new UserInterface( this );
+		this.userInterface.init( leftBlock, rightBlock, journal );
 	}
 
 	public start(){
@@ -29,6 +32,6 @@ class Game {
 	}
 
 	public update( delta ){
-		this.battleRoot.update( delta );
+		this.battle.update( delta );
 	}
 }

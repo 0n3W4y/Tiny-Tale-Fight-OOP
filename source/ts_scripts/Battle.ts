@@ -1,4 +1,4 @@
-class BattleRoot {
+class Battle {
 
 	public teamOne;
 	public teamTwo;
@@ -48,7 +48,7 @@ class BattleRoot {
 		var targetChanceToEvade = targetFightStats.getCurrentStat( "AGI" ) / 100;
 		var randomNum = Math.random();
 		if( targetChanceToEvade >= randomNum ){
-			console.log( target.getComponent("Name").getFullName() + " dodge the attack!" );
+			this.parent.userInterface.addLineToJournal( target.getComponent("Name").getFullName() + " dodge the attack!" );
 			return;
 		}
 
@@ -63,19 +63,19 @@ class BattleRoot {
 		if( damage > 0 ){
 			hp -= damage;
 			targetFightStats.setStats( "current", { "HP":hp } );
-			console.log( player.getComponent( "Name" ).getFullName() + " attacking " + target.getComponent( "Name" ).getFullName() + " on " + damage + "; Attack: " + playerDamage + "; TargetDefense: " + targetDefense );
+			this.parent.userInterface.addLineToJournal( player.getComponent( "Name" ).getFullName() + " attacking " + target.getComponent( "Name" ).getFullName() + " on " + damage + "; Attack: " + playerDamage + "; TargetDefense: " + targetDefense );
 		}
 		else{
-			console.log( player.getComponent( "Name" ).getFullName() + " attacking " + target.getComponent( "Name" ).getFullName() + ", but can't avoid the defense" );
+			this.parent.userInterface.addLineToJournal( player.getComponent( "Name" ).getFullName() + " attacking " + target.getComponent( "Name" ).getFullName() + ", but can't avoid the defense" );
 		}
 
 		if( hp <= 0 ){
-			console.log( target.getComponent( "Name" ).getFullName() + " - Dead!" );
+			this.parent.userInterface.addLineToJournal( target.getComponent( "Name" ).getFullName() + " - Dead!" );
 			this.isFightEnd = true;;
 			return;
 		}
 
-		console.log( target.getComponent( "Name" ).getFullName() + " now have " + hp + " HP" );
+		this.parent.userInterface.addLineToJournal( target.getComponent( "Name" ).getFullName() + " now have " + hp + " HP" );
 
 	}
 
