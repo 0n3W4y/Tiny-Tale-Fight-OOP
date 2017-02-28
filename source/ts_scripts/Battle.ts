@@ -1,7 +1,7 @@
 class Battle {
 
-	public teamOne;
-	public teamTwo;
+	public teamOne:Array<any>;
+	public teamTwo:Array<any>;
 
 	public isFighting:boolean;
 	private isFightEnd:boolean;
@@ -12,15 +12,23 @@ class Battle {
 		this.parent = parent;
 		this.isFighting = false;
 		this.isFightEnd = true;
+		this.teamOne = new Array();
+		this.teamTwo = new Array();
 	}
 
-	public addPlayersToFight( team1, team2 ){
-		this.teamOne = team1;
-		this.teamTwo = team2;
+	public addPlayerToFight( team, entity ){
+		if( team == 1 )
+			this.teamOne.push( entity );
+		else if( team == 2 )
+			this.teamTwo.push( entity );
+		else
+			console.log( "Error in add entity in team, team = " + team + " not found. Error in Battle/addPlayerToGight" );
+
 	}
 
 
 	public beginFight(){
+		this.prepareFight();
 		this.isFighting = true;
 		this.isFightEnd = false;
 	}
@@ -30,13 +38,13 @@ class Battle {
 	}
 
 	private fight( delta ){
-		var p1Attack = this.teamOne.getComponent( "FightingStats" );
-		var p2Attack = this.teamTwo.getComponent( "FightingStats" );
+		var p1Attack = this.teamOne[0].getComponent( "FightingStats" );
+		var p2Attack = this.teamTwo[0].getComponent( "FightingStats" );
 		if( p1Attack.checkAttack( delta ))
-			this.attack( this.teamOne, this.teamTwo );
+			this.attack( this.teamOne[0], this.teamTwo[0] );
 
 		if( p2Attack.checkAttack( delta ) )
-			this.attack( this.teamTwo, this.teamOne );
+			this.attack( this.teamTwo[0], this.teamOne[0] );
 
 		if( this.isFightEnd )
 			this.isFighting= false;
@@ -76,6 +84,7 @@ class Battle {
 		}
 
 		this.parent.userInterface.addLineToJournal( target.getComponent( "Name" ).getFullName() + " now have " + hp + " HP" );
+		this.parent.userInterface.updateCharacterBlock( target );
 
 	}
 
@@ -83,5 +92,14 @@ class Battle {
 		if( this.isFighting ){
 			this.fight( delta );
 		}
+	}
+
+	private prepareFight(){
+		var fullNamePlayer = this.teamOne[0].getComponent("Name").getFullname();
+		var fullNameEnemy = this.teamTwo[0].getComponent("Name").getFullName();
+		var enemyHp = this.teamTwo[0].getComponent("FightingStats").getCurrentStat("HP");
+		var damage = this.teamTwo[0].getComponent("FightingStats").getCurrentStat("STR");
+		var stringDamage = Math.round( damage/2 ) + " - " + Math.round( damage*2 );
+		var string = fullNamePlayer + " found new troubles. " + fullNameEnemy + " on the road! It have: " + enemyHp + ", and can attack on: " + stringDamage + " phisical damage! Prepare to battle!";
 	}
 }

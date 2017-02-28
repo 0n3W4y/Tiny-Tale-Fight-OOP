@@ -15,19 +15,19 @@ class EntityRoot {
 	}
 
 	public generateEntity( type ):any{
-		var entity = this.createEntity( "Mob" );
+		var entityType = null;
+		if( type == "Humanoid" || "Creature" )
+			entityType = "Character";
+
+		var entity = this.createEntity( entityType );
 		var params = this.entityParametersGenerator.generate( type );
 		entity.createComponentsWithParams( params );
 		return entity;
 	}
 
-	public createEntity( type ):any{
+	public createEntity( newType ):any{
 		var id = this.createId();
-		var type;
-		if( type == "Player" )
-			type = "Player";
-		else if( type == "Mob" )
-			type = "Mob";
+		var type = newType;
 
 		var entity = new Entity( id, type );
 		this.entities.push( entity );

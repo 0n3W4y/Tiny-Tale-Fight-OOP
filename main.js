@@ -27,9 +27,12 @@ function initGame(){
 		ExperienceStats: {lvl:1, exp:0}
 	}
 	player.createComponentsWithParams( playerParams );
+	player.getComponent("FightingStats").updateStatsWithLevelUp();
 
 	mob = game.entityRoot.generateEntity( "Creature" );
+	mob.getComponent("FightingStats").updateStatsWithLevelUp();
 
-	game.battle.addPlayersToFight( player, mob );
+	game.battle.addPlayerToFight( 1,  player );
+	game.battle.addPlayerToFight( 2, mob );
 	game.battle.beginFight();
 }

@@ -27,6 +27,11 @@ var Game = (function () {
     Game.prototype.update = function (delta) {
         this.battle.update(delta);
     };
+    Game.prototype.addMob = function () {
+        if (!this.battle.isFighting) {
+            var mob = this.entityRoot.generateEntity("Creature");
+        }
+    };
     return Game;
 }());
 var UserInterface = (function () {
@@ -113,12 +118,13 @@ var Battle = (function () {
         this.parent = parent;
         this.isFighting = false;
         this.isFightEnd = true;
+        this.teamOne = new Array();
+        this.teamTwo = new Array();
     }
-    Battle.prototype.addPlayersToFight = function (team1, team2) {
-        this.teamOne = team1;
-        this.teamTwo = team2;
+    Battle.prototype.addPlayersToFight = function (team, entity) {
     };
     Battle.prototype.beginFight = function () {
+        this.prepareFight();
         this.isFighting = true;
         this.isFightEnd = false;
     };
@@ -126,12 +132,12 @@ var Battle = (function () {
         this.isFighting = false;
     };
     Battle.prototype.fight = function (delta) {
-        var p1Attack = this.teamOne.getComponent("FightingStats");
-        var p2Attack = this.teamTwo.getComponent("FightingStats");
+        var p1Attack = this.teamOne[0].getComponent("FightingStats");
+        var p2Attack = this.teamTwo[0].getComponent("FightingStats");
         if (p1Attack.checkAttack(delta))
-            this.attack(this.teamOne, this.teamTwo);
+            this.attack(this.teamOne[0], this.teamTwo[0]);
         if (p2Attack.checkAttack(delta))
-            this.attack(this.teamTwo, this.teamOne);
+            this.attack(this.teamTwo[0], this.teamOne[0]);
         if (this.isFightEnd)
             this.isFighting = false;
     };
@@ -172,6 +178,14 @@ var Battle = (function () {
             this.fight(delta);
         }
     };
+    Battle.prototype.prepareFight = function () {
+        var fullNamePlayer = this.teamOne[0].getComponent("Name").getFullname();
+        var fullNameEnemy = this.teamTwo[0].getComponent("Name").getFullName();
+        var enemyHp = this.teamTwo[0].getComponent("FightingStats").getCurrentStat("HP");
+        var damage = this.teamTwo[0].getComponent("FightingStats").getCurrentStat("STR");
+        var stringDamage = Math.round(damage / 2) + " - " + Math.round(damage * 2);
+        var string = fullNamePlayer + " found new troubles. " + fullNameEnemy + " on the road! It have: " + enemyHp + ", and can attack on: " + stringDamage + " phisical damage! Prepare to battle!";
+    };
     return Battle;
 }());
 var EntityRoot = (function () {
@@ -183,18 +197,17 @@ var EntityRoot = (function () {
         this.entityParametersGenerator = new EntityParametersGenerator(creaturesData, humanoidsData);
     };
     EntityRoot.prototype.generateEntity = function (type) {
-        var entity = this.createEntity("Mob");
+        var entityType = null;
+        if (type == "Humanoid" || "Creature")
+            entityType = "Character";
+        var entity = this.createEntity(entityType);
         var params = this.entityParametersGenerator.generate(type);
         entity.createComponentsWithParams(params);
         return entity;
     };
-    EntityRoot.prototype.createEntity = function (type) {
+    EntityRoot.prototype.createEntity = function (newType) {
         var id = this.createId();
-        var type;
-        if (type == "Player")
-            type = "Player";
-        else if (type == "Mob")
-            type = "Mob";
+        var type = newType;
         var entity = new Entity(id, type);
         this.entities.push(entity);
         return entity;
@@ -741,7 +754,7 @@ var creaturesData = {
             stats: { HP: [30, 60], SP: [10, 40], STR: [8, 16], AGI: [4, 8], END: [4, 6], INT: [4, 5], ASPD: [50, 55] },
             lvlup: { HP: [5, 6], SP: [1, 2], STR: [1, 2], AGI: [1, 2], END: [1, 2], INT: [1, 2], ASPD: [0, 0] }
         },
-        ExperienceStats: { exp: [10, 12] } // [ min, max ];
+        ExperienceStats: { exp: [2, 4] } // [ min, max ];
     }
 };
 var humanoidsData = {

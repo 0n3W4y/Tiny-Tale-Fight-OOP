@@ -7,6 +7,6 @@ var creaturesData = {
 			stats: {HP:[30, 60], SP:[10, 40], STR:[8, 16], AGI:[4, 8], END:[4, 6], INT:[4, 5], ASPD:[50, 55]}, // [ min, max ];
 			lvlup: {HP:[5, 6], SP:[1, 2], STR:[1, 2], AGI:[1, 2], END:[1, 2], INT:[1, 2], ASPD:[0, 0]} 
 		}, 
-		ExperienceStats: { exp:[10, 12] } // [ min, max ];
+		ExperienceStats: { exp:[2, 4] } // [ min, max ];
 	}
 }

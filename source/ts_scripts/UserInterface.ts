@@ -19,6 +19,8 @@ class UserInterface {
 	private fillCharacterBlock( blockName, entity ){
 		//params { name:"full name", hp:100, sp:100, exp:[0,100], lvl: str:1, end:1, int:1 };
 		var params = this.collectDataFromEntity( entity );
+		var container = this.getContainer( blockName );
+
 		var nameContainer = params["Name"];
 		var name = nameContainer["fullname"];
 		var fightingStatsContainer = params["FightingStats"];
@@ -33,11 +35,12 @@ class UserInterface {
 		var expToNextLvl = experienceStats["expToNextLvl"];
 		var lvl = experienceStats["lvl"];
 
-
-		var container = this.getContainer( blockName );
+		
 		container.getElementsByClassName("name")[0].innerHTML = name;
 		container.getElementsByClassName("red")[0].innerHTML = hp + "/" + hp;
+		container.getElementsByClassName("red")[0].style.width = "100%";
 		container.getElementsByClassName("green")[0].innerHTML = sp + "/" + sp;
+		container.getElementsByClassName("green")[0].style.width = "100%";
 		container.getElementsByClassName("violet")[0].innerHTML = exp + "/" + expToNextLvl;
 		var percent = Math.floor( (exp/expToNextLvl) *100 );
 		var stringPercent = percent+ "%";
@@ -94,5 +97,41 @@ class UserInterface {
 		var data = { "Name": name, "Type": type, "FightingStats": fightingStats, "ExperienceStats": experienceStats, "AgeStats": ageStats };
 
 		return data;
+	}
+
+	public updateCharacterBlock( blockName, entity ){
+		var data = this.collectDataFromEntity( entity );
+		var container = this.getContainer( blockName );
+
+		var fightingStatsContainer = data["FightingStats"];
+		var currentStatsContainer = fightingStatsContainer["currentStats"];
+		var hp = currentStatsContainer["HP"];
+		var sp = currentStatsContainer["SP"];
+		var str = currentStatsContainer["STR"];
+		var end = currentStatsContainer["END"];
+		var int = currentStatsContainer["INT"];
+		var staticStatsContainer = fightingStatsContainer["staticStats"];
+		var lvlUpStatsContainer = fightingStatsContainer["levelUpStats"];
+		var experienceStats = data["ExperienceStats"];
+		var exp = experienceStats["exp"];
+		var expToNextLvl = experienceStats["expToNextLvl"];
+		var lvl = experienceStats["lvl"];
+
+		var staticHp = staticStatsContainer["HP"] + lvlUpStatsContainer["HP"]*lvl;
+		var staticSp = staticStatsContainer["SP"] + lvlUpStatsContainer["SP"]*lvl;
+
+		container.getElementsByClassName("red")[0].innerHTML = hp + "/" + staticHp;
+		container.getElementsByClassName("red")[0].style.width = Math.round( ( hp/staticHp ) * 100 ) + "%";
+		container.getElementsByClassName("green")[0].innerHTML = sp + "/" + staticSp;
+		container.getElementsByClassName("green")[0].style.width = Math.round( ( sp/staticSp ) * 100 ) + "%";
+		container.getElementsByClassName("violet")[0].innerHTML = exp + "/" + expToNextLvl;
+		var percent = Math.floor( (exp/expToNextLvl) *100 );
+		var stringPercent = percent+ "%";
+		container.getElementsByClassName("violet")[0].style.width = stringPercent;
+		container.getElementsByClassName("level")[0].innerHTML = lvl;
+		container.getElementsByClassName("phisic-attack")[0].innerHTML = str;
+		container.getElementsByClassName("defense")[0].innerHTML = end;
+		container.getElementsByClassName("magic-attack")[0].innerHTML = int;
+
 	}
 }

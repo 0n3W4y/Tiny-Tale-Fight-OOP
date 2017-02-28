@@ -34,4 +34,10 @@ class Game {
 	public update( delta ){
 		this.battle.update( delta );
 	}
+
+	public addMob(){
+		if( !this.battle.isFighting ){
+			var mob = this.entityRoot.generateEntity("Creature");
+		}
+	}
 }
