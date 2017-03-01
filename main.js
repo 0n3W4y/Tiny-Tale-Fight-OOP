@@ -10,12 +10,9 @@ function initGame(){
 	game.init( creaturesData, humanoidsData, lb, rb, journal );
 
 	player = game.entityRoot.generateEntity( "Player", "Humanoid" );
-	player.getComponent( "FightingStats" ).updateStatsWithLevelUp();
-	player.getComponent( "ExperienceStats" ).exp = 0;
 	game.userInterface.fillBlock("Left", player);
 
 	mob = game.entityRoot.generateEntity( "Mob", "Creature" );
-	mob.getComponent( "FightingStats" ).updateStatsWithLevelUp();
 	game.userInterface.fillBlock("Right", mob);
 
 	game.battle.addPlayerToFight( 1,  player );

@@ -65,10 +65,10 @@ class EntityParametersGenerator {
 		for( var key in object ){
 			var container = object[key];
 			if( key == "name" ){
-				if( typeof container === "string" )
+				if( typeof container === "string" ) //проверяем, с каким типом данных мы работает, либо это строка. либо массив из строк.
 					name = container;
 				else{
-					var rnum = Math.floor( Math.random()*container.length );
+					var rnum = Math.floor( Math.random()*container.length ); // выбираем рандомное значение из массива.
 					name = container[rnum];
 				}
 			}
@@ -207,6 +207,7 @@ class EntityParametersGenerator {
 	private generateExperienceStats( object ):any{
 		var lvl = 1;
 		var exp = 0;
+		var bounty = 0;
 		var min;
 		var max;
 
@@ -222,10 +223,30 @@ class EntityParametersGenerator {
 					exp = rnum;
 				}
 			}
+			else if( key == "lvl" ){
+				if( typeof container === "number" )
+					lvl = container;
+				else{
+					min = container[0];
+					max = container[1];
+					var rnum = Math.floor( min + Math.random()*(max - min + 1) );
+					lvl = rnum;
+				}
+			}
+			else if( key == "bounty" ){
+				if( typeof container === "number" )
+					bounty = container;
+				else{
+					min = container[0];
+					max = container[1];
+					var rnum = Math.floor( min + Math.random()*(max - min + 1) );
+					bounty = rnum;
+				}
+			}
 			else
 				console.log( "Error, no key with name: " + key + ". Error in EntityParametersGenerator/generateExperienceStats." );
 		}
-		var result = { "lvl": lvl, "exp": exp };
+		var result = { "lvl": lvl, "exp": exp, "bounty": bounty };
 		return result;
 	}
 
