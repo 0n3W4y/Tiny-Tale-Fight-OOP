@@ -47,12 +47,24 @@ class Battle {
 		if( p2Attack.checkAttack( delta ) )
 			dead = this.attack( this.teamTwo[0], this.teamOne[0] );
 
-		if( this.isFightEnd )
-			this.isFighting= false;
-
 		if( dead != null )
 			this.killEntity( dead );
 
+		if( this.isFightEnd && ( this.teamTwo.length == 0 || this.teamOne.length == 0 ) ){
+			this.isFighting = false;
+			this.resetStats();
+		}
+		else
+			this.isFightEnd = false;
+
+	}
+
+	private resetStats(){
+		if( this.teamTwo.length == 0 ){
+			this.teamOne[0].getComponent( "FightingStats" ).resetStats();
+			this.parent.userInterface.fillBlock( this.teamOne[0] );
+			this.parent.userInterface.addLineToJournal("Grats, u kill them all" );
+		}
 	}
 
 	private attack( player, target ):any{
@@ -61,7 +73,7 @@ class Battle {
 		var targetChanceToEvade = targetFightStats.getCurrentStat( "AGI" ) / 100;
 		var randomNum = Math.random();
 		if( targetChanceToEvade >= randomNum ){
-			this.parent.userInterface.addLineToJournal( target.getComponent("Name").getFullName() + " dodge the attack!" );
+			this.parent.userInterface.addLineToJournal( player.getComponent( "Name" ).getFullName() + " attacking " + target.getComponent("Name").getFullName() + " dodge the attack!" );
 			return null;
 		}
 
@@ -85,13 +97,13 @@ class Battle {
 		if( hp <= 0 ){
 			this.parent.userInterface.addLineToJournal( target.getComponent( "Name" ).getFullName() + " - Dead!" );
 			this.isFightEnd = true;
-			this.parent.userInterface.updateCharacterBlock( target );
+			this.parent.userInterface.fillBlock( target );
 			var exp = target.getComponent( "ExperienceStats" ).bounty;
 			this.gainExperience( player, exp );
 			return target;
 		}
 
-		this.parent.userInterface.updateCharacterBlock( target );
+		this.parent.userInterface.fillBlock( target );
 		return null;
 	}
 
@@ -129,11 +141,13 @@ class Battle {
 	}
 
 	private gainExperience( entity, value ){
-		entity.getComponent( "ExperienceStats" ).gainExperience( value );
-		entity.getComponent( "FightingStats" ).resetStats();
-		var entityFullname = entity.getComponent( "Name" ).getFullName();
-		this.parent.userInterface.addLineToJournal( entityFullname + " gained " + value + " experience." );
-		this.parent.userInterface.updateCharacterBlock( entity );
+		if( entity.type == "Player" ){
+			entity.getComponent( "ExperienceStats" ).gainExperience( value );
+			var entityFullname = entity.getComponent( "Name" ).getFullName();
+			this.parent.userInterface.addLineToJournal( entityFullname + " gained " + value + " experience." );
+			this.parent.userInterface.fillBlock( entity );
+		}
+		
 	}
 
 

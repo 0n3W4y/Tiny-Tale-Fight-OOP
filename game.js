@@ -34,7 +34,7 @@ var Game = (function () {
     };
     Game.prototype.generatePlayer = function () {
         var player = this.entityRoot.generateEntity("Player", "Humanoid");
-        this.userInterface.fillBlock("Left", player);
+        this.userInterface.fillBlock(player);
         this.battle.addPlayerToFight(1, player);
     };
     Game.prototype.generateMob = function () {
@@ -56,7 +56,7 @@ var Game = (function () {
         var mob = this.entityRoot.generateEntity("Mob", "Creature");
         mob.getComponent("ExperienceStats").lvl = mobLevel;
         mob.getComponent("ExperienceStats").updateComponent();
-        this.userInterface.fillBlock("Right", mob);
+        this.userInterface.fillBlock(mob);
         this.battle.addPlayerToFight(2, mob);
     };
     return Game;
@@ -66,86 +66,14 @@ var UserInterface = (function () {
         this.parent = parent;
     }
     UserInterface.prototype.init = function (leftBlock, rightBlock, journal) {
-        this.leftCharacterBlock = leftBlock;
-        this.rightCharacterBlock = rightBlock;
-        this.journal = journal;
+        this.leftCharacterBlock = document.getElementById(leftBlock);
+        this.rightCharacterBlock = document.getElementById(rightBlock);
+        this.journal = document.getElementById(journal);
     };
-    UserInterface.prototype.fillCharacterBlock = function (blockName, entity) {
+    UserInterface.prototype.fillLeftCharacterBlock = function (entity) {
         //params { name:"full name", hp:100, sp:100, exp:[0,100], lvl: str:1, end:1, int:1 };
-        var params = this.collectDataFromEntity(entity);
-        var container = this.getContainer(blockName);
-        var nameContainer = params["Name"];
-        var name = nameContainer["fullname"];
-        var fightingStatsContainer = params["FightingStats"];
-        var currentStatsContainer = fightingStatsContainer["currentStats"];
-        var hp = currentStatsContainer["HP"];
-        var sp = currentStatsContainer["SP"];
-        var str = currentStatsContainer["STR"];
-        var end = currentStatsContainer["END"];
-        var int = currentStatsContainer["INT"];
-        var experienceStats = params["ExperienceStats"];
-        var exp = experienceStats["exp"];
-        var expToNextLvl = experienceStats["expToNextLvl"];
-        var lvl = experienceStats["lvl"];
-        container.getElementsByClassName("name")[0].innerHTML = name;
-        container.getElementsByClassName("red")[0].innerHTML = hp + "/" + hp;
-        container.getElementsByClassName("red")[0].style.width = "100%";
-        container.getElementsByClassName("green")[0].innerHTML = sp + "/" + sp;
-        container.getElementsByClassName("green")[0].style.width = "100%";
-        container.getElementsByClassName("violet")[0].innerHTML = exp + "/" + expToNextLvl;
-        var percent = Math.floor((exp / expToNextLvl) * 100);
-        var stringPercent = percent + "%";
-        container.getElementsByClassName("violet")[0].style.width = stringPercent;
-        container.getElementsByClassName("level")[0].innerHTML = lvl;
-        container.getElementsByClassName("phisic-attack")[0].innerHTML = str;
-        container.getElementsByClassName("defense")[0].innerHTML = end;
-        container.getElementsByClassName("magic-attack")[0].innerHTML = int;
-    };
-    UserInterface.prototype.addLineToJournal = function (string) {
-        var container = document.getElementById(this.journal);
-        var li = document.createElement("li");
-        li.innerHTML = string;
-        container.insertBefore(li, container.firstChild);
-    };
-    UserInterface.prototype.getContainer = function (blockName) {
-        if (blockName == "Left")
-            return document.getElementById(this.leftCharacterBlock);
-        else if (blockName == "Right")
-            return document.getElementById(this.rightCharacterBlock);
-        else
-            return document.getElementById(this.journal);
-    };
-    UserInterface.prototype.fillBlock = function (blockName, entity) {
-        if (blockName == "Left")
-            this.fillCharacterBlock(blockName, entity);
-        else if (blockName == "Right")
-            this.fillCharacterBlock(blockName, entity);
-        else
-            console.log("Error no key with name: " + blockName + ". Error in UserInterface/fillBlock");
-    };
-    UserInterface.prototype.drawAvatar = function (blockName, params) {
-        var container = this.rightCharacterBlock;
-        if (blockName == "Left")
-            container = this.leftCharacterBlock;
-        var avatar = container.getElementsByClassName("avatar");
-        //img.src= params;
-    };
-    UserInterface.prototype.collectDataFromEntity = function (entity) {
-        var name = entity.getComponent("Name").exportDataToObject();
-        var type = entity.getComponent("Type").exportDataToObject();
-        var fightingStats = entity.getComponent("FightingStats").exportDataToObject();
-        var experienceStats = entity.getComponent("ExperienceStats").exportDataToObject();
-        var ageStats = entity.getComponent("AgeStats").exportDataToObject();
-        //if params == null, collect all data;
-        var data = { "Name": name, "Type": type, "FightingStats": fightingStats, "ExperienceStats": experienceStats, "AgeStats": ageStats };
-        return data;
-    };
-    UserInterface.prototype.updateCharacterBlock = function (entity) {
-        var blockName = "Right";
-        if (entity.type == "Player")
-            blockName = "Left";
         var data = this.collectDataFromEntity(entity);
-        var container = this.getContainer(blockName);
+        var container = this.leftCharacterBlock;
         var fightingStatsContainer = data["FightingStats"];
         var currentStatsContainer = fightingStatsContainer["currentStats"];
         var hp = currentStatsContainer["HP"];
@@ -179,6 +107,70 @@ var UserInterface = (function () {
         container.getElementsByClassName("phisic-attack")[0].innerHTML = str;
         container.getElementsByClassName("defense")[0].innerHTML = end;
         container.getElementsByClassName("magic-attack")[0].innerHTML = int;
+    };
+    UserInterface.prototype.fillRightCharacterBlock = function (entity) {
+        var data = this.collectDataFromEntity(entity);
+        var container = this.rightCharacterBlock;
+        var fightingStatsContainer = data["FightingStats"];
+        var currentStatsContainer = fightingStatsContainer["currentStats"];
+        var hp = currentStatsContainer["HP"];
+        var sp = currentStatsContainer["SP"];
+        var str = currentStatsContainer["STR"];
+        var end = currentStatsContainer["END"];
+        var int = currentStatsContainer["INT"];
+        var staticStatsContainer = fightingStatsContainer["staticStats"];
+        var lvlUpStatsContainer = fightingStatsContainer["levelUpStats"];
+        var experienceStats = data["ExperienceStats"];
+        var bounty = experienceStats["bounty"];
+        var lvl = experienceStats["lvl"];
+        var staticHp = staticStatsContainer["HP"] + lvlUpStatsContainer["HP"] * lvl;
+        var staticSp = staticStatsContainer["SP"] + lvlUpStatsContainer["SP"] * lvl;
+        container.getElementsByClassName("red")[0].innerHTML = hp + "/" + staticHp;
+        var hpBar = Math.round((hp / staticHp) * 100);
+        if (hpBar < 0)
+            hpBar = 0;
+        container.getElementsByClassName("red")[0].style.width = hpBar + "%";
+        container.getElementsByClassName("green")[0].innerHTML = sp + "/" + staticSp;
+        var spBar = Math.round((sp / staticSp) * 100);
+        if (spBar < 0)
+            spBar = 0;
+        container.getElementsByClassName("green")[0].style.width = spBar + "%";
+        container.getElementsByClassName("level")[0].innerHTML = lvl;
+        container.getElementsByClassName("phisic-attack")[0].innerHTML = str;
+        container.getElementsByClassName("defense")[0].innerHTML = end;
+        container.getElementsByClassName("magic-attack")[0].innerHTML = int;
+        container.getElementsByClassName("bounty")[0].innerHTML = bounty + " Exp";
+    };
+    UserInterface.prototype.addLineToJournal = function (string) {
+        var container = this.journal;
+        var li = document.createElement("li");
+        li.innerHTML = string;
+        container.insertBefore(li, container.firstChild);
+    };
+    UserInterface.prototype.fillBlock = function (entity) {
+        if (entity.type == "Player")
+            this.fillLeftCharacterBlock(entity);
+        else if (entity.type == "Mob")
+            this.fillRightCharacterBlock(entity);
+        else
+            console.log("Error no key with name: " + entity.type + ". Error in UserInterface/fillBlock");
+    };
+    UserInterface.prototype.drawAvatar = function (blockName, params) {
+        var container = this.rightCharacterBlock;
+        if (blockName == "Left")
+            container = this.leftCharacterBlock;
+        var avatar = container.getElementsByClassName("avatar");
+        //img.src= params;
+    };
+    UserInterface.prototype.collectDataFromEntity = function (entity) {
+        var name = entity.getComponent("Name").exportDataToObject();
+        var type = entity.getComponent("Type").exportDataToObject();
+        var fightingStats = entity.getComponent("FightingStats").exportDataToObject();
+        var experienceStats = entity.getComponent("ExperienceStats").exportDataToObject();
+        var ageStats = entity.getComponent("AgeStats").exportDataToObject();
+        //if params == null, collect all data;
+        var data = { "Name": name, "Type": type, "FightingStats": fightingStats, "ExperienceStats": experienceStats, "AgeStats": ageStats };
+        return data;
     };
     return UserInterface;
 }());
@@ -214,10 +206,21 @@ var Battle = (function () {
             dead = this.attack(this.teamOne[0], this.teamTwo[0]);
         if (p2Attack.checkAttack(delta))
             dead = this.attack(this.teamTwo[0], this.teamOne[0]);
-        if (this.isFightEnd)
-            this.isFighting = false;
         if (dead != null)
             this.killEntity(dead);
+        if (this.isFightEnd && (this.teamTwo.length == 0 || this.teamOne.length == 0)) {
+            this.isFighting = false;
+            this.resetStats();
+        }
+        else
+            this.isFightEnd = false;
+    };
+    Battle.prototype.resetStats = function () {
+        if (this.teamTwo.length == 0) {
+            this.teamOne[0].getComponent("FightingStats").resetStats();
+            this.parent.userInterface.fillBlock(this.teamOne[0]);
+            this.parent.userInterface.addLineToJournal("Grats, u kill them all");
+        }
     };
     Battle.prototype.attack = function (player, target) {
         var targetFightStats = target.getComponent("FightingStats");
@@ -225,7 +228,7 @@ var Battle = (function () {
         var targetChanceToEvade = targetFightStats.getCurrentStat("AGI") / 100;
         var randomNum = Math.random();
         if (targetChanceToEvade >= randomNum) {
-            this.parent.userInterface.addLineToJournal(target.getComponent("Name").getFullName() + " dodge the attack!");
+            this.parent.userInterface.addLineToJournal(player.getComponent("Name").getFullName() + " attacking " + target.getComponent("Name").getFullName() + " dodge the attack!");
             return null;
         }
         var playerFightStats = player.getComponent("FightingStats");
@@ -246,12 +249,12 @@ var Battle = (function () {
         if (hp <= 0) {
             this.parent.userInterface.addLineToJournal(target.getComponent("Name").getFullName() + " - Dead!");
             this.isFightEnd = true;
-            this.parent.userInterface.updateCharacterBlock(target);
+            this.parent.userInterface.fillBlock(target);
             var exp = target.getComponent("ExperienceStats").bounty;
             this.gainExperience(player, exp);
             return target;
         }
-        this.parent.userInterface.updateCharacterBlock(target);
+        this.parent.userInterface.fillBlock(target);
         return null;
     };
     Battle.prototype.update = function (delta) {
@@ -282,11 +285,12 @@ var Battle = (function () {
         }
     };
     Battle.prototype.gainExperience = function (entity, value) {
-        entity.getComponent("ExperienceStats").gainExperience(value);
-        entity.getComponent("FightingStats").resetStats();
-        var entityFullname = entity.getComponent("Name").getFullName();
-        this.parent.userInterface.addLineToJournal(entityFullname + " gained " + value + " experience.");
-        this.parent.userInterface.updateCharacterBlock(entity);
+        if (entity.type == "Player") {
+            entity.getComponent("ExperienceStats").gainExperience(value);
+            var entityFullname = entity.getComponent("Name").getFullName();
+            this.parent.userInterface.addLineToJournal(entityFullname + " gained " + value + " experience.");
+            this.parent.userInterface.fillBlock(entity);
+        }
     };
     return Battle;
 }());

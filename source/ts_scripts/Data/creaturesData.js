@@ -8,13 +8,11 @@ var creaturesData = {
 			sex: ["Man", "Woman"], 
 			race: "Scorpicores"
 		},
-
 		AgeStats: {
 			age:[10, 100], 
 			month:[1, 12] ,
 			day:[1,30]
 		}, // [ min, max ];
-
 		FightingStats: {
 			stats: {
 				HP:[30, 60], 
@@ -23,9 +21,8 @@ var creaturesData = {
 				AGI:[4, 8], 
 				END:[4, 6], 
 				INT:[4, 5], 
-				ASPD:[10, 15]
+				ASPD:[100, 115]
 			}, // [ min, max ];
-
 			lvlup: {
 				HP:[5, 6], 
 				SP:[1, 2], 
@@ -36,7 +33,6 @@ var creaturesData = {
 				ASPD:[1, 1]
 			} 
 		},
-
 		ExperienceStats: { 
 			bounty:[2, 4] 
 		} // [ min, max ];
