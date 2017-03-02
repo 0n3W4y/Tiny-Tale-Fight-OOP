@@ -15,9 +15,11 @@
 	</head>
 	<body>
 		<div id="upper-control-panel">
-			<input type="button" id="StartButton" class="game-control-buttons" value="Start" onClick="game.start()">
 			<input type="button" id="PauseButton" class="game-control-buttons" value="Pause" onClick="game.pause()">
 			<input type="button" id="StopButton" class="game-control-buttons" value="Stop" onClick="game.stop()">
+			<input type="button" id="StartButton" class="game-control-buttons" value="Add Player" onClick="game.generatePlayer()">
+			<input type="button" id="AddMob" class="game-control-buttons" value="Add Mob" onClick="game.generateMob()">
+			<input type="button" id="StartFight" class="game-control-buttons" value="Fight!" onClick="game.battle.beginFight()">			
 		</div>
 		<div id="wrapper" align="center">
 			<div id="left-character-main-frame">
@@ -63,7 +65,7 @@
 							<div class="bar" id="hpbar" title="Health points"><span class="red">0/0</span></div>
 							<div class="bar" id="spbar" title="Stamina points"><span class="green">0/0</span></div>
 							<div class="bar" id="expbar" title="Experience"><span class="violet">0/0</span></div>
-							1<br>
+							<div class="text" id="bounty" title="Bounty">Bounty: 0xp, 0g</div>
 							2<br>
 							3<br>
 							4

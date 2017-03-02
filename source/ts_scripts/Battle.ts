@@ -40,24 +40,29 @@ class Battle {
 	private fight( delta ){
 		var p1Attack = this.teamOne[0].getComponent( "FightingStats" );
 		var p2Attack = this.teamTwo[0].getComponent( "FightingStats" );
-		if( p1Attack.checkAttack( delta ))
-			this.attack( this.teamOne[0], this.teamTwo[0] );
+		var dead;
+		if( p1Attack.checkAttack( delta ) )
+			dead = this.attack( this.teamOne[0], this.teamTwo[0] );
 
 		if( p2Attack.checkAttack( delta ) )
-			this.attack( this.teamTwo[0], this.teamOne[0] );
+			dead = this.attack( this.teamTwo[0], this.teamOne[0] );
 
 		if( this.isFightEnd )
 			this.isFighting= false;
+
+		if( dead != null )
+			this.killEntity( dead );
+
 	}
 
-	private attack( player, target ){
+	private attack( player, target ):any{
 		var targetFightStats = target.getComponent( "FightingStats" );
 		var targetDefense = targetFightStats.getCurrentStat( "END" );
 		var targetChanceToEvade = targetFightStats.getCurrentStat( "AGI" ) / 100;
 		var randomNum = Math.random();
 		if( targetChanceToEvade >= randomNum ){
 			this.parent.userInterface.addLineToJournal( target.getComponent("Name").getFullName() + " dodge the attack!" );
-			return;
+			return null;
 		}
 
 		var playerFightStats = player.getComponent( "FightingStats" );
@@ -81,11 +86,13 @@ class Battle {
 			this.parent.userInterface.addLineToJournal( target.getComponent( "Name" ).getFullName() + " - Dead!" );
 			this.isFightEnd = true;
 			this.parent.userInterface.updateCharacterBlock( target );
-			return;
+			var exp = target.getComponent( "ExperienceStats" ).bounty;
+			this.gainExperience( player, exp );
+			return target;
 		}
 
 		this.parent.userInterface.updateCharacterBlock( target );
-
+		return null;
 	}
 
 	public update(delta){
@@ -103,4 +110,31 @@ class Battle {
 		var string = fullNamePlayer + " found new troubles. " + fullNameEnemy + " on the road! It have: " + enemyHp + " Health Points, and can attack on: " + stringDamage + " phisical damage! Prepare to battle!";
 		this.parent.userInterface.addLineToJournal( string );
 	}
+
+	private killEntity( entity ){
+		var entityType = entity.type;
+		var index;
+		if( entityType == "Player" ){
+			index = this.teamOne.indexOf( entity );
+			this.teamOne.splice( index, 1 );
+			// do something with mob, who killed player, clear interface, popup tooltip, start respwn function;
+		}else{
+			index = this.teamTwo.indexOf( entity );
+			this.teamTwo.splice( index, 1 );
+			this.parent.entityRoot.removeEntity( entity );
+		}
+
+
+
+	}
+
+	private gainExperience( entity, value ){
+		entity.getComponent( "ExperienceStats" ).gainExperience( value );
+		entity.getComponent( "FightingStats" ).resetStats();
+		var entityFullname = entity.getComponent( "Name" ).getFullName();
+		this.parent.userInterface.addLineToJournal( entityFullname + " gained " + value + " experience." );
+		this.parent.userInterface.updateCharacterBlock( entity );
+	}
+
+
 }

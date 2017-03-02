@@ -120,7 +120,7 @@ class EntityParametersGenerator {
 		var min;
 		var max;
 		var age = 0;
-		var month = 1;
+		var month = 0;
 		var day = 1;
 
 		for( var key in object ){
@@ -205,9 +205,9 @@ class EntityParametersGenerator {
 	}
 
 	private generateExperienceStats( object ):any{
-		var lvl = 1;
-		var exp = 0;
-		var bounty = 0;
+		var lvl = 1; //default;
+		var exp = 0; //default;
+		var bounty = 0; //default;
 		var min;
 		var max;
 

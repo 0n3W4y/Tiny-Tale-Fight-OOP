@@ -44,8 +44,8 @@ class Entity {
 		for( var key in params ){
 			component = this.createComponent( key );
 			if( component != null ){
-				component.init( params[key] );
 				this.addComponent( component );
+				component.init( params[key] );				
 			}
 			else
 				console.log( "Error in Entity/createComponentsWithParams" );

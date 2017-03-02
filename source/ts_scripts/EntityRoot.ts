@@ -33,7 +33,7 @@ class EntityRoot {
 		return entity;
 	}
 
-	public getListofEntites():Array<any>{
+	public getListOfEntities():Array<any>{
 		return this.entities;
 	}
 

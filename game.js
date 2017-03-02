@@ -32,6 +32,33 @@ var Game = (function () {
             var mob = this.entityRoot.generateEntity("Creature");
         }
     };
+    Game.prototype.generatePlayer = function () {
+        var player = this.entityRoot.generateEntity("Player", "Humanoid");
+        this.userInterface.fillBlock("Left", player);
+        this.battle.addPlayerToFight(1, player);
+    };
+    Game.prototype.generateMob = function () {
+        var entityList = this.entityRoot.getListOfEntities();
+        var lvl;
+        for (var i = 0; i < entityList.length; i++) {
+            if (entityList[i].type == "Player") {
+                lvl = entityList[i].getComponent("ExperienceStats").lvl;
+                break;
+            }
+        }
+        var min = lvl - 2;
+        var max = lvl + 2;
+        if (min < 1)
+            min = 1;
+        if (max > 100)
+            max = 100;
+        var mobLevel = Math.floor(Math.random() * (max - min + 1) + min);
+        var mob = this.entityRoot.generateEntity("Mob", "Creature");
+        mob.getComponent("ExperienceStats").lvl = mobLevel;
+        mob.getComponent("ExperienceStats").updateComponent();
+        this.userInterface.fillBlock("Right", mob);
+        this.battle.addPlayerToFight(2, mob);
+    };
     return Game;
 }());
 var UserInterface = (function () {
@@ -182,12 +209,15 @@ var Battle = (function () {
     Battle.prototype.fight = function (delta) {
         var p1Attack = this.teamOne[0].getComponent("FightingStats");
         var p2Attack = this.teamTwo[0].getComponent("FightingStats");
+        var dead;
         if (p1Attack.checkAttack(delta))
-            this.attack(this.teamOne[0], this.teamTwo[0]);
+            dead = this.attack(this.teamOne[0], this.teamTwo[0]);
         if (p2Attack.checkAttack(delta))
-            this.attack(this.teamTwo[0], this.teamOne[0]);
+            dead = this.attack(this.teamTwo[0], this.teamOne[0]);
         if (this.isFightEnd)
             this.isFighting = false;
+        if (dead != null)
+            this.killEntity(dead);
     };
     Battle.prototype.attack = function (player, target) {
         var targetFightStats = target.getComponent("FightingStats");
@@ -196,7 +226,7 @@ var Battle = (function () {
         var randomNum = Math.random();
         if (targetChanceToEvade >= randomNum) {
             this.parent.userInterface.addLineToJournal(target.getComponent("Name").getFullName() + " dodge the attack!");
-            return;
+            return null;
         }
         var playerFightStats = player.getComponent("FightingStats");
         var playerDamage = playerFightStats.getCurrentStat("STR");
@@ -217,9 +247,12 @@ var Battle = (function () {
             this.parent.userInterface.addLineToJournal(target.getComponent("Name").getFullName() + " - Dead!");
             this.isFightEnd = true;
             this.parent.userInterface.updateCharacterBlock(target);
-            return;
+            var exp = target.getComponent("ExperienceStats").bounty;
+            this.gainExperience(player, exp);
+            return target;
         }
         this.parent.userInterface.updateCharacterBlock(target);
+        return null;
     };
     Battle.prototype.update = function (delta) {
         if (this.isFighting) {
@@ -234,6 +267,26 @@ var Battle = (function () {
         var stringDamage = Math.round(damage / 2) + " - " + Math.round(damage * 2);
         var string = fullNamePlayer + " found new troubles. " + fullNameEnemy + " on the road! It have: " + enemyHp + " Health Points, and can attack on: " + stringDamage + " phisical damage! Prepare to battle!";
         this.parent.userInterface.addLineToJournal(string);
+    };
+    Battle.prototype.killEntity = function (entity) {
+        var entityType = entity.type;
+        var index;
+        if (entityType == "Player") {
+            index = this.teamOne.indexOf(entity);
+            this.teamOne.splice(index, 1);
+        }
+        else {
+            index = this.teamTwo.indexOf(entity);
+            this.teamTwo.splice(index, 1);
+            this.parent.entityRoot.removeEntity(entity);
+        }
+    };
+    Battle.prototype.gainExperience = function (entity, value) {
+        entity.getComponent("ExperienceStats").gainExperience(value);
+        entity.getComponent("FightingStats").resetStats();
+        var entityFullname = entity.getComponent("Name").getFullName();
+        this.parent.userInterface.addLineToJournal(entityFullname + " gained " + value + " experience.");
+        this.parent.userInterface.updateCharacterBlock(entity);
     };
     return Battle;
 }());
@@ -259,7 +312,7 @@ var EntityRoot = (function () {
         this.entities.push(entity);
         return entity;
     };
-    EntityRoot.prototype.getListofEntites = function () {
+    EntityRoot.prototype.getListOfEntities = function () {
         return this.entities;
     };
     EntityRoot.prototype.createId = function () {
@@ -371,7 +424,7 @@ var EntityParametersGenerator = (function () {
                 if (typeof container === "string")
                     name = container;
                 else {
-                    var rnum = Math.floor(Math.random() * container.length);
+                    var rnum = Math.floor(Math.random() * container.length); // выбираем рандомное значение из массива.
                     name = container[rnum];
                 }
             }
@@ -420,7 +473,7 @@ var EntityParametersGenerator = (function () {
         var min;
         var max;
         var age = 0;
-        var month = 1;
+        var month = 0;
         var day = 1;
         for (var key in object) {
             var container = object[key];
@@ -500,8 +553,9 @@ var EntityParametersGenerator = (function () {
         return result;
     };
     EntityParametersGenerator.prototype.generateExperienceStats = function (object) {
-        var lvl = 1;
-        var exp = 0;
+        var lvl = 1; //default;
+        var exp = 0; //default;
+        var bounty = 0; //default;
         var min;
         var max;
         for (var key in object) {
@@ -516,10 +570,30 @@ var EntityParametersGenerator = (function () {
                     exp = rnum;
                 }
             }
+            else if (key == "lvl") {
+                if (typeof container === "number")
+                    lvl = container;
+                else {
+                    min = container[0];
+                    max = container[1];
+                    var rnum = Math.floor(min + Math.random() * (max - min + 1));
+                    lvl = rnum;
+                }
+            }
+            else if (key == "bounty") {
+                if (typeof container === "number")
+                    bounty = container;
+                else {
+                    min = container[0];
+                    max = container[1];
+                    var rnum = Math.floor(min + Math.random() * (max - min + 1));
+                    bounty = rnum;
+                }
+            }
             else
                 console.log("Error, no key with name: " + key + ". Error in EntityParametersGenerator/generateExperienceStats.");
         }
-        var result = { "lvl": lvl, "exp": exp };
+        var result = { "lvl": lvl, "exp": exp, "bounty": bounty };
         return result;
     };
     EntityParametersGenerator.prototype.storeObjKeysInArray = function () {
@@ -567,8 +641,8 @@ var Entity = (function () {
         for (var key in params) {
             component = this.createComponent(key);
             if (component != null) {
-                component.init(params[key]);
                 this.addComponent(component);
+                component.init(params[key]);
             }
             else
                 console.log("Error in Entity/createComponentsWithParams");
@@ -678,19 +752,23 @@ var FightingStats = (function (_super) {
             return false;
     };
     FightingStats.prototype.updateStatsWithLevelUp = function () {
-        var level = this.parent.getComponent("ExperienceStats").lvl;
-        if (level != null) {
+        var value = this.parent.getComponent("ExperienceStats");
+        if (value != null) {
             for (var key in this.levelUpStats) {
-                var stat = this.levelUpStats[key] * level + this.staticStats[key];
+                var stat = this.levelUpStats[key] * value.lvl + this.staticStats[key];
                 this.currentStats[key] = stat;
             }
         }
         else
-            console.log("Error with Level up stats, level = " + level + ". Error in FightingStats/updateStatsWithLevelUp");
+            console.log("Error with Level up stats, level = " + value + ". Error in FightingStats/updateStatsWithLevelUp");
     };
     FightingStats.prototype.exportDataToObject = function () {
         var result = { "currentStats": this.currentStats, "staticStats": this.staticStats, "levelUpStats": this.levelUpStats };
         return result;
+    };
+    FightingStats.prototype.resetStats = function () {
+        this.timeToNextAttack = 0;
+        this.updateStatsWithLevelUp();
     };
     return FightingStats;
 }(Component));
@@ -768,7 +846,7 @@ var ExperienceStats = (function (_super) {
         var _this = _super.call(this, "ExperienceStats", parent) || this;
         _this.exp = 0;
         _this.lvl = 1;
-        _this.updateExpToNextLvl();
+        _this.bounty = 0;
         _this.isLevelUpped = false;
         return _this;
     }
@@ -778,23 +856,48 @@ var ExperienceStats = (function (_super) {
                 this.exp = params[key];
             else if (key == "lvl")
                 this.lvl = params[key];
+            else if (key == "bounty")
+                this.bounty = params[key];
         }
+        this.updateComponent();
     };
     ExperienceStats.prototype.updateExpToNextLvl = function () {
         this.expToNextLvl = (this.lvl - 1) * 25 + this.lvl * 25;
     };
-    ExperienceStats.prototype.gainExperiance = function (value) {
+    ExperienceStats.prototype.gainExperience = function (value) {
+        if (this.lvl == 100)
+            return;
         this.exp += value;
         if (this.exp >= this.expToNextLvl) {
             this.lvl++;
-            this.exp -= this.expToNextLvl;
-            this.updateExpToNextLvl();
+            if (this.lvl < 100) {
+                this.exp -= this.expToNextLvl;
+                this.updateComponent();
+            }
+            else {
+                this.exp = this.expToNextLvl;
+                this.updateBounty();
+                this.updateFightingStats();
+            }
             this.isLevelUpped = true;
         }
     };
     ExperienceStats.prototype.exportDataToObject = function () {
-        var result = { "exp": this.exp, "lvl": this.lvl, "expToNextLvl": this.expToNextLvl };
+        var result = { "exp": this.exp, "lvl": this.lvl, "expToNextLvl": this.expToNextLvl, "bounty": this.bounty };
         return result;
+    };
+    ExperienceStats.prototype.updateBounty = function () {
+        this.bounty *= this.lvl;
+    };
+    ExperienceStats.prototype.updateFightingStats = function () {
+        var component = this.parent.getComponent("FightingStats");
+        if (component != null)
+            component.updateStatsWithLevelUp();
+    };
+    ExperienceStats.prototype.updateComponent = function () {
+        this.updateExpToNextLvl();
+        this.updateBounty();
+        this.updateFightingStats();
     };
     return ExperienceStats;
 }(Component));

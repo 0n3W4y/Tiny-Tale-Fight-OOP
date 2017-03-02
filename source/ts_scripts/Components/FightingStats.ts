@@ -100,19 +100,26 @@ class FightingStats extends Component{
 	}
 
 	public updateStatsWithLevelUp(){
-		var level = this.parent.getComponent( "ExperienceStats" ).lvl;
-		if( level != null ){
+
+		var value = this.parent.getComponent( "ExperienceStats" );
+
+		if( value != null ){
 			for( var key in this.levelUpStats ){
-				var stat = this.levelUpStats[key] * level + this.staticStats[key];
+				var stat = this.levelUpStats[key] * value.lvl + this.staticStats[key];
 				this.currentStats[key] = stat;
 			}
 		}else
-			console.log( "Error with Level up stats, level = " + level + ". Error in FightingStats/updateStatsWithLevelUp" );	
+			console.log( "Error with Level up stats, level = " + value + ". Error in FightingStats/updateStatsWithLevelUp" );	
 	}
 
 	public exportDataToObject():any{
 		var result = { "currentStats": this.currentStats, "staticStats": this.staticStats, "levelUpStats": this.levelUpStats };
 		return result;
 	}
+
+	public resetStats(){
+		this.timeToNextAttack = 0;
+		this.updateStatsWithLevelUp();
+	}	
 
 }

@@ -40,4 +40,37 @@ class Game {
 			var mob = this.entityRoot.generateEntity("Creature");
 		}
 	}
+
+	public generatePlayer(){
+		var player = this.entityRoot.generateEntity( "Player", "Humanoid" );
+		this.userInterface.fillBlock("Left", player);
+		this.battle.addPlayerToFight( 1,  player );
+	}
+
+	public generateMob(){
+		var entityList = this.entityRoot.getListOfEntities();
+		var lvl;
+		for( var i = 0; i < entityList.length; i++ ){
+			if( entityList[i].type == "Player" ){
+				lvl =  entityList[i].getComponent( "ExperienceStats" ).lvl;
+				break;
+			}
+			
+		}
+		var min = lvl - 2;
+		var max = lvl + 2;
+
+		if( min < 1 )
+			min = 1;
+
+		if( max > 100 )
+			max = 100;
+
+		var mobLevel = Math.floor( Math.random()*(max - min + 1) + min );
+		var mob = this.entityRoot.generateEntity( "Mob", "Creature" );
+		mob.getComponent( "ExperienceStats" ).lvl = mobLevel;
+		mob.getComponent( "ExperienceStats" ).updateComponent();
+		this.userInterface.fillBlock("Right", mob);
+		this.battle.addPlayerToFight( 2, mob );
+	}
 }

@@ -27,22 +27,30 @@ class ExperienceStats extends Component {
 
 		}
 
-		this.updateExpToNextLvl();
-		this.updateFightingStats();
-		this.updateBounty();
+		this.updateComponent();
 	}
 
 	private updateExpToNextLvl():void{
 		this.expToNextLvl = (this.lvl-1)*25 + this.lvl*25;
 	}
 
-	public gainExperiance( value ){
+	public gainExperience( value ){
+		if( this.lvl == 100 ) //ограничение уровня.
+			return;
+
 		this.exp += value;
 		if( this.exp >= this.expToNextLvl ){
 			this.lvl++;
-			this.exp -= this.expToNextLvl;
-			this.updateExpToNextLvl();
-			this.updateFightingStats();
+			if( this.lvl < 100 ){
+				this.exp -= this.expToNextLvl;
+				this.updateComponent();
+			}
+			else{
+				this.exp = this.expToNextLvl;
+				this.updateBounty();
+				this.updateFightingStats();
+			}
+			
 			this.isLevelUpped = true;
 		}
 	}
@@ -52,7 +60,7 @@ class ExperienceStats extends Component {
 		return result;
 	}
 
-	public updateBounty(){
+	private updateBounty(){
 		this.bounty *= this.lvl;
 	}
 
@@ -60,5 +68,11 @@ class ExperienceStats extends Component {
 		var component = this.parent.getComponent( "FightingStats" );
 			if( component != null )
 				component.updateStatsWithLevelUp();
+	}
+
+	public updateComponent(){
+		this.updateExpToNextLvl();
+		this.updateBounty();
+		this.updateFightingStats();
 	}
 }
