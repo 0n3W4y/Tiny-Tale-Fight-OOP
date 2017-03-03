@@ -74,6 +74,8 @@ var UserInterface = (function () {
         //params { name:"full name", hp:100, sp:100, exp:[0,100], lvl: str:1, end:1, int:1 };
         var data = this.collectDataFromEntity(entity);
         var container = this.leftCharacterBlock;
+        var nameContainer = data["Name"];
+        var fullName = nameContainer["fullname"];
         var fightingStatsContainer = data["FightingStats"];
         var currentStatsContainer = fightingStatsContainer["currentStats"];
         var hp = currentStatsContainer["HP"];
@@ -89,6 +91,7 @@ var UserInterface = (function () {
         var lvl = experienceStats["lvl"];
         var staticHp = staticStatsContainer["HP"] + lvlUpStatsContainer["HP"] * lvl;
         var staticSp = staticStatsContainer["SP"] + lvlUpStatsContainer["SP"] * lvl;
+        container.getElementsByClassName("name")[0].innerHTML = fullName;
         container.getElementsByClassName("red")[0].innerHTML = hp + "/" + staticHp;
         var hpBar = Math.round((hp / staticHp) * 100);
         if (hpBar < 0)
@@ -111,6 +114,8 @@ var UserInterface = (function () {
     UserInterface.prototype.fillRightCharacterBlock = function (entity) {
         var data = this.collectDataFromEntity(entity);
         var container = this.rightCharacterBlock;
+        var nameContainer = data["Name"];
+        var fullName = nameContainer["fullname"];
         var fightingStatsContainer = data["FightingStats"];
         var currentStatsContainer = fightingStatsContainer["currentStats"];
         var hp = currentStatsContainer["HP"];
@@ -125,6 +130,7 @@ var UserInterface = (function () {
         var lvl = experienceStats["lvl"];
         var staticHp = staticStatsContainer["HP"] + lvlUpStatsContainer["HP"] * lvl;
         var staticSp = staticStatsContainer["SP"] + lvlUpStatsContainer["SP"] * lvl;
+        container.getElementsByClassName("name")[0].innerHTML = fullName;
         container.getElementsByClassName("red")[0].innerHTML = hp + "/" + staticHp;
         var hpBar = Math.round((hp / staticHp) * 100);
         if (hpBar < 0)
@@ -201,13 +207,15 @@ var Battle = (function () {
     Battle.prototype.fight = function (delta) {
         var p1Attack = this.teamOne[0].getComponent("FightingStats");
         var p2Attack = this.teamTwo[0].getComponent("FightingStats");
-        var dead;
+        var dead = new Array();
         if (p1Attack.checkAttack(delta))
-            dead = this.attack(this.teamOne[0], this.teamTwo[0]);
+            dead.push(this.attack(this.teamOne[0], this.teamTwo[0]));
         if (p2Attack.checkAttack(delta))
-            dead = this.attack(this.teamTwo[0], this.teamOne[0]);
-        if (dead != null)
-            this.killEntity(dead);
+            dead.push(this.attack(this.teamTwo[0], this.teamOne[0]));
+        for (var i = 0; i < dead.length; i++) {
+            if (dead[i] != null)
+                this.killEntity(dead[i]);
+        }
         if (this.isFightEnd && (this.teamTwo.length == 0 || this.teamOne.length == 0)) {
             this.isFighting = false;
             this.resetStats();

@@ -21,6 +21,8 @@ class UserInterface {
 		var data = this.collectDataFromEntity( entity );
 		var container = this.leftCharacterBlock;
 
+		var nameContainer = data["Name"];
+		var fullName = nameContainer["fullname"];
 		var fightingStatsContainer = data["FightingStats"];
 		var currentStatsContainer = fightingStatsContainer["currentStats"];
 		var hp = currentStatsContainer["HP"];
@@ -38,6 +40,7 @@ class UserInterface {
 		var staticHp = staticStatsContainer["HP"] + lvlUpStatsContainer["HP"]*lvl;
 		var staticSp = staticStatsContainer["SP"] + lvlUpStatsContainer["SP"]*lvl;
 
+		container.getElementsByClassName("name")[0].innerHTML = fullName;
 		container.getElementsByClassName("red")[0].innerHTML = hp + "/" + staticHp;
 		var hpBar = Math.round( ( hp/staticHp ) * 100 );
 		if( hpBar < 0 )
@@ -63,6 +66,8 @@ class UserInterface {
 		var data = this.collectDataFromEntity( entity );
 		var container = this.rightCharacterBlock;
 
+		var nameContainer = data["Name"];
+		var fullName = nameContainer["fullname"];
 		var fightingStatsContainer = data["FightingStats"];
 		var currentStatsContainer = fightingStatsContainer["currentStats"];
 		var hp = currentStatsContainer["HP"];
@@ -79,6 +84,7 @@ class UserInterface {
 		var staticHp = staticStatsContainer["HP"] + lvlUpStatsContainer["HP"]*lvl;
 		var staticSp = staticStatsContainer["SP"] + lvlUpStatsContainer["SP"]*lvl;
 
+		container.getElementsByClassName("name")[0].innerHTML = fullName;
 		container.getElementsByClassName("red")[0].innerHTML = hp + "/" + staticHp;
 		var hpBar = Math.round( ( hp/staticHp ) * 100 );
 		if( hpBar < 0 )
@@ -132,6 +138,36 @@ class UserInterface {
 		var data = { "Name": name, "Type": type, "FightingStats": fightingStats, "ExperienceStats": experienceStats, "AgeStats": ageStats };
 
 		return data;
+	}
+
+	public removeFromEnemyList( index ):void{
+
+	}
+
+	public addToEnemyList( entity, id ):void{
+		var li = document.createElement("li");
+		li.id = "" + id;
+		var divAvatar = document.createElement("div");
+		divAvatar.className = "avatar";
+		var imgInDiv = document.createElement("img");
+		var divLevel = document.createElement("div");
+		divLevel.className = "level";
+		var divPhisAttack = document.createElement("div");
+		divPhisAttack.className = "phisic-attack";
+		var divDefense = document.createElement("div");
+		divDefense.className = "defense";
+		var divMagAttack = document.createElement("div");
+		divMagAttack.className = "magic-attack";
+
+		<li id="0">
+					<div class="avatar" align="left">
+					<img src=""></img>
+					<div class="level" title="Level">0</div>
+					<div class="phisic-attack" title="Phisics Attack">0</div>
+					<div class="defense" title="Defense">0</div>
+					<div class="magic-attack" title="Magic Attack">0</div>
+					</div>
+				</li>
 	}
 
 }

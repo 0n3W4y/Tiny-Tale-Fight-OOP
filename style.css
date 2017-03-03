@@ -167,18 +167,6 @@ body {
   background: #999999; 
 }
 
-#enemy-list { 
-  position: absolute;
-  display:block; 
-  width:150px; 
-  height:680px; 
-  background: #999999; 
-  border:1px blue solid; 
-  margin:10px; 
-  top:0px;
-  right:0px;
-  overflow:auto;
-}
 #upper-control-panel { 
   width:100%;  
   background-color:#333355; 
@@ -196,11 +184,6 @@ body {
   top:180px;
   overflow:hide; 
   background: #999999; 
-}
-
-#fighting-log li{ 
-  text-align:left; 
-  font-size:16px; 
 }
 
 #left-center-block { 
@@ -233,7 +216,7 @@ body {
 #wrapper{
   display:block;
   position:absolute;
-  width:1200px;
+  width:1180px;
   height:700px;
   border: 1px black solid;
   background-color: #aaaaaa;
@@ -320,3 +303,39 @@ body {
   border-radius: 4px;
   overflow: auto;
 }
+
+#fighting-log li{ 
+  text-align:left; 
+  font-size:16px; 
+}
+
+#enemy-list { 
+  position: absolute;
+  display:block; 
+  width:122px; 
+  height:680px; 
+  background: #999999; 
+  border:1px blue solid; 
+  margin:10px; 
+  top:0px;
+  right:0px;
+  overflow:auto;
+}
+
+#list-of-enemies{
+  margin:0px;
+  position:relative;
+  list-style-type: none;
+  padding:5px;
+
+}
+
+#list-of-enemies li{
+  display:block; 
+  float:left;  
+  height:138px; 
+  width:110px; 
+  margin:0px;
+}
+
+

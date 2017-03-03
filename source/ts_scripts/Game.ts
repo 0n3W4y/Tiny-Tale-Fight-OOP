@@ -43,7 +43,7 @@ class Game {
 
 	public generatePlayer(){
 		var player = this.entityRoot.generateEntity( "Player", "Humanoid" );
-		this.userInterface.fillBlock( player );
+		this.userInterface.fillBlock( player ); //WARNING, need to be deleted;
 		this.battle.addPlayerToFight( 1,  player );
 	}
 
@@ -70,7 +70,6 @@ class Game {
 		var mob = this.entityRoot.generateEntity( "Mob", "Creature" );
 		mob.getComponent( "ExperienceStats" ).lvl = mobLevel;
 		mob.getComponent( "ExperienceStats" ).updateComponent();
-		this.userInterface.fillBlock( mob );
 		this.battle.addPlayerToFight( 2, mob );
 	}
 }

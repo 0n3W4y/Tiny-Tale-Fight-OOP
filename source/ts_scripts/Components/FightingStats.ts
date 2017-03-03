@@ -1,13 +1,15 @@
 class FightingStats extends Component{
+	public isDead:boolean;
+
 	private currentStats:any;
 	private staticStats:any;
 	private levelUpStats:any;
-
 	private timeToNextAttack:number;
 
 	constructor( parent ){
 		super( "FightingStats", parent );
 		this.timeToNextAttack = 0;
+		this.isDead = false;
 		this.currentStats = {
 			HP:0,
 			SP:0,

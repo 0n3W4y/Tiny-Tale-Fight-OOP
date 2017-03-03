@@ -4,14 +4,12 @@ class Battle {
 	public teamTwo:Array<any>;
 
 	public isFighting:boolean;
-	private isFightEnd:boolean;
 
 	private parent:any;
 
 	constructor( parent ){
 		this.parent = parent;
 		this.isFighting = false;
-		this.isFightEnd = true;
 		this.teamOne = new Array();
 		this.teamTwo = new Array();
 	}
@@ -19,8 +17,11 @@ class Battle {
 	public addPlayerToFight( team, entity ){
 		if( team == 1 )
 			this.teamOne.push( entity );
-		else if( team == 2 )
+		else if( team == 2 ){
+			var id = this.teamTwo.length;
+			this.parent.userInterface.addToEnemyList( entity, id );
 			this.teamTwo.push( entity );
+		}
 		else
 			console.log( "Error in add entity in team, team = " + team + " not found. Error in Battle/addPlayerToGight" );
 
@@ -30,7 +31,6 @@ class Battle {
 	public beginFight(){
 		this.prepareFight();
 		this.isFighting = true;
-		this.isFightEnd = false;
 	}
 
 	public stopFight(){
@@ -38,24 +38,29 @@ class Battle {
 	}
 
 	private fight( delta ){
-		var p1Attack = this.teamOne[0].getComponent( "FightingStats" );
-		var p2Attack = this.teamTwo[0].getComponent( "FightingStats" );
-		var dead;
-		if( p1Attack.checkAttack( delta ) )
-			dead = this.attack( this.teamOne[0], this.teamTwo[0] );
+		var p1 = this.teamOne[0];
+		var p2 = null;
+		var p1Attack = p1.getComponent( "FightingStats" );
+		
+		for( var i = 0; i < this.teamTwo.length; i++ ){
+			p2 = this.teamTwo[i];
+			if( !( p2.getComponent( "FightingStats" ).isDead ) )
+				break;
+		}
 
-		if( p2Attack.checkAttack( delta ) )
-			dead = this.attack( this.teamTwo[0], this.teamOne[0] );
-
-		if( dead != null )
-			this.killEntity( dead );
-
-		if( this.isFightEnd && ( this.teamTwo.length == 0 || this.teamOne.length == 0 ) ){
+		if( p1Attack.isDead || p2 == null ){
 			this.isFighting = false;
 			this.resetStats();
+			return;
 		}
-		else
-			this.isFightEnd = false;
+
+		var p2Attack = p2.getComponent( "FightingStats" );
+
+		if( p1Attack.checkAttack( delta ) )
+			this.attack( p1, p2 );
+
+		if( p2Attack.checkAttack( delta ) )
+			this.attack( p2, p1 );
 
 	}
 
@@ -67,14 +72,16 @@ class Battle {
 		}
 	}
 
-	private attack( player, target ):any{
+	private attack( player, target ):void{
+		var playerName = player.getComponent( "Name" ).getFullName();
+		var targetName = target.getComponent( "Name" ).getFullName();
 		var targetFightStats = target.getComponent( "FightingStats" );
 		var targetDefense = targetFightStats.getCurrentStat( "END" );
 		var targetChanceToEvade = targetFightStats.getCurrentStat( "AGI" ) / 100;
 		var randomNum = Math.random();
 		if( targetChanceToEvade >= randomNum ){
-			this.parent.userInterface.addLineToJournal( player.getComponent( "Name" ).getFullName() + " attacking " + target.getComponent("Name").getFullName() + " dodge the attack!" );
-			return null;
+			this.parent.userInterface.addLineToJournal( playerName + " attacking " + targetName + ", but it dodge the attack!" );
+			return;
 		}
 
 		var playerFightStats = player.getComponent( "FightingStats" );
@@ -88,23 +95,20 @@ class Battle {
 		if( damage > 0 ){
 			hp -= damage;
 			targetFightStats.setStats( "current", { "HP":hp } );
-			this.parent.userInterface.addLineToJournal( player.getComponent( "Name" ).getFullName() + " attacking " + target.getComponent( "Name" ).getFullName() + " on " + damage + "; Attack: " + playerDamage + "; TargetDefense: " + targetDefense );
+			this.parent.userInterface.addLineToJournal( playerName + " attacking " + targetName + " on " + damage + "; Attack: " + playerDamage + "; TargetDefense: " + targetDefense );
 		}
 		else{
-			this.parent.userInterface.addLineToJournal( player.getComponent( "Name" ).getFullName() + " attacking " + target.getComponent( "Name" ).getFullName() + ", but can't avoid the defense" );
+			this.parent.userInterface.addLineToJournal( playerName + " attacking " + targetName + ", but can't avoid the defense" );
 		}
 
 		if( hp <= 0 ){
-			this.parent.userInterface.addLineToJournal( target.getComponent( "Name" ).getFullName() + " - Dead!" );
-			this.isFightEnd = true;
-			this.parent.userInterface.fillBlock( target );
+			this.parent.userInterface.addLineToJournal( targetName + " - Killed by " + playerName );
 			var exp = target.getComponent( "ExperienceStats" ).bounty;
 			this.gainExperience( player, exp );
-			return target;
+			target.getComponent( "FightingStats" ).isDead = true;
 		}
 
 		this.parent.userInterface.fillBlock( target );
-		return null;
 	}
 
 	public update(delta){
@@ -121,6 +125,8 @@ class Battle {
 		var stringDamage = Math.round( damage/2 ) + " - " + Math.round( damage*2 );
 		var string = fullNamePlayer + " found new troubles. " + fullNameEnemy + " on the road! It have: " + enemyHp + " Health Points, and can attack on: " + stringDamage + " phisical damage! Prepare to battle!";
 		this.parent.userInterface.addLineToJournal( string );
+		this.parent.userInterface.fillBlock( this.teamTwo[0] );
+		this.parent.userInterface.removeFromEnemyList( this.teamTwo[0] );
 	}
 
 	private killEntity( entity ){
@@ -149,6 +155,5 @@ class Battle {
 		}
 		
 	}
-
 
 }
