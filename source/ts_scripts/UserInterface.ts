@@ -159,15 +159,9 @@ class UserInterface {
 		var divMagAttack = document.createElement("div");
 		divMagAttack.className = "magic-attack";
 
-		<li id="0">
-					<div class="avatar" align="left">
-					<img src=""></img>
-					<div class="level" title="Level">0</div>
-					<div class="phisic-attack" title="Phisics Attack">0</div>
-					<div class="defense" title="Defense">0</div>
-					<div class="magic-attack" title="Magic Attack">0</div>
-					</div>
-				</li>
+		var fightingStats = entity.getComponent( "FightingStats" );
+		var level = entity.getComponent( "ExperienceStats" );
+		
 	}
 
 }

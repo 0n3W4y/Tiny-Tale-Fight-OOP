@@ -5,6 +5,10 @@ class Battle {
 
 	public isFighting:boolean;
 
+	private isFightPrepare:boolean;
+	private isRoundBegan:boolean;
+	private isRoundEnd:boolean;
+
 	private parent:any;
 
 	constructor( parent ){
@@ -12,6 +16,15 @@ class Battle {
 		this.isFighting = false;
 		this.teamOne = new Array();
 		this.teamTwo = new Array();
+		this.isFightPrepare = false;
+		this.isRoundBegan = false;
+		this.isRoundEnd = false;
+	}
+
+	public update( delta ){
+		if( this.isFighting ){
+			this.fight( delta );
+		}
 	}
 
 	public addPlayerToFight( team, entity ){
@@ -27,50 +40,29 @@ class Battle {
 
 	}
 
-
-	public beginFight(){
-		this.prepareFight();
-		this.isFighting = true;
-	}
-
-	public stopFight(){
-		this.isFighting = false;
-	}
-
 	private fight( delta ){
-		var p1 = this.teamOne[0];
-		var p2 = null;
-		var p1Attack = p1.getComponent( "FightingStats" );
-		
-		for( var i = 0; i < this.teamTwo.length; i++ ){
-			p2 = this.teamTwo[i];
-			if( !( p2.getComponent( "FightingStats" ).isDead ) )
-				break;
-		}
-
-		if( p1Attack.isDead || p2 == null ){
-			this.isFighting = false;
-			this.resetStats();
+		if( !this.isFightPrepare ){
+			this.prepareFight( delta );
 			return;
 		}
 
-		var p2Attack = p2.getComponent( "FightingStats" );
-
-		if( p1Attack.checkAttack( delta ) )
-			this.attack( p1, p2 );
-
-		if( p2Attack.checkAttack( delta ) )
-			this.attack( p2, p1 );
-
-	}
-
-	private resetStats(){
-		if( this.teamTwo.length == 0 ){
-			this.teamOne[0].getComponent( "FightingStats" ).resetStats();
-			this.parent.userInterface.fillBlock( this.teamOne[0] );
-			this.parent.userInterface.addLineToJournal("Grats, u kill them all" );
+		if( !this.isRoundBegan ){
+			this.beginRound( delta );
+			return;
 		}
+
+		
+		this.battle( delta );
+
+
+		if ( !this.isRoundEnd ){
+			this.endRound( delta );
+			return;
+		}
+
 	}
+
+
 
 	private attack( player, target ):void{
 		var playerName = player.getComponent( "Name" ).getFullName();
@@ -92,14 +84,15 @@ class Battle {
 
 		var damage = playerDamage - targetDefense;
 		var hp = targetFightStats.getCurrentStat( "HP" );
-		if( damage > 0 ){
-			hp -= damage;
-			targetFightStats.setStats( "current", { "HP":hp } );
+		if( damage > 0 )
 			this.parent.userInterface.addLineToJournal( playerName + " attacking " + targetName + " on " + damage + "; Attack: " + playerDamage + "; TargetDefense: " + targetDefense );
-		}
 		else{
-			this.parent.userInterface.addLineToJournal( playerName + " attacking " + targetName + ", but can't avoid the defense" );
+			damage = 1;
+			this.parent.userInterface.addLineToJournal( playerName + " attacking " + targetName + ", but can't avoid the defense. Attacking on 1" );
 		}
+
+		hp -= damage;
+		targetFightStats.setStats( "current", { "HP":hp } );
 
 		if( hp <= 0 ){
 			this.parent.userInterface.addLineToJournal( targetName + " - Killed by " + playerName );
@@ -111,22 +104,97 @@ class Battle {
 		this.parent.userInterface.fillBlock( target );
 	}
 
-	public update(delta){
-		if( this.isFighting ){
-			this.fight( delta );
+	
+
+	private prepareFight( time ){
+		var p1 = this.teamOne[0];
+		var p2 = this.teamTwo[0];
+
+		if( p1 == null || p2 == null ){
+			this.endBattle();
+			return;
 		}
+
+		var fullNamePlayer = p1.getComponent("Name").getFullName();
+		var fullNameEnemy = p2.getComponent("Name").getFullName();
+		var enemyHp = p2.getComponent("FightingStats").getCurrentStat("HP");
+		var damage = p2.getComponent("FightingStats").getCurrentStat("STR");
+		var stringDamage = Math.round( damage/2 ) + " - " + Math.round( damage*2 );
+		var string = fullNamePlayer + " found new troubles. " + fullNameEnemy + " attacking! It have: " + enemyHp + " Health Points, and can attack on: " + stringDamage + " phisical damage!";
+		this.parent.userInterface.addLineToJournal( string );
+		this.parent.userInterface.fillBlock( p1 );
+		this.parent.userInterface.removeFromEnemyList( p2 );
+
+		this.isFightPrepare = true;
+		this.isRoundBegan = true;
 	}
 
-	private prepareFight(){
-		var fullNamePlayer = this.teamOne[0].getComponent("Name").getFullName();
-		var fullNameEnemy = this.teamTwo[0].getComponent("Name").getFullName();
-		var enemyHp = this.teamTwo[0].getComponent("FightingStats").getCurrentStat("HP");
-		var damage = this.teamTwo[0].getComponent("FightingStats").getCurrentStat("STR");
-		var stringDamage = Math.round( damage/2 ) + " - " + Math.round( damage*2 );
-		var string = fullNamePlayer + " found new troubles. " + fullNameEnemy + " on the road! It have: " + enemyHp + " Health Points, and can attack on: " + stringDamage + " phisical damage! Prepare to battle!";
-		this.parent.userInterface.addLineToJournal( string );
-		this.parent.userInterface.fillBlock( this.teamTwo[0] );
-		this.parent.userInterface.removeFromEnemyList( this.teamTwo[0] );
+	
+
+	private gainExperience( entity, value ){
+		if( entity.type == "Player" ){
+			entity.getComponent( "ExperienceStats" ).gainExperience( value );
+			var entityFullname = entity.getComponent( "Name" ).getFullName();
+			this.parent.userInterface.addLineToJournal( entityFullname + " gained " + value + " experience." );
+			this.parent.userInterface.fillBlock( entity );
+		}
+		
+	}
+
+	private battle( time ){
+		var p1 = this.teamOne[0];
+		var p2 = null;
+		var p1Attack = p1.getComponent( "FightingStats" );
+		
+		for( var i = 0; i < this.teamTwo.length; i++ ){
+			p2 = this.teamTwo[i];
+			if( !( p2.getComponent( "FightingStats" ).isDead ) )
+				break;
+		}
+
+		if( p1Attack.isDead || p2 == null ){
+			this.isFighting = false;
+			this.resetStats();
+			return;
+		}
+
+		var p2Attack = p2.getComponent( "FightingStats" );
+
+		if( p1Attack.checkAttack( time ) )
+			this.attack( p1, p2 );
+
+		if( p2Attack.checkAttack( time ) )
+			this.attack( p2, p1 );
+	}
+
+	private endBattle(){
+		this.isFighting = false;
+	}
+
+	public stopFight(){
+		this.isFighting = false;
+	}
+
+	public startFight(){
+		this.isFighting = true;
+	}
+
+	private beginRound( time ){
+		this.isRoundBegan = true;
+		this.isRoundEnd = false;
+	}
+
+	private endRound( time ){
+		this.isRoundEnd = true;
+		this.isRoundBegan = false;
+	}
+
+	private resetStats(){
+		if( this.teamTwo.length == 0 ){
+			this.teamOne[0].getComponent( "FightingStats" ).resetStats();
+			this.parent.userInterface.fillBlock( this.teamOne[0] );
+			this.parent.userInterface.addLineToJournal("Grats, u kill them all" );
+		}
 	}
 
 	private killEntity( entity ){
@@ -142,18 +210,6 @@ class Battle {
 			this.parent.entityRoot.removeEntity( entity );
 		}
 
-
-
-	}
-
-	private gainExperience( entity, value ){
-		if( entity.type == "Player" ){
-			entity.getComponent( "ExperienceStats" ).gainExperience( value );
-			var entityFullname = entity.getComponent( "Name" ).getFullName();
-			this.parent.userInterface.addLineToJournal( entityFullname + " gained " + value + " experience." );
-			this.parent.userInterface.fillBlock( entity );
-		}
-		
 	}
 
 }
