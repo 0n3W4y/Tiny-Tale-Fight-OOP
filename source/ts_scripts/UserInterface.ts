@@ -145,6 +145,12 @@ class UserInterface {
 	}
 
 	public addToEnemyList( entity, id ):void{
+		var fightingStats = entity.getComponent( "FightingStats" );
+		var str = fightingStats.getCurrentStat( "STR" );
+		var def = fightingStats.getCurrentStat( "END" );
+		var int = fightingStats.getCurrentStat( "INT" );
+		var level = entity.getComponent( "ExperienceStats" ).lvl;
+
 		var li = document.createElement("li");
 		li.id = "" + id;
 		var divAvatar = document.createElement("div");
@@ -152,16 +158,37 @@ class UserInterface {
 		var imgInDiv = document.createElement("img");
 		var divLevel = document.createElement("div");
 		divLevel.className = "level";
+		divLevel.innerHTML = level;
 		var divPhisAttack = document.createElement("div");
 		divPhisAttack.className = "phisic-attack";
+		divPhisAttack.innerHTML = str;
 		var divDefense = document.createElement("div");
 		divDefense.className = "defense";
+		divDefense.innerHTML = def;
 		var divMagAttack = document.createElement("div");
 		divMagAttack.className = "magic-attack";
+		divMagAttack.innerHTML = int;
 
-		var fightingStats = entity.getComponent( "FightingStats" );
-		var level = entity.getComponent( "ExperienceStats" );
-		
+		li.appendChild( divAvatar );
+		divAvatar.appendChild( imgInDiv );
+		divAvatar.appendChild( divLevel );
+		divAvatar.appendChild( divPhisAttack );
+		divAvatar.appendChild( divDefense );
+		divAvatar.appendChild( divMagAttack );
+
+		var container = document.getElementById( "list-of-enemies" );
+		container.appendChild( li );
+
+		//create tooltip;
+
+	}
+
+	public createToolTip( entity ){
+
+	}
+
+	public updateTollTip( entity ){
+
 	}
 
 }

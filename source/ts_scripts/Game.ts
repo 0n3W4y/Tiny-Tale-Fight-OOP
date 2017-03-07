@@ -35,21 +35,14 @@ class Game {
 		this.battle.update( delta );
 	}
 
-	public addMob(){
-		if( !this.battle.isFighting ){
-			var mob = this.entityRoot.generateEntity("Creature");
-		}
-	}
-
 	public generatePlayer(){
 		var player = this.entityRoot.generateEntity( "Player", "Humanoid" );
-		this.userInterface.fillBlock( player ); //WARNING, need to be deleted;
 		this.battle.addPlayerToFight( 1,  player );
 	}
 
 	public generateMob(){
 		var entityList = this.entityRoot.getListOfEntities();
-		var lvl;
+		var lvl = 1;
 		for( var i = 0; i < entityList.length; i++ ){
 			if( entityList[i].type == "Player" ){
 				lvl =  entityList[i].getComponent( "ExperienceStats" ).lvl;
@@ -57,6 +50,7 @@ class Game {
 			}
 			
 		}
+
 		var min = lvl - 2;
 		var max = lvl + 2;
 

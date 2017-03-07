@@ -73,6 +73,10 @@ class FightingStats extends Component{
 		return this.staticStats[stat];
 	}
 
+	public getLevelupStat( stat ){
+		return this.levelUpStats[stat];
+	}
+
 	public setStats( to, stat ){
 		var container = this.staticStats;
 		if( to == "current" )

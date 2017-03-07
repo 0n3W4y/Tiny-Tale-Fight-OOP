@@ -6,7 +6,7 @@ class Battle {
 	public isFighting:boolean;
 
 	private isFightPrepare:boolean;
-	private isRoundBegan:boolean;
+	private isRoundBegin:boolean;
 	private isRoundEnd:boolean;
 
 	private parent:any;
@@ -17,7 +17,7 @@ class Battle {
 		this.teamOne = new Array();
 		this.teamTwo = new Array();
 		this.isFightPrepare = false;
-		this.isRoundBegan = false;
+		this.isRoundBegin = false;
 		this.isRoundEnd = false;
 	}
 
@@ -43,21 +43,18 @@ class Battle {
 	private fight( delta ){
 		if( !this.isFightPrepare ){
 			this.prepareFight( delta );
-			return;
 		}
 
-		if( !this.isRoundBegan ){
+		if( !this.isRoundBegin ){
 			this.beginRound( delta );
-			return;
 		}
 
 		
 		this.battle( delta );
 
 
-		if ( !this.isRoundEnd ){
+		if ( this.isRoundEnd ){
 			this.endRound( delta );
-			return;
 		}
 
 	}
@@ -126,7 +123,7 @@ class Battle {
 		this.parent.userInterface.removeFromEnemyList( p2 );
 
 		this.isFightPrepare = true;
-		this.isRoundBegan = true;
+		this.isRoundBegin = true;
 	}
 
 	
@@ -153,8 +150,7 @@ class Battle {
 		}
 
 		if( p1Attack.isDead || p2 == null ){
-			this.isFighting = false;
-			this.resetStats();
+			this.isRoundEnd = true;
 			return;
 		}
 
@@ -180,13 +176,13 @@ class Battle {
 	}
 
 	private beginRound( time ){
-		this.isRoundBegan = true;
+		this.isRoundBegin = true;
 		this.isRoundEnd = false;
 	}
 
 	private endRound( time ){
 		this.isRoundEnd = true;
-		this.isRoundBegan = false;
+		this.isRoundBegin = false;
 	}
 
 	private resetStats(){

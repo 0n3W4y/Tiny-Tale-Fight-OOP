@@ -21,95 +21,90 @@
 			<input type="button" id="AddMob" class="game-control-buttons" value="Add Mob" onClick="game.generateMob()">
 			<input type="button" id="StartFight" class="game-control-buttons" value="Fight!" onClick="game.battle.beginFight()">			
 		</div>
-		<div id="wrapper" align="center">
-			<div id="left-character-main-frame">
-				<table id="Player-main-frame" align="left" cellspacing="0" border=1 bordercolor="blue" width="100%" height="100%">
-					<tr>
-						<td>
-						<div class="avatar">
-							<img src=""></img>
-							<div class="level" title="Level">0</div>
-							<div class="phisic-attack" title="Phisics Attack">0</div>
-							<div class="defense" title="Defense">0</div>
-							<div class="magic-attack" title="Magic Attack">0</div>
-						</div>
-						<div class="statstext" align="left">
-							<div class="name">n/a</div>
-							<div class="bar" id="hpbar" title="Health points"><span class="red">0/0</span></div>
-							<div class="bar" id="spbar" title="Stamina points"><span class="green">0/0</span></div>
-							<div class="bar" id="expbar" title="Experience"><span class="violet">0/0</span></div>
-							1<br>
-							2<br>
-							3<br>
-							4
-						</div>
-						</td>
-					</tr>
-				</table>
-			</div>
+		<div id="wrapper">
 
-			<div id="right-character-main-frame">
-				<table id="Enemy-main-frame" align="left" cellspacing="0" border=1 bordercolor="blue" width="100%" height="100%">
-					<tr>
-						<td>
-							
-						<div class="avatar" align="left">
-							<img src=""></img>
-							<div class="level">0</div>
-							<div class="phisic-attack">0</div>
-							<div class="defense">0</div>
-							<div class="magic-attack">0</div>
-						</div>
-						<div class="statstext" align="left">
-							<div class="name">n/a</div>
-							<div class="bar" id="hpbar" title="Health points"><span class="red">0/0</span></div>
-							<div class="bar" id="spbar" title="Stamina points"><span class="green">0/0</span></div>
-							<div class="text" id="bounty">Bounty: <span class="bounty">0 Exp</span></div>
-							1<br>
-							2<br>
-							3<br>
-							4
-						</div>
-						</td>
-					</tr>
-				</table>
-			</div>
+			<div id="upper-block">
 
-
-			<div id="enemy-list">
-				<ul id="list-of-enemies">
-				<li id="0">
-					<div class="avatar" align="left">
-						<img src=""></img>
-						<div class="level">0</div>
-						<div class="phisic-attack">0</div>
-						<div class="defense">0</div>
-						<div class="magic-attack">0</div>
+				<div id="left-character-main-block">
+					<div id="avatar">
 					</div>
-				</li>
-				<li id="2c"><div class="enemy-list-creature"></div></li>
-				</ul>
-			</div>
 
+					<div id="bars">
+						<div class="bar"><span class="red">100/100</span></div>
+						<div class="bar"><span class="violet">100/100</span></div>
+					</div>
 
-			<div id="center-block">
-				
-				<div id="left-center-block">
-					<div id="buttons-left-block">
-						<input type="button" value="button1">
+					<div id="stats-text">
+						<table>
+						<tr>
+							<td>
+								<div class="PATK">FATK:</div>
+								<div class="MATK">MATK:</div>
+								<div class="DEF">DEF:</div>
+								<div class="DDG">DDG:</div>
+								<div class="BLK">BLOCK:</div>
+							</td>
+							<td>
+								<div class="PATK-value">100-120</div>
+								<div class="MATK-value">100-120</div>
+								<div class="DEF-value">33000</div>
+								<div class="DDG-value">10%</div>
+								<div class="BLK-value">1%</div>
+							</td>
+						</tr>
+						</table>
 					</div>
 				</div>
 
-
-				<div id="right-center-block">
-					<div id="buttons-left-block">
-						<input type="button" value="button1">
+				<div id="right-character-main-block">
+					<div id="avatar">
 					</div>
-					<ul id="fighting-log"></ul>
+
+					<div id="bars">
+						<div class="bar"><span class="red">100/100</span></div>
+						<div class="bar"><span class="green">100/100</span></div>
+					</div>
+
+					<div id="stats-text">
+						<table>
+						<tr>
+							<td>
+								<div class="PATK">FATK:</div>
+								<div class="MATK">MATK:</div>
+								<div class="DEF">DEF:</div>
+								<div class="DDG">DDG:</div>
+								<div class="BLK">BLOCK:</div>
+							</td>
+							<td>
+								<div class="PATK-value">100-120</div>
+								<div class="MATK-value">100-120</div>
+								<div class="DEF-value">33000</div>
+								<div class="DDG-value">10%</div>
+								<div class="BLK-value">1%</div>
+							</td>
+						</tr>
+						</table>
+					</div>
 				</div>
+
 			</div>
 
+			<div id="left-bottom-block">
+
+				<div id="inventory-block">
+				</div>
+				<div id="journal-block">
+				</div>
+				<div id="orbs-block">
+				</div>
+
+			</div>
+
+			<div id="right-bottom-block">
+
+			</div>
 		</div>
+
 		<script>
 			initGame();
 		</script>
