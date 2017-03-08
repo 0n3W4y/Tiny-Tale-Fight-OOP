@@ -18,7 +18,7 @@ class UserInterface {
 
 	private fillLeftCharacterBlock( entity ){
 		//params { name:"full name", hp:100, sp:100, exp:[0,100], lvl: str:1, end:1, int:1 };
-		var data = this.collectDataFromEntity( entity );
+		var data = this.parent.entityRoot.collectDataFromEntity( entity );
 		var container = this.leftCharacterBlock;
 
 		var nameContainer = data["Name"];
@@ -63,7 +63,7 @@ class UserInterface {
 	}
 
 	private fillRightCharacterBlock( entity ){
-		var data = this.collectDataFromEntity( entity );
+		var data = this.parent.entityRoot.collectDataFromEntity( entity );
 		var container = this.rightCharacterBlock;
 
 		var nameContainer = data["Name"];
@@ -127,19 +127,6 @@ class UserInterface {
 		//img.src= params;
 	}
 
-	public collectDataFromEntity( entity ):any{
-		var name = entity.getComponent( "Name" ).exportDataToObject();
-		var type = entity.getComponent( "Type" ).exportDataToObject();
-		var fightingStats = entity.getComponent( "FightingStats" ).exportDataToObject();
-		var experienceStats = entity.getComponent( "ExperienceStats" ).exportDataToObject();
-		var ageStats = entity.getComponent( "AgeStats" ).exportDataToObject();
-
-		//if params == null, collect all data;
-		var data = { "Name": name, "Type": type, "FightingStats": fightingStats, "ExperienceStats": experienceStats, "AgeStats": ageStats };
-
-		return data;
-	}
-
 	public removeFromEnemyList( index ):void{
 
 	}
@@ -179,3 +166,5 @@ class UserInterface {
 	}
 
 }
+
+		

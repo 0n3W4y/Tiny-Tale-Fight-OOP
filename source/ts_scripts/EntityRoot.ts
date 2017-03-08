@@ -47,4 +47,17 @@ class EntityRoot {
 				this.entities.splice(i, 1);
 		}
 	}
+
+	public collectDataFromEntity( entity ):any{
+		var name = entity.getComponent( "Name" ).exportDataToObject();
+		var type = entity.getComponent( "Type" ).exportDataToObject();
+		var fightingStats = entity.getComponent( "FightingStats" ).exportDataToObject();
+		var experienceStats = entity.getComponent( "ExperienceStats" ).exportDataToObject();
+		var ageStats = entity.getComponent( "AgeStats" ).exportDataToObject();
+
+		//if params == null, collect all data;
+		var data = { "Name": name, "Type": type, "FightingStats": fightingStats, "ExperienceStats": experienceStats, "AgeStats": ageStats };
+
+		return data;
+	}
 }
