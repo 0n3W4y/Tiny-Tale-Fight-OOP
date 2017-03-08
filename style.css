@@ -11,6 +11,7 @@ body {
   margin:0px; 
   padding:0px; 
   overflow:hide;
+  text-align: center;
 }
 
 #wrapper{
@@ -21,6 +22,8 @@ body {
   background-color: #444444;
   padding:0px;
   margin:10px;
+  margin-left: -640px;
+  left:50%;
   overflow:hidden;
 }
 
@@ -39,7 +42,7 @@ body {
   display:block; 
   position:relative;
   float:left;
-  width:1124px; 
+  width:1184px; 
   height:470px; 
   margin:5px; 
   margin-top: 0px;
@@ -51,7 +54,7 @@ body {
   display:block; 
   position:relative;
   float:left;
-  width:160px; 
+  width:100px; 
   height:470px; 
   margin:5px;
   margin-left: 0px;
@@ -104,9 +107,10 @@ body {
   display:block; 
   position:relative;
   float:left;
-  width:800px; 
+  width:865px; 
   height:350px; 
   margin: 5px; 
+  margin-left:0px;
   overflow:hide; 
   top:0px;
   left:0px;
@@ -118,10 +122,11 @@ body {
   display:block; 
   position:relative;
   float:left;
-  width:800px; 
+  width:865px; 
   height:100px; 
   margin:5px;
   margin-top: 0px;
+  margin-left:0px;
   overflow:hide; 
   top:0px;
   left:0px;
@@ -173,11 +178,51 @@ body {
   float:left;
   position: relative;
   overflow: hide;
-  width:125px;
-  height:85px;
+  width:330px;
+  height:20px;
   margin:5px;
   padding:0px;
   font-size: 14px;
+}
+
+#enemy-list {
+  display: block;
+  position: relative;
+  overflow: auto;
+  width:100%;
+  height:100%;
+  margin:0px;
+  padding:0px;
+}
+
+.name {
+  display: block;
+  position: relative;
+  overflow: hide;
+  text-overflow: hide;
+  width:300px;
+  height:20px;
+  margin:5px;
+  padding: 0px;
+  color:white;
+  font-size:24px;
+}
+
+.level {
+  display: block;
+  position: relative;
+  overflow: hide;
+  text-overflow: hide;
+  width:24px;
+  height:20px;
+  margin:2px;
+  padding:0px;
+  color: orange;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: left;
+  text-shadow: 1px 1px black;
+
 }
 
 /* BARS */
@@ -186,16 +231,17 @@ body {
   display: block;
   float: left;
   position: relative;
-  width:210px;
-  height:85px;
+  width:340px;
+  height:55px;
   overflow: hide;
+  text-overflow: hide;
   margin:5px;
   margin-left: 0px;
   margin-right: 0px;
 }
 
 .bar {
-  width:205px;
+  width:340px;
   height:26px;
   position: relative;
   background: #808080;

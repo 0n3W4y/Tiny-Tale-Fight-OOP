@@ -2,15 +2,19 @@ class EntityParametersGenerator {
 
 	private creaturesData:Array<any>;
 	private humanoidsData:Array<any>;
+	private humanoidsClassData:Array<any>;
 
 	private creaturesDataArray:Array<any>;
 	private humanoidsDataArray:Array<any>;
+	private humanoidsClassDataArray:Array<any>;
 
-	constructor( creaturesData, humanoidsData ){
+	constructor( creaturesData, humanoidsData, humanoidsClassData ){
 		this.creaturesData = creaturesData;
 		this.humanoidsData = humanoidsData;
+		this.humanoidsClassData = humanoidsClassData;
 		this.creaturesDataArray = new Array();
 		this.humanoidsDataArray = new Array();
+		this.humanoidsClassDataArray = new Array();
 		this.storeObjKeysInArray();
 	}
 
@@ -165,6 +169,7 @@ class EntityParametersGenerator {
 	private generateFightingStats( object ):any{
 		var stats = {};
 		var lvlup = {};
+		var lvlupClass = {};
 		var min;
 		var max;
 
@@ -196,11 +201,24 @@ class EntityParametersGenerator {
 					}
 				}
 			}
+			else if( key == "levelUpClassStats" ){
+				for( var newKey in container ){
+					var innerContainer = container[newKey];
+					if( typeof container[newKey] === "number" )
+						lvlupClass[newKey] = container[newKey];
+					else{
+						min = innerContainer[0];
+						max = innerContainer[1];
+						var rnum = Math.floor( min + Math.random()*( max - min + 1 ) );
+						lvlupClass[newKey] = rnum;
+					}
+				}
+			}
 			else
 				console.log( "Error, no key with name: " + key + ". Error in EntityParametersGenerator/generateFightingStats." );
 		}
 
-		var result = { "stats": stats, "lvlup": lvlup };
+		var result = { "stats": stats, "lvlup": lvlup, "lvlupClass": lvlupClass };
 		return result;
 	}
 
@@ -257,6 +275,10 @@ class EntityParametersGenerator {
 
 		for( var int in this.humanoidsData ){
 			this.humanoidsDataArray.push( int );
+		}
+
+		for( var num in this.humanoidsClassData ){
+			this.humanoidsClassDataArray.push( num );
 		}
 	}
 }

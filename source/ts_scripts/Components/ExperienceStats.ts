@@ -18,12 +18,10 @@ class ExperienceStats extends Component {
 
 	public init( params ){
 		for( var key in params ){
-			if( key == "exp" )
-				this.exp = params[key];
-			else if( key == "lvl" )
-				this.lvl = params[key];
-			else if( key == "bounty" )
-				this.bounty = params[key];
+			if( key == "exp" || key == "lvl" || key == "bounty" )
+				this[key] = params[key];
+			else
+				console.log( "Error, no key with name: " + key + ". Error in ExperienceStats/init." );
 
 		}
 

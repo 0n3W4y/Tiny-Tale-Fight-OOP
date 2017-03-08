@@ -5,7 +5,6 @@ function initGame(){
 	var lb = "left-character-main-frame";
 	var rb = "right-character-main-frame";
 	var journal = "fighting-log";
-	game.init( creaturesData, humanoidsData, lb, rb, journal );
+	game.init( creaturesData, humanoidsData, humanoidsClassData, lb, rb, journal );
 	game.start();
 }
-

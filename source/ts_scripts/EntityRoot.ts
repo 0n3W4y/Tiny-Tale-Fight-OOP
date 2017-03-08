@@ -10,8 +10,8 @@ class EntityRoot {
 		this.parent = parent;
 	}
 
-	public init( creaturesData, humanoidsData ){
-		this.entityParametersGenerator = new EntityParametersGenerator( creaturesData, humanoidsData );
+	public init( creaturesData, humanoidsData, humanoidsClassData ){
+		this.entityParametersGenerator = new EntityParametersGenerator( creaturesData, humanoidsData, humanoidsClassData );
 	}
 
 	public generateEntity( entityType, type ):any{

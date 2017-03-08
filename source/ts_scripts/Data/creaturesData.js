@@ -3,10 +3,11 @@ var creaturesData = {
 		Name: {
 			name: ["Raged", "Bloody", "Sand", "Some"], 
 			surname: "Scorpion"
-		}, // surname be a key ( Scoprion );
+		},
 		Type: {
 			sex: ["Man", "Woman"], 
-			race: "Scorpicores"
+			race: "Scorpicores",
+			class: "NoClass"
 		},
 		AgeStats: {
 			age:[10, 100], 
@@ -16,25 +17,31 @@ var creaturesData = {
 		FightingStats: {
 			stats: {
 				HP:[10, 20], 
-				SP:[10, 40], 
-				STR:[8, 9], 
-				AGI:[4, 8], 
-				END:[4, 6], 
-				INT:[4, 5], 
-				ASPD:[100, 115]
-			}, // [ min, max ];
+				STR:[1, 5], 
+				AGI:[1, 5], 
+				INT:[1, 5], 
+				ASPD:[250,500],
+				DDG:[0, 100],
+				BLK:0,
+				PDEF:[0, 100],
+				MDEF:[0, 100]
+			},
 			lvlup: {
-				HP:[5, 6], 
-				SP:[1, 2], 
+				HP:[4, 8], 
 				STR:[1, 2], 
-				AGI:[1, 2], 
-				END:[1, 2], 
+				AGI:[1, 2],  
 				INT:[1, 2], 
-				ASPD:[1, 1]
+				ASPD:[1, 2],
+				DDG:[0, 1],
+				BLK:0,
+				PDEF:[0, 1],
+				MDEF:[0, 1]
 			} 
 		},
-		ExperienceStats: { 
+		ExperienceStats: {
+			lvl:1,
+			exp:0,
 			bounty:[2, 4] 
-		} // [ min, max ];
+		} 
 	}
 }

@@ -10,10 +10,10 @@ class Game {
 		this.fps = fps;
 	}
 
-	public init( creaturesData, humanoidsData, leftBlock, rightBlock, journal ){
+	public init( creaturesData, humanoidsData, humanoidsClassData, leftBlock, rightBlock, journal ){
 		this.commonTick = new CommonTick( this, this.fps );
 		this.entityRoot = new EntityRoot( this );
-		this.entityRoot.init( creaturesData, humanoidsData );
+		this.entityRoot.init( creaturesData, humanoidsData, humanoidsClassData );
 		this.battle = new Battle( this );
 		this.userInterface = new UserInterface( this );
 		this.userInterface.init( leftBlock, rightBlock, journal );

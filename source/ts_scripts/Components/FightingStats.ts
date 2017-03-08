@@ -4,6 +4,8 @@ class FightingStats extends Component{
 	private currentStats:any;
 	private staticStats:any;
 	private levelUpStats:any;
+	private levelUpClassStats:any;
+
 	private timeToNextAttack:number;
 
 	constructor( parent ){
@@ -15,9 +17,12 @@ class FightingStats extends Component{
 			SP:0,
 			STR:0,
 			AGI:0,
-			END:0,
 			INT:0,
-			ASPD:0
+			ASPD:0,
+			DDG:0,
+			BLK:0,
+			PDEF:0,
+			MDEF:0
 		}
 
 		this.staticStats = {
@@ -25,9 +30,12 @@ class FightingStats extends Component{
 			SP:0,
 			STR:0,
 			AGI:0,
-			END:0,
 			INT:0,
-			ASPD:0
+			ASPD:0,
+			DDG:0,
+			BLK:0,
+			PDEF:0,
+			MDEF:0
 		}
 
 		this.levelUpStats = {
@@ -35,9 +43,18 @@ class FightingStats extends Component{
 			SP:0,
 			STR:0,
 			AGI:0,
-			END:0,
 			INT:0,
-			ASPD:0
+			ASPD:0,
+			DDG:0,
+			BLK:0,
+			PDEF:0,
+			MDEF:0
+		}
+
+		this.levelUpClassStats = {
+			STR:0,
+			AGI:0,
+			INT:0
 		}
 
 	}
@@ -54,12 +71,28 @@ class FightingStats extends Component{
 						console.log( "Error, no key with name: " + newKey + ". Error in FightingStats/init." );
 				}
 			}
-			else{
+			else if( key == "staticStats" ){
+				for( var newKey in container ){
+					if ( !( this.staticStats[newKey] === undefined) ){
+						this.staticStats[newKey] = container[newKey];
+					}else
+						console.log( "Error, no key with name: " + newKey + ". Error in FightingStats/init." );
+				}
+			}
+			else if( key == "lvlUpStats" ){
 				for( var newKey in container ){
 					if ( !( this.levelUpStats[newKey] === undefined) ){
 						this.levelUpStats[newKey] = container[newKey];
 					}else
 						console.log( "Error, no key with name: " + newKey + ". Error in FightingStats/init." );
+				}
+			}
+			else if( key == "levelUpClassStats" ){
+				for( var elseKey in container ){
+					if ( !( this.levelUpClassStats[elseKey] === undefined) ){
+						this.levelUpClassStats[elseKey] = container[elseKey];
+					}else
+						console.log( "Error, no key with name: " + elseKey + ". Error in FightingStats/init." );
 				}
 			}
 		}
@@ -77,10 +110,22 @@ class FightingStats extends Component{
 		return this.levelUpStats[stat];
 	}
 
+	public getLevelUpClassStats( stat ){
+		return this.levelUpClassStats[stat];
+	}
+
 	public setStats( to, stat ){
 		var container = this.staticStats;
 		if( to == "current" )
 			container = this.currentStats;
+		else if( to == "lvlUpStats" )
+			container = this.levelUpStats;
+		else if( to == "levelUpClassStats" )
+			container = this.levelUpClassStats;
+		else{
+			console.log( "Error, no container with name " + to + ". Error in FightingStats/setStats.");
+			return;
+		}
 
 		for( var key in stat ){
 			if( !( container[key] === undefined ) )
@@ -93,7 +138,7 @@ class FightingStats extends Component{
 		return result;		
 	}
 
-	private checkTimeToAttack( time ){
+	private checkTimeToAttack( time ):boolean{
 		this.timeToNextAttack += time;
 		var timeToNextAttack = this.getCurrentStat( "ASPD" );
 		timeToNextAttack = (1000/timeToNextAttack)*100;
