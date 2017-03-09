@@ -1,9 +1,8 @@
 /* MAIN */
 
 body { 
-  margin: 0; 
+  margin: 0px;
   background-color: #222222;
-  align-content: center;
 }
 
 #upper-control-panel { 
@@ -17,12 +16,14 @@ body {
 
 #wrapper{
   display:block;
-  position:absolute;
+  position:flex;
   width:1300px;
   height:600px;
   background-color: #444444;
   padding:0px;
   margin:10px;
+  margin-left:auto;
+  margin-right: auto;
   overflow:hidden;
 }
 
@@ -188,7 +189,7 @@ body {
 }
 
 
-/* DECOR PLAYER INTERFACE */
+/* DECOR CHARACTER BLOCK */
 #avatar {
   display: block;
   float:left;

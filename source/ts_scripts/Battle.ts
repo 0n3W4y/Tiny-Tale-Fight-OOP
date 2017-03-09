@@ -45,7 +45,7 @@ class Battle {
 			this.teamTwo.push( entity );
 		}
 		else
-			console.log( "Error in add entity in team, team = " + team + " not found. Error in Battle/addPlayerToGight" );
+			console.log( "Error in add entity in team, team = " + team + " not found. Error in Battle/addPlayerToFight" );
 
 	}
 
@@ -54,18 +54,12 @@ class Battle {
 			this.prepareFight( delta );
 
 		this.beginRound( delta );
-
-		
 		this.battle( delta );
-
-
 		this.endRound( delta );
 
 		if( this.isBattleEnd ){
-			// подвести итоги, сделать остальные функции по начислению опыта и прочего.
+			this.battleEnd();
 		}
-
-
 	}	
 
 	private prepareFight( time ){
@@ -81,8 +75,7 @@ class Battle {
 		var mdamage = p2.getComponent( "FightingStats" ).getCurrentStat( "INT" );
 		var stringDamage = Math.round( pdamage/2 ) + " - " + Math.round( pdamage*2 );
 		var stringMDamage = Math.round( mdamage/2 ) + " - " + Math.round( mdamage*2 );
-		var index = this.teamTwo.indexOf( p2 );
-		this.parent.userInterface.removeFromEnemyList( index );
+		this.parent.userInterface.removeFromEnemyList( 0 );
 		this.parent.userInterface.fillBlock( p2 );
 
 		var string = "<b>" + fullNamePlayer + "</b>" + " found new troubles. ";
@@ -214,12 +207,12 @@ class Battle {
 
 			var randomNum = Math.floor((Math.random()*101)*100); // 0 - 10000;
 			if( targetDodgeChanse >= randomNum ){
-				this.parent.userInterface.addLineToJournal( playerName + " attacking, but " + targetName + " dodge the attack!" );
+				this.parent.userInterface.addLineToJournal( "<b>" + playerName + "</b>" + " attacking, but " + "<b>" + targetName + "</b>" + " dodge the attack!" );
 				return;
 			}
 			
-			pshysicalPlayerDamage -= pshysicalPlayerDamage*100/(targetPhysicsDefense/100);
-			magicalPlayerDamage -= magicalPlayerDamage*100/(targetMagicalDefense/100);
+			pshysicalPlayerDamage -= pshysicalPlayerDamage * ( targetPhysicsDefense / 100 ) / 100;
+			magicalPlayerDamage -= magicalPlayerDamage * ( targetMagicalDefense / 100 ) / 100;
 			var totalDamage = pshysicalPlayerDamage + magicalPlayerDamage;
 
 			// вычислить, получилось ли заблокировать атаку
@@ -227,7 +220,7 @@ class Battle {
 
 			targetHP -= totalDamage;
 			targetFightStats.setStats( "current", { "HP": targetHP } );
-			this.parent.userInterface.addLineToJournal( playerName + " attacking " + targetName + " on " + totalDamage + ". Physics: " + pshysicalPlayerDamage + ". Magical: " + magicalPlayerDamage + ". TargetResists: physics: " + targetPhysicsDefense + ", magical: " + targetMagicalDefense + "." );
+			this.parent.userInterface.addLineToJournal( "<b>" + playerName + "</b>" +" attacking " + "<b>" + targetName + "</b>" + " on " + '<font color="purple">' + totalDamage + "</font>" + ". Physics: " + '<font color="red">' + pshysicalPlayerDamage + "</font>" + ". Magical: " + '<font color="blue">' + magicalPlayerDamage + "</font>" + ". TargetResists: physics: " + targetPhysicsDefense + ", magical: " + targetMagicalDefense + "." );
 
 			if( targetHP <= 0 )
 				targetFightStats.killedBy = player;
@@ -243,48 +236,79 @@ class Battle {
 	}
 
 	private endRound( time ){
+		var updateRightBlock = false;
 
 		for( var i = 0; i < this.teamOneAlive.length; i++ ){
 			var p1 = this.teamOneAlive[i];
-			if( p1.getComponent( "FightingStats" ).killedBy == null ){
-				// еще живой;
-			}else{
+			if( p1.getComponent( "FightingStats" ).killedBy != null ){ // is dead;
 				if( p1.type == "Player" ){
-					this.isFighting = false;
-					this.parent.userInterface.addLineToJournal( "You lose!" );
-					this.parent.stop();
+					this.parent.userInterface.addLineToJournal( "You are dead!" );
+					this.isBattleEnd = true;
 					return;
 				}else{
 					// player's mob is dead;
+					//remove player's mob from interface, remove from alive list, and remove entity if need;
 				}
+			}else{
+				// player and player's mob survived in this round;
 			}
 		}
 
 		for( var j = 0; j < this.teamTwoAlive.length; j++ ){
 			var p2 = this.teamTwoAlive[j];
 			var p2FightingComponent = p2.getComponent( "FightingStats" );
-			if( p2FightingComponent.killedBy == null ){
-				// still alive;
-			}else{
+			if( p2FightingComponent.killedBy != null ){ // is dead;
 				if( p2FightingComponent.killedBy.type == "Player" ){
 					var player = p2FightingComponent.killedBy;
 					var playerName = player.getComponent( "Name" ).getFullName();
 					var bounty = p2.getComponent( "ExperienceStats" ).bounty;
 					this.gainExperience( player, bounty );
-					this.parent.userInterface.addLineToJournal( p2.getComponent( "Name" ).getFullname() + " - Killed by " + playerName );
+					this.parent.userInterface.addLineToJournal( p2.getComponent( "Name" ).getFullName() + " - Killed by " + playerName );
+					var index = this.teamTwoAlive.indexOf( p2 );
+					if( index == 0 )
+						updateRightBlock = true; // need to update main right block;
+					else{
+						//this.parent.userInterface.killMob( p2 );
+						this.teamTwoAlive.splice( index, 1 );
+					}
 				}else{
 					// player's mob add exp to Player;
 				}
+			}else{
+				
 			}
 		}
-
 
 		if( this.updateInterface )
 			this.parent.userInterface.updateInterface();
 
-		if( this.teamOneAlive.length == 0 || this.teamTwoAlive.length == 0)
-			this.isFighting = false;
+		if( updateRightBlock ){
+			var p2 = this.teamTwoAlive[0];
+			//this.parent.userInterface.removeFromMainBlock( p2 );
+			//this.parent.userInterface.killMob( p2 );
+			//var index = this.teamTwo.indexOf( p2 );
+			//this.parent.userInterface.addToEnemyList( p2, index );
+			this.teamTwoAlive.splice( 0, 1 );
 
+			if( this.teamTwoAlive.length == 0 ){ //all dead;
+				this.parent.userInterface.addLineToJournal( "No one mob survived!" );
+				this.isBattleEnd = true;
+				return;
+			}
+
+			var newP2 = this.teamTwoAlive[0];
+			//this.parent.userInterface.removeFromEnemyList( newP2 );
+			//this.parent.userInterface.fillBlock( newP2 );			
+		}		
+
+		if( this.teamOneAlive.length == 0 || this.teamTwoAlive.length == 0)
+			this.battleEnd();
+
+	}
+
+	private battleEnd(){
+		this.isFighting = false;
+		this.isFightPrepare = false;
 	}
 
 	private resetStats(){

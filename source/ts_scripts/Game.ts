@@ -36,7 +36,7 @@ class Game {
 	}
 
 	public generatePlayer(){
-		var player = this.entityRoot.generatePlayer( "Player" );
+		var player = this.entityRoot.generatePlayer( null );
 		this.battle.addPlayerToFight( 1,  player );
 		var fullName = player.getComponent( "Name" ).getFullName();
 		var string = fullName + " created and added to fight!";

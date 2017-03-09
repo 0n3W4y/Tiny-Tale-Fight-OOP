@@ -28,7 +28,7 @@ var Game = (function () {
         this.battle.update(delta);
     };
     Game.prototype.generatePlayer = function () {
-        var player = this.entityRoot.generatePlayer("Player");
+        var player = this.entityRoot.generatePlayer(null);
         this.battle.addPlayerToFight(1, player);
         var fullName = player.getComponent("Name").getFullName();
         var string = fullName + " created and added to fight!";
@@ -214,7 +214,7 @@ var Battle = (function () {
             this.teamTwo.push(entity);
         }
         else
-            console.log("Error in add entity in team, team = " + team + " not found. Error in Battle/addPlayerToGight");
+            console.log("Error in add entity in team, team = " + team + " not found. Error in Battle/addPlayerToFight");
     };
     Battle.prototype.fight = function (delta) {
         if (!this.isFightPrepare)
@@ -223,6 +223,7 @@ var Battle = (function () {
         this.battle(delta);
         this.endRound(delta);
         if (this.isBattleEnd) {
+            this.battleEnd();
         }
     };
     Battle.prototype.prepareFight = function (time) {
@@ -236,8 +237,7 @@ var Battle = (function () {
         var mdamage = p2.getComponent("FightingStats").getCurrentStat("INT");
         var stringDamage = Math.round(pdamage / 2) + " - " + Math.round(pdamage * 2);
         var stringMDamage = Math.round(mdamage / 2) + " - " + Math.round(mdamage * 2);
-        var index = this.teamTwo.indexOf(p2);
-        this.parent.userInterface.removeFromEnemyList(index);
+        this.parent.userInterface.removeFromEnemyList(0);
         this.parent.userInterface.fillBlock(p2);
         var string = "<b>" + fullNamePlayer + "</b>" + " found new troubles. ";
         if (this.teamTwo.length > 1) {
@@ -344,17 +344,17 @@ var Battle = (function () {
             var targetHP = targetFightStats.getCurrentStat("HP");
             var randomNum = Math.floor((Math.random() * 101) * 100); // 0 - 10000;
             if (targetDodgeChanse >= randomNum) {
-                this.parent.userInterface.addLineToJournal(playerName + " attacking, but " + targetName + " dodge the attack!");
+                this.parent.userInterface.addLineToJournal("<b>" + playerName + "</b>" + " attacking, but " + "<b>" + targetName + "</b>" + " dodge the attack!");
                 return;
             }
-            pshysicalPlayerDamage -= pshysicalPlayerDamage * 100 / (targetPhysicsDefense / 100);
-            magicalPlayerDamage -= magicalPlayerDamage * 100 / (targetMagicalDefense / 100);
+            pshysicalPlayerDamage -= pshysicalPlayerDamage * (targetPhysicsDefense / 100) / 100;
+            magicalPlayerDamage -= magicalPlayerDamage * (targetMagicalDefense / 100) / 100;
             var totalDamage = pshysicalPlayerDamage + magicalPlayerDamage;
             // вычислить, получилось ли заблокировать атаку
             // и отнять % от блокированного урона из общего урона.
             targetHP -= totalDamage;
             targetFightStats.setStats("current", { "HP": targetHP });
-            this.parent.userInterface.addLineToJournal(playerName + " attacking " + targetName + " on " + totalDamage + ". Physics: " + pshysicalPlayerDamage + ". Magical: " + magicalPlayerDamage + ". TargetResists: physics: " + targetPhysicsDefense + ", magical: " + targetMagicalDefense + ".");
+            this.parent.userInterface.addLineToJournal("<b>" + playerName + "</b>" + " attacking " + "<b>" + targetName + "</b>" + " on " + '<font color="purple">' + totalDamage + "</font>" + ". Physics: " + '<font color="red">' + pshysicalPlayerDamage + "</font>" + ". Magical: " + '<font color="blue">' + magicalPlayerDamage + "</font>" + ". TargetResists: physics: " + targetPhysicsDefense + ", magical: " + targetMagicalDefense + ".");
             if (targetHP <= 0)
                 targetFightStats.killedBy = player;
         }
@@ -363,42 +363,67 @@ var Battle = (function () {
         this.updateInterface = true;
     };
     Battle.prototype.endRound = function (time) {
+        var updateRightBlock = false;
         for (var i = 0; i < this.teamOneAlive.length; i++) {
             var p1 = this.teamOneAlive[i];
-            if (p1.getComponent("FightingStats").killedBy == null) {
-            }
-            else {
+            if (p1.getComponent("FightingStats").killedBy != null) {
                 if (p1.type == "Player") {
-                    this.isFighting = false;
-                    this.parent.userInterface.addLineToJournal("You lose!");
-                    this.parent.stop();
+                    this.parent.userInterface.addLineToJournal("You are dead!");
+                    this.isBattleEnd = true;
                     return;
                 }
                 else {
                 }
             }
+            else {
+            }
         }
         for (var j = 0; j < this.teamTwoAlive.length; j++) {
             var p2 = this.teamTwoAlive[j];
             var p2FightingComponent = p2.getComponent("FightingStats");
-            if (p2FightingComponent.killedBy == null) {
-            }
-            else {
+            if (p2FightingComponent.killedBy != null) {
                 if (p2FightingComponent.killedBy.type == "Player") {
                     var player = p2FightingComponent.killedBy;
                     var playerName = player.getComponent("Name").getFullName();
                     var bounty = p2.getComponent("ExperienceStats").bounty;
                     this.gainExperience(player, bounty);
-                    this.parent.userInterface.addLineToJournal(p2.getComponent("Name").getFullname() + " - Killed by " + playerName);
+                    this.parent.userInterface.addLineToJournal(p2.getComponent("Name").getFullName() + " - Killed by " + playerName);
+                    var index = this.teamTwoAlive.indexOf(p2);
+                    if (index == 0)
+                        updateRightBlock = true; // need to update main right block;
+                    else {
+                        //this.parent.userInterface.killMob( p2 );
+                        this.teamTwoAlive.splice(index, 1);
+                    }
                 }
                 else {
                 }
             }
+            else {
+            }
         }
         if (this.updateInterface)
             this.parent.userInterface.updateInterface();
+        if (updateRightBlock) {
+            var p2 = this.teamTwoAlive[0];
+            //this.parent.userInterface.removeFromMainBlock( p2 );
+            //this.parent.userInterface.killMob( p2 );
+            //var index = this.teamTwo.indexOf( p2 );
+            //this.parent.userInterface.addToEnemyList( p2, index );
+            this.teamTwoAlive.splice(0, 1);
+            if (this.teamTwoAlive.length == 0) {
+                this.parent.userInterface.addLineToJournal("No one mob survived!");
+                this.isBattleEnd = true;
+                return;
+            }
+            var newP2 = this.teamTwoAlive[0];
+        }
         if (this.teamOneAlive.length == 0 || this.teamTwoAlive.length == 0)
-            this.isFighting = false;
+            this.battleEnd();
+    };
+    Battle.prototype.battleEnd = function () {
+        this.isFighting = false;
+        this.isFightPrepare = false;
     };
     Battle.prototype.resetStats = function () {
         if (this.teamTwo.length == 0) {
@@ -727,8 +752,8 @@ var EntityParametersGenerator = (function () {
             if (key == "stats") {
                 for (var newKey in container) {
                     var innerContainer = container[newKey];
-                    if (typeof container[key] === "number")
-                        stats[newKey] = container[key];
+                    if (typeof innerContainer === "number")
+                        stats[newKey] = innerContainer;
                     else {
                         min = innerContainer[0];
                         max = innerContainer[1];
@@ -740,8 +765,8 @@ var EntityParametersGenerator = (function () {
             else if (key == "lvlup") {
                 for (var newKey in container) {
                     var innerContainer = container[newKey];
-                    if (typeof container[newKey] === "number")
-                        lvlup[newKey] = container[newKey];
+                    if (typeof innerContainer === "number")
+                        lvlup[newKey] = innerContainer;
                     else {
                         min = innerContainer[0];
                         max = innerContainer[1];

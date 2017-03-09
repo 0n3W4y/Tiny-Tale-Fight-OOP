@@ -208,8 +208,8 @@ class EntityParametersGenerator {
 			if( key == "stats" ){
 				for( var newKey in container ){
 					var innerContainer = container[newKey];
-					if( typeof container[key] === "number" )
-						stats[newKey] = container[key];
+					if( typeof innerContainer === "number" )
+						stats[newKey] = innerContainer;
 					else{
 						min = innerContainer[0];
 						max = innerContainer[1];
@@ -221,8 +221,8 @@ class EntityParametersGenerator {
 			else if( key == "lvlup" ){
 				for( var newKey in container ){
 					var innerContainer = container[newKey];
-					if( typeof container[newKey] === "number" )
-						lvlup[newKey] = container[newKey];
+					if( typeof innerContainer === "number" )
+						lvlup[newKey] = innerContainer;
 					else{
 						min = innerContainer[0];
 						max = innerContainer[1];

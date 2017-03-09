@@ -40,14 +40,14 @@ class UserInterface {
 		var staticHp = staticStatsContainer["HP"] + lvlUpStatsContainer["HP"]*lvl;
 
 		container.getElementsByClassName("name")[0].innerHTML = fullName;
-		container.getElementsByClassName("red")[0].innerHTML = hp + "/" + staticHp;
+		container.getElementsByClassName("red")[0].innerHTML = Math.round( hp ) + "/" + staticHp;
 		var hpBar = Math.round( ( hp/staticHp ) * 100 );
 		if( hpBar < 0 )
 			hpBar = 0;
 		container.getElementsByClassName("red")[0].style.width = hpBar + "%";
 		container.getElementsByClassName("violet")[0].innerHTML = exp + "/" + expToNextLvl;
 		var percent = Math.floor( (exp/expToNextLvl) *100 );
-		var stringPercent = percent+ "%";
+		var stringPercent = percent + "%";
 		container.getElementsByClassName("violet")[0].style.width = stringPercent;
 		container.getElementsByClassName("level")[0].innerHTML = lvl;
 
@@ -73,7 +73,7 @@ class UserInterface {
 		var staticHp = staticStatsContainer["HP"] + lvlUpStatsContainer["HP"]*lvl;
 
 		container.getElementsByClassName("name")[0].innerHTML = fullName;
-		container.getElementsByClassName("red")[0].innerHTML = hp + "/" + staticHp;
+		container.getElementsByClassName("red")[0].innerHTML = Math.round( hp ) + "/" + staticHp;
 		var hpBar = Math.round( ( hp/staticHp ) * 100 );
 		if( hpBar < 0 )
 			hpBar = 0;
