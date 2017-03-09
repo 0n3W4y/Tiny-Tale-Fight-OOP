@@ -18,13 +18,20 @@ class EntityParametersGenerator {
 		this.storeObjKeysInArray();
 	}
 
-	public generate( type ):any{
+	public generate( entityType, type ):any{
 		var container = this.creaturesDataArray;
 		var data = this.creaturesData;
+		var playerClass;
 
-		if ( type == "Humanoid" ){
+		if ( entityType == "Player" ){
 			container = this.humanoidsDataArray;
-			data = this.humanoidsData
+			data = this.humanoidsData;
+			if( type == null ){
+				var rIndex = Math.floor( Math.random()*( this.humanoidsClassDataArray.length ) );
+				playerClass = this.humanoidsClassDataArray[rIndex];
+			}else{
+				playerClass = this.humanoidsClassDataArray[type];
+			}
 		}
 
 		var params = {
@@ -45,11 +52,11 @@ class EntityParametersGenerator {
 			if( key == "Name" )
 				value = this.generateName( creatureParams[key] );
 			else if( key == "Type" )
-				value = this.generateType( creatureParams[key] );
+				value = this.generateType( creatureParams[key], playerClass );
 			else if( key == "AgeStats" )
 				value = this.generateAgeStats( creatureParams[key] );
 			else if( key == "FightingStats" )
-				value = this.generateFightingStats( creatureParams[key] );
+				value = this.generateFightingStats( creatureParams[key], params.Type["class"] );
 			else if( key == "ExperienceStats" )
 				value = this.generateExperienceStats( creatureParams[key] );
 			else
@@ -91,9 +98,10 @@ class EntityParametersGenerator {
 		return result;
 	}
 
-	private generateType( object ):any{
+	private generateType( object, playerClass ):any{
 		var sex = "NoSex";
 		var race = "NoRace";
+		var creatureClass = playerClass || "NoClass";
 
 		for( var key in object ){
 			var container = object[key];
@@ -113,10 +121,16 @@ class EntityParametersGenerator {
 					race = container[rnum];
 				}
 			}
+			else if( key == "class" ){
+				if( creatureClass == "NoClass" ){
+					var rnum = Math.floor( Math.random()*container.length );
+					creatureClass = container[rnum];
+				}
+			}
 			else
 				console.log( "Error, no key with name: " + key + ". Error in EntityParametersGenerator/generateType." );
 		}
-		var result = { "sex": sex, "race": race };
+		var result = { "sex": sex, "race": race, "class": creatureClass };
 		return result;
 	}
 
@@ -166,12 +180,28 @@ class EntityParametersGenerator {
 		return result;
 	}
 
-	private generateFightingStats( object ):any{
+	private generateFightingStats( object, playerClass ):any{
 		var stats = {};
 		var lvlup = {};
-		var lvlupClass = {};
+		var lvlupClass = { STR:0, AGI:0, INT:0 };
+		var creatureClassParams;
 		var min;
 		var max;
+
+		if( playerClass != "NoClass" ){
+			creatureClassParams = this.humanoidsClassData[playerClass];
+			for( var newKey in creatureClassParams ){
+				var innerContainer = creatureClassParams[newKey];
+				if( typeof creatureClassParams[newKey] === "number" )
+					lvlupClass[newKey] = creatureClassParams[newKey];
+				else{
+					min = innerContainer[0];
+					max = innerContainer[1];
+					var rnum = Math.floor( min + Math.random()*( max - min + 1 ) );
+					lvlupClass[newKey] = rnum;
+				}
+			}
+		}
 
 		for( var key in object ){
 			var container = object[key];
@@ -198,19 +228,6 @@ class EntityParametersGenerator {
 						max = innerContainer[1];
 						var rnum = Math.floor( min + Math.random()*( max - min + 1 ) );
 						lvlup[newKey] = rnum;
-					}
-				}
-			}
-			else if( key == "levelUpClassStats" ){
-				for( var newKey in container ){
-					var innerContainer = container[newKey];
-					if( typeof container[newKey] === "number" )
-						lvlupClass[newKey] = container[newKey];
-					else{
-						min = innerContainer[0];
-						max = innerContainer[1];
-						var rnum = Math.floor( min + Math.random()*( max - min + 1 ) );
-						lvlupClass[newKey] = rnum;
 					}
 				}
 			}

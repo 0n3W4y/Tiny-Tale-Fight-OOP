@@ -2,7 +2,8 @@
 
 body { 
   margin: 0; 
-  background-color: #222222; 
+  background-color: #222222;
+  align-content: center;
 }
 
 #upper-control-panel { 
@@ -22,8 +23,6 @@ body {
   background-color: #444444;
   padding:0px;
   margin:10px;
-  margin-left: -640px;
-  left:50%;
   overflow:hidden;
 }
 
@@ -42,7 +41,7 @@ body {
   display:block; 
   position:relative;
   float:left;
-  width:1184px; 
+  width:1169px; 
   height:470px; 
   margin:5px; 
   margin-top: 0px;
@@ -54,7 +53,7 @@ body {
   display:block; 
   position:relative;
   float:left;
-  width:100px; 
+  width:115px; 
   height:470px; 
   margin:5px;
   margin-left: 0px;
@@ -107,7 +106,7 @@ body {
   display:block; 
   position:relative;
   float:left;
-  width:865px; 
+  width:850px; 
   height:350px; 
   margin: 5px; 
   margin-left:0px;
@@ -122,7 +121,7 @@ body {
   display:block; 
   position:relative;
   float:left;
-  width:865px; 
+  width:850px; 
   height:100px; 
   margin:5px;
   margin-top: 0px;
@@ -132,6 +131,36 @@ body {
   left:0px;
   background: #999999;
   border: 1px solid black; 
+}
+
+#enemy-list {
+  display: block;
+  position: relative;
+  overflow: auto;
+  list-style-type: none;
+  width:100%;
+  height:100%;
+  margin:0px;
+  padding:0px;
+}
+
+#journal{
+  display: block;
+  position: relative;
+  overflow: auto;
+  padding: 0px;
+  margin: 5px;
+  font-size:18px;
+  color:black;
+  background: white;
+  width:838px;
+  height:338px;
+  border:1px solid black;
+}
+
+#journal li{
+  position: relative;
+  margin-left: 25px;
 }
 
 
@@ -159,7 +188,7 @@ body {
 }
 
 
-/* */
+/* DECOR PLAYER INTERFACE */
 #avatar {
   display: block;
   float:left;
@@ -183,17 +212,6 @@ body {
   margin:5px;
   padding:0px;
   font-size: 14px;
-}
-
-#enemy-list {
-  display: block;
-  position: relative;
-  overflow: auto;
-  list-style-type: none;
-  width:100%;
-  height:100%;
-  margin:0px;
-  padding:0px;
 }
 
 .name {
@@ -226,6 +244,8 @@ body {
 
 }
 
+
+
 /* BARS */
 
 #bars{
@@ -255,9 +275,50 @@ body {
   -webkit-box-shadow: inset 0 -1px 1px rgba(255,255,255,0.3);
   -moz-box-shadow   : inset 0 -1px 1px rgba(255,255,255,0.3);
   box-shadow        : inset 0 -1px 1px rgba(255,255,255,0.3);
+  font-size:16px;
+  font-family: Georgia, fantasy;
+  font-weight:bolder;
 }
 
-.bar > span.violet {
+.bar-li {
+  width:80px;
+  height:10px;
+  position: relative;
+  top:45px;
+  background: #808080;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  border-radius: 4px;
+  padding: 2px;
+  margin:0px;
+  overflow: hidden;
+  -webkit-box-shadow: inset 0 -1px 1px rgba(255,255,255,0.3);
+  -moz-box-shadow   : inset 0 -1px 1px rgba(255,255,255,0.3);
+  box-shadow        : inset 0 -1px 1px rgba(255,255,255,0.3);
+  font-size:10px;
+  font-family: Georgia, fantasy;
+  
+}
+
+.bar-exp {
+  width:340px;
+  height:10px;
+  position: relative;
+  background: #808080;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  border-radius: 4px;
+  padding: 2px;
+  margin:0px;
+  overflow: hidden;
+  -webkit-box-shadow: inset 0 -1px 1px rgba(255,255,255,0.3);
+  -moz-box-shadow   : inset 0 -1px 1px rgba(255,255,255,0.3);
+  box-shadow        : inset 0 -1px 1px rgba(255,255,255,0.3);
+  font-size:10px;
+  font-family: Georgia, fantasy;
+}
+
+span.violet {
   display: block;
   height: 100%;
   border-top-right-radius: 4px;
@@ -276,13 +337,11 @@ body {
   position: relative;
   text-align:right;
   overflow: visible;
-  width:100%;
-  font-family: Georgia, fantasy;
-  font-weight:bolder;
-  font-size:16px;
+  width:0%;
   color:white;
 }
-.bar > span.green {
+
+span.green {
   display: block;
   height: 100%;
   border-top-right-radius: 4px;
@@ -301,13 +360,11 @@ body {
   position: relative;
   text-align:right;
   overflow: visible;
-  width:100%;
-  font-family: Georgia, fantasy;
-  font-weight:bolder;
-  font-size:16px;
+  width:0%;
   color:white;
 }
-.bar > span.red {
+
+span.red {
   display: block;
   height: 100%;
   border-top-right-radius: 4px;
@@ -325,11 +382,8 @@ body {
   margin:0;
   text-align:right;
   overflow: visible;
-  width:100%;
-  font-family: Georgia, fantasy;
-  font-weight:bolder;
+  width:0%;
   box-sizing: content-box;
-  font-size:16px;
   color:white;
 }
 

@@ -13,11 +13,25 @@ class EntityRoot {
 	public init( creaturesData, humanoidsData, humanoidsClassData ){
 		this.entityParametersGenerator = new EntityParametersGenerator( creaturesData, humanoidsData, humanoidsClassData );
 	}
-
-	public generateEntity( entityType, type ):any{
+/*
+	public generateEntity( entityType ):any{
 
 		var entity = this.createEntity( entityType );
-		var params = this.entityParametersGenerator.generate( type );
+		var params = this.entityParametersGenerator.generate( entityType );
+		entity.createComponentsWithParams( params );
+		return entity;
+	}
+*/
+	public generatePlayer( type ){
+		var entity = this.createEntity( "Player" );
+		var params = this.entityParametersGenerator.generate( "Player", type );
+		entity.createComponentsWithParams( params );
+		return entity;
+	}
+
+	public generateMob(){
+		var entity = this.createEntity( "Mob" );
+		var params = this.entityParametersGenerator.generate( "Mob", null );
 		entity.createComponentsWithParams( params );
 		return entity;
 	}

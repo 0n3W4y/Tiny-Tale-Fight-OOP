@@ -17,7 +17,7 @@ class UserInterface {
 	}
 
 	private fillLeftCharacterBlock( entity ){
-		//params { name:"full name", hp:100, sp:100, exp:[0,100], lvl: str:1, end:1, int:1 };
+		//data =  { name:"full name", hp:100, sp:100, exp:[0,100], lvl: str:1, end:1, int:1 };
 		var data = this.parent.entityRoot.collectDataFromEntity( entity );
 		var container = this.leftCharacterBlock;
 
@@ -26,19 +26,18 @@ class UserInterface {
 		var fightingStatsContainer = data["FightingStats"];
 		var currentStatsContainer = fightingStatsContainer["currentStats"];
 		var hp = currentStatsContainer["HP"];
-		var sp = currentStatsContainer["SP"];
 		var str = currentStatsContainer["STR"];
-		var end = currentStatsContainer["END"];
+		var end = currentStatsContainer["AGI"];
 		var int = currentStatsContainer["INT"];
 		var staticStatsContainer = fightingStatsContainer["staticStats"];
 		var lvlUpStatsContainer = fightingStatsContainer["levelUpStats"];
+		var lvlUpClassStatsContainer = fightingStatsContainer["levelUpClassStats"];
 		var experienceStats = data["ExperienceStats"];
 		var exp = experienceStats["exp"];
 		var expToNextLvl = experienceStats["expToNextLvl"];
 		var lvl = experienceStats["lvl"];
 
 		var staticHp = staticStatsContainer["HP"] + lvlUpStatsContainer["HP"]*lvl;
-		var staticSp = staticStatsContainer["SP"] + lvlUpStatsContainer["SP"]*lvl;
 
 		container.getElementsByClassName("name")[0].innerHTML = fullName;
 		container.getElementsByClassName("red")[0].innerHTML = hp + "/" + staticHp;
@@ -46,19 +45,11 @@ class UserInterface {
 		if( hpBar < 0 )
 			hpBar = 0;
 		container.getElementsByClassName("red")[0].style.width = hpBar + "%";
-		container.getElementsByClassName("green")[0].innerHTML = sp + "/" + staticSp;
-		var spBar = Math.round( ( sp/staticSp ) * 100 );
-		if( spBar < 0 )
-			spBar = 0;
-		container.getElementsByClassName("green")[0].style.width = spBar + "%";
 		container.getElementsByClassName("violet")[0].innerHTML = exp + "/" + expToNextLvl;
 		var percent = Math.floor( (exp/expToNextLvl) *100 );
 		var stringPercent = percent+ "%";
 		container.getElementsByClassName("violet")[0].style.width = stringPercent;
 		container.getElementsByClassName("level")[0].innerHTML = lvl;
-		container.getElementsByClassName("phisic-attack")[0].innerHTML = str;
-		container.getElementsByClassName("defense")[0].innerHTML = end;
-		container.getElementsByClassName("magic-attack")[0].innerHTML = int;
 
 	}
 
@@ -71,9 +62,7 @@ class UserInterface {
 		var fightingStatsContainer = data["FightingStats"];
 		var currentStatsContainer = fightingStatsContainer["currentStats"];
 		var hp = currentStatsContainer["HP"];
-		var sp = currentStatsContainer["SP"];
 		var str = currentStatsContainer["STR"];
-		var end = currentStatsContainer["END"];
 		var int = currentStatsContainer["INT"];
 		var staticStatsContainer = fightingStatsContainer["staticStats"];
 		var lvlUpStatsContainer = fightingStatsContainer["levelUpStats"];
@@ -82,7 +71,6 @@ class UserInterface {
 		var lvl = experienceStats["lvl"];
 
 		var staticHp = staticStatsContainer["HP"] + lvlUpStatsContainer["HP"]*lvl;
-		var staticSp = staticStatsContainer["SP"] + lvlUpStatsContainer["SP"]*lvl;
 
 		container.getElementsByClassName("name")[0].innerHTML = fullName;
 		container.getElementsByClassName("red")[0].innerHTML = hp + "/" + staticHp;
@@ -90,16 +78,7 @@ class UserInterface {
 		if( hpBar < 0 )
 			hpBar = 0;
 		container.getElementsByClassName("red")[0].style.width = hpBar + "%";
-		container.getElementsByClassName("green")[0].innerHTML = sp + "/" + staticSp;
-		var spBar = Math.round( ( sp/staticSp ) * 100 );
-		if( spBar < 0 )
-			spBar = 0;
-		container.getElementsByClassName("green")[0].style.width = spBar + "%";
 		container.getElementsByClassName("level")[0].innerHTML = lvl;
-		container.getElementsByClassName("phisic-attack")[0].innerHTML = str;
-		container.getElementsByClassName("defense")[0].innerHTML = end;
-		container.getElementsByClassName("magic-attack")[0].innerHTML = int;
-		container.getElementsByClassName("bounty")[0].innerHTML = bounty + " Exp";
 	}
 
 	private addLineToJournal( string ){
@@ -128,27 +107,43 @@ class UserInterface {
 	}
 
 	public removeFromEnemyList( index ):void{
-
+		var child = document.getElementById( index );
+		var container = document.getElementById( "enemy-list" );
+		container.removeChild( child );
 	}
 
 	public addToEnemyList( entity, id ):void{
 		var race = entity.getComponent( "Type" ).race; // for image ( avatar );
 		var level = entity.getComponent( "ExperienceStats" ).lvl;
+		var fightingComponent = entity.getComponent( "FightingStats" );
+		var currentHPStat = fightingComponent.getCurrentStat( "HP" );
+		var staticHPStat = fightingComponent.getStaticStat( "HP" );
+		var lvlUpHPStat = fightingComponent.getLevelUpStat( "HP" );
+
+		var staticHP = staticHPStat + lvlUpHPStat * level;
 
 		var li = document.createElement("li");
 		li.id = "" + id;
 		var divAvatar = document.createElement("div");
-		divAvatar.className = "avatar";
+		divAvatar.id = "avatar";
 		//divAvatar.style.background-image = 
 
 		var divLevel = document.createElement("div");
 		divLevel.className = "level";
 		divLevel.innerHTML = level;
 
+		var divBar = document.createElement("div");
+		divBar.className = "bar-li";
+
+		var spanBar = document.createElement("span");
+		spanBar.className = "red";
+		spanBar.innerHTML = currentHPStat + "/" + staticHP;
+		spanBar.style.width = "100%";
 
 		li.appendChild( divAvatar );
 		divAvatar.appendChild( divLevel );
-
+		divAvatar.appendChild( divBar );
+		divBar.appendChild( spanBar );
 
 		var container = document.getElementById( "enemy-list" );
 		container.appendChild( li );
@@ -162,6 +157,10 @@ class UserInterface {
 	}
 
 	public updateTollTip( entity ){
+
+	}
+
+	public updateInterface(){
 
 	}
 

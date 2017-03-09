@@ -36,8 +36,11 @@ class Game {
 	}
 
 	public generatePlayer(){
-		var player = this.entityRoot.generateEntity( "Player", "Humanoid" );
+		var player = this.entityRoot.generatePlayer( "Player" );
 		this.battle.addPlayerToFight( 1,  player );
+		var fullName = player.getComponent( "Name" ).getFullName();
+		var string = fullName + " created and added to fight!";
+		this.userInterface.addLineToJournal( string );
 	}
 
 	public generateMob(){
@@ -61,7 +64,7 @@ class Game {
 			max = 100;
 
 		var mobLevel = Math.floor( Math.random()*(max - min + 1) + min );
-		var mob = this.entityRoot.generateEntity( "Mob", "Creature" );
+		var mob = this.entityRoot.generateMob( "Mob", "Creature" );
 		mob.getComponent( "ExperienceStats" ).lvl = mobLevel;
 		mob.getComponent( "ExperienceStats" ).updateComponent();
 		this.battle.addPlayerToFight( 2, mob );

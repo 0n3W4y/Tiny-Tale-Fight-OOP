@@ -1,5 +1,5 @@
 class FightingStats extends Component{
-	public isDead:boolean;
+	public killedBy:any; // заменить на killedBy, поставиить в занчение ссылку на entity, по ней ориентироватся - умерла ли entity или нет.
 
 	private currentStats:any;
 	private staticStats:any;
@@ -7,11 +7,12 @@ class FightingStats extends Component{
 	private levelUpClassStats:any;
 
 	private timeToNextAttack:number;
+	private attackCoolDawn:number;
 
 	constructor( parent ){
 		super( "FightingStats", parent );
 		this.timeToNextAttack = 0;
-		this.isDead = false;
+		this.killedBy = null;
 		this.currentStats = {
 			HP:0,
 			SP:0,
@@ -96,6 +97,8 @@ class FightingStats extends Component{
 				}
 			}
 		}
+
+		this.updateAttackCoolDawn();
 	}
 
 	public getCurrentStat( stat ){
@@ -106,7 +109,7 @@ class FightingStats extends Component{
 		return this.staticStats[stat];
 	}
 
-	public getLevelupStat( stat ){
+	public getLevelUpStat( stat ){
 		return this.levelUpStats[stat];
 	}
 
@@ -123,7 +126,7 @@ class FightingStats extends Component{
 		else if( to == "levelUpClassStats" )
 			container = this.levelUpClassStats;
 		else{
-			console.log( "Error, no container with name " + to + ". Error in FightingStats/setStats.");
+			console.log( "Error, no container with name: " + to + ". Error in FightingStats/setStats.");
 			return;
 		}
 
@@ -140,9 +143,7 @@ class FightingStats extends Component{
 
 	private checkTimeToAttack( time ):boolean{
 		this.timeToNextAttack += time;
-		var timeToNextAttack = this.getCurrentStat( "ASPD" );
-		timeToNextAttack = (1000/timeToNextAttack)*100;
-		if ( this.timeToNextAttack >= timeToNextAttack ){
+		if ( this.timeToNextAttack >= this.attackCoolDawn ){
 			this.timeToNextAttack = 0;
 			return true;
 		}
@@ -156,21 +157,33 @@ class FightingStats extends Component{
 
 		if( value != null ){
 			for( var key in this.levelUpStats ){
-				var stat = this.levelUpStats[key] * value.lvl + this.staticStats[key];
+				var lvlupClassStat = 0;
+				if( !( this.levelUpClassStats[key] === undefined ) )
+					lvlupClassStat = this.levelUpClassStats[key];
+
+				var stat = this.levelUpStats[key] * value.lvl + this.staticStats[key] + lvlupClassStat * value.lvl;
 				this.currentStats[key] = stat;
 			}
 		}else
-			console.log( "Error with Level up stats, level = " + value + ". Error in FightingStats/updateStatsWithLevelUp" );	
+			console.log( "Error with Level up stats, level = " + value + ". Error in FightingStats/updateStatsWithLevelUp" );
 	}
 
 	public exportDataToObject():any{
-		var result = { "currentStats": this.currentStats, "staticStats": this.staticStats, "levelUpStats": this.levelUpStats };
+		var result = { "currentStats": this.currentStats, "staticStats": this.staticStats, "levelUpStats": this.levelUpStats, "levelUpClassStats": this.levelUpClassStats };
 		return result;
 	}
 
 	public resetStats(){
 		this.timeToNextAttack = 0;
 		this.updateStatsWithLevelUp();
-	}	
+		this.updateAttackCoolDawn();
+	}
+
+	private updateAttackCoolDawn(){
+		var aspd = this.getCurrentStat( "ASPD" );
+		var agi = this.getCurrentStat( "AGI" );
+		var timeToNextAttack = aspd + aspd/100 * ( agi/100 );
+		this.attackCoolDawn = Math.round(2000/timeToNextAttack)*1000;
+	}
 
 }
