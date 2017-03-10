@@ -157,6 +157,7 @@ body {
   width:838px;
   height:338px;
   border:1px solid black;
+  list-style-type: circle;
 }
 
 #journal li{
@@ -267,8 +268,8 @@ body {
   height:26px;
   position: relative;
   background: #808080;
-  -moz-border-radius: 6px;
-  -webkit-border-radius: 6px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
   border-radius: 4px;
   padding: 2px;
   margin:0px;
@@ -282,14 +283,14 @@ body {
 }
 
 .bar-li {
-  width:80px;
+  width:81px;
   height:10px;
   position: relative;
-  top:45px;
+  top:53px;
   background: #808080;
-  -moz-border-radius: 6px;
-  -webkit-border-radius: 6px;
-  border-radius: 4px;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
   padding: 2px;
   margin:0px;
   overflow: hidden;

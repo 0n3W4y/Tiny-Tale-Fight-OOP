@@ -78,7 +78,17 @@ var Game = (function () {
         location.reload(true);
     };
     Game.prototype.askForNextBattle = function () {
-        this.stop();
+        if (this.player.getComponent("FightingStats").killedBy != null)
+            this.preStart();
+        else {
+            this.battle.addPlayerToFight(1, this.player);
+            var playerLvl = this.player.getComponent("ExperienceStats").lvl;
+            var max = Math.round(4 + playerLvl / 5);
+            var min = Math.round(1 + playerLvl / 5);
+            this.generateSomeMobs(min, max);
+            this.preStartDone = true;
+            this.battle.startFight();
+        }
     };
     Game.prototype.generateSomeMobs = function (min, max) {
         var randomNum = Math.floor(min + Math.random() * (max - min + 1));
@@ -319,6 +329,12 @@ var UserInterface = (function () {
         else
             console.log("Error, block name : " + blockName + " not found. Error in UserInterface/clearBlock.");
     };
+    UserInterface.prototype.clearAllBlocks = function () {
+        this.clearLeftBlock();
+        this.clearRightBlock();
+        //this.clearLeftHelperBlock();
+        this.clearEnemyList();
+    };
     UserInterface.prototype.clearRightBlock = function () {
         var container = this.rightCharacterBlock;
         container.getElementsByClassName("name")[0].innerHTML = "";
@@ -442,7 +458,7 @@ var Battle = (function () {
         var stringMDamage = Math.round(mdamage / 2) + " - " + Math.round(mdamage * 2);
         this.parent.userInterface.removeFromEnemyList(0);
         this.parent.userInterface.fillBlock(p2);
-        this.parent.userInterface.journal.newContact(fullNameEnemy);
+        this.parent.userInterface.journal.newContact(fullNamePlayer);
         if (this.teamTwo.length > 1) {
             this.parent.userInterface.journal.newContactManyTargets(this.teamTwo.length);
         }
@@ -606,25 +622,22 @@ var Battle = (function () {
         }
         this.teamTwo.length = 0;
         //обнуляем массив с игроком, только если он умер, либо убираем только хелпера;
-        for (var j = 0; j < this.teamOne.length; j++) {
-            var entity = this.teamOne[j];
-            if (entity.type == "Helper" && entity.getComponent("FightingStats").killedBy != null)
-                this.teamOne.splice(j, 1);
-            if (entity.type == "Player" && entity.getComponent("FightingStats").killedBy != null)
-                this.teamOne.splice(j, 1);
-        }
+        this.teamOne.length = 0;
+        this.teamTwo.length = 0;
         this.isFighting = false;
         this.isFightPrepare = false;
         this.parent.userInterface.journal.addLineToJournal("Battle is end!");
         //обнуляем массивы с живыми.
         this.teamOneAlive.length = 0;
         this.teamTwoAlive.length = 0;
+        this.parent.userInterface.clearAllBlocks();
     };
     Battle.prototype.gainExperience = function (entity, value) {
         if (entity.type == "Player") {
             entity.getComponent("ExperienceStats").gainExperience(value);
             var entityFullname = entity.getComponent("Name").getFullName();
             this.parent.userInterface.journal.gainExp(entityFullname, value);
+            this.parent.userInterface.updateUIForEntity(entity, 0);
         }
     };
     Battle.prototype.stopFight = function () {
@@ -632,6 +645,7 @@ var Battle = (function () {
     };
     Battle.prototype.startFight = function () {
         this.isFighting = true;
+        this.isBattleEnd = false;
     };
     Battle.prototype.checkAliveMobs = function () {
         if (this.teamTwoAlive.length > 0)
@@ -649,7 +663,7 @@ var Battle = (function () {
         var player = this.teamOne[0];
         player.getComponent("FightingStats").resetStats();
         var playerName = player.getComponent("Name").getFullName();
-        this.parent.userInterface.journal.win(playerName);
+        this.parent.userInterface.journal.lose(playerName);
     };
     Battle.prototype.killEntity = function (entity) {
         this.parent.entityRoot.removeEntity(entity);

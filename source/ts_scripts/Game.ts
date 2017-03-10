@@ -109,7 +109,18 @@ class Game {
 	}
 
 	private askForNextBattle(){
-		this.stop();
+		if( this.player.getComponent( "FightingStats" ).killedBy != null )
+			this.preStart();
+		else{
+			this.battle.addPlayerToFight( 1,  this.player );
+			var playerLvl = this.player.getComponent( "ExperienceStats" ).lvl;
+			var max = Math.round( 4 + playerLvl/5 );
+			var min = Math.round( 1 + playerLvl/5 );
+			this.generateSomeMobs( min, max );
+			this.preStartDone = true;
+			this.battle.startFight();
+		}
+
 	}
 
 	private generateSomeMobs( min, max ){

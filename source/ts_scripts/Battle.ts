@@ -82,7 +82,7 @@ class Battle {
 		this.parent.userInterface.removeFromEnemyList( 0 );
 		this.parent.userInterface.fillBlock( p2 );
 
-		this.parent.userInterface.journal.newContact( fullNameEnemy );
+		this.parent.userInterface.journal.newContact( fullNamePlayer );
 
 		if( this.teamTwo.length > 1 ){
 			this.parent.userInterface.journal.newContactManyTargets( this.teamTwo.length );
@@ -270,13 +270,13 @@ class Battle {
 
 		//update interface or update it in battle.		
 
-		if( this.teamOneAlive.length == 0 || this.teamTwoAlive.length == 0)
+		if( this.teamOneAlive.length == 0 || this.teamTwoAlive.length == 0 )
 			this.isBattleEnd = true;
 
 	}
 
 	private battleEnd(){
-		
+
 		if( this.whoWin == "Player" )
 			this.playerWin();
 		else
@@ -290,14 +290,8 @@ class Battle {
 		this.teamTwo.length = 0;
 
 		//обнуляем массив с игроком, только если он умер, либо убираем только хелпера;
-		for( var j = 0; j < this.teamOne.length; j++ ){
-			var entity = this.teamOne[j];
-			if( entity.type == "Helper" && entity.getComponent( "FightingStats" ).killedBy != null )
-				this.teamOne.splice( j, 1 );
-
-			if( entity.type == "Player" && entity.getComponent( "FightingStats" ).killedBy != null )
-				this.teamOne.splice( j, 1 );
-		}
+		this.teamOne.length = 0;
+		this.teamTwo.length = 0;
 
 		this.isFighting = false;
 		this.isFightPrepare = false;
@@ -307,6 +301,8 @@ class Battle {
 		//обнуляем массивы с живыми.
 		this.teamOneAlive.length = 0;
 		this.teamTwoAlive.length = 0;
+
+		this.parent.userInterface.clearAllBlocks();
 	}	
 
 	private gainExperience( entity, value ){
@@ -314,6 +310,7 @@ class Battle {
 			entity.getComponent( "ExperienceStats" ).gainExperience( value );
 			var entityFullname = entity.getComponent( "Name" ).getFullName();
 			this.parent.userInterface.journal.gainExp( entityFullname, value );
+			this.parent.userInterface.updateUIForEntity( entity, 0 );
 		}
 		
 	}
@@ -324,6 +321,7 @@ class Battle {
 
 	public startFight(){
 		this.isFighting = true;
+		this.isBattleEnd = false;
 	}
 
 	private checkAliveMobs():any{
@@ -344,7 +342,7 @@ class Battle {
 		var player = this.teamOne[0];
 		player.getComponent( "FightingStats" ).resetStats();
 		var playerName = player.getComponent( "Name" ).getFullName();
-		this.parent.userInterface.journal.win( playerName );
+		this.parent.userInterface.journal.lose( playerName );
 	}
 
 	private killEntity( entity ){

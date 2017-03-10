@@ -212,6 +212,13 @@ class UserInterface {
 			console.log( "Error, block name : " + blockName + " not found. Error in UserInterface/clearBlock.");
 	}
 
+	public clearAllBlocks(){
+		this.clearLeftBlock();
+		this.clearRightBlock();
+		//this.clearLeftHelperBlock();
+		this.clearEnemyList();
+	}
+
 	private clearRightBlock(){
 		var container = this.rightCharacterBlock;
 		container.getElementsByClassName("name")[0].innerHTML = "";
