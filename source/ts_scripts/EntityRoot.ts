@@ -4,10 +4,12 @@ class EntityRoot {
 	public entityParametersGenerator:any;
 
 	private parent;
+	private entityIdNumber:number;
 	
 	constructor( parent ){
 		this.entities = new Array();
 		this.parent = parent;
+		this.entityIdNumber = 0;
 	}
 
 	public init( creaturesData, humanoidsData, humanoidsClassData ){
@@ -52,7 +54,10 @@ class EntityRoot {
 	}
 
 	public createId():string{
-		return "0";
+		var string = "" + this.entityIdNumber;
+		this.entityIdNumber++;
+
+		return string;
 	}
 
 	public removeEntity( entity ){

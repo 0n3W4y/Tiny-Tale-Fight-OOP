@@ -1,10 +1,10 @@
 class FightingStats extends Component{
 	public killedBy:any; // заменить на killedBy, поставиить в занчение ссылку на entity, по ней ориентироватся - умерла ли entity или нет.
 
-	private currentStats:any;
-	private staticStats:any;
-	private levelUpStats:any;
-	private levelUpClassStats:any;
+	public currentStats:any;
+	public staticStats:any;
+	public levelUpStats:any;
+	public levelUpClassStats:any;
 
 	private timeToNextAttack:number;
 	private attackCoolDawn:number;

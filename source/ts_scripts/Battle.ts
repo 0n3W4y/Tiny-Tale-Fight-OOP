@@ -7,12 +7,15 @@ class Battle {
 
 	private isFightPrepare:boolean;
 	private isBattleEnd:boolean;
-	private updateInterface:boolean;
 
 	private teamOneAlive:Array<any>;
 	private teamTwoAlive:Array<any>;
 	private teamOneReady:Array<any>;
 	private teamTwoReady:Array<any>;
+
+	private whoWin:any;
+
+	private entitiesToUpdateInterface:Array<any>;
 
 	private parent:any;
 
@@ -27,7 +30,8 @@ class Battle {
 		this.teamTwoReady = new Array();
 		this.isFightPrepare = false;
 		this.isBattleEnd = false;
-		this.updateInterface = false;
+		this.entitiesToUpdateInterface = new Array();
+		this.whoWin = null;
 	}
 
 	public update( delta ){
@@ -68,7 +72,7 @@ class Battle {
 		var fullNamePlayer = p1.getComponent( "Name" ).getFullName();
 		this.parent.userInterface.fillBlock( p1 );
 
-		var p2 = this.teamTwo[0];
+		var p2 = this.teamTwo[0]; // always select first mob in array;
 		var fullNameEnemy = p2.getComponent( "Name" ).getFullName();
 		var enemyHp = p2.getComponent( "FightingStats" ).getCurrentStat( "HP" );
 		var pdamage = p2.getComponent( "FightingStats" ).getCurrentStat( "STR" );
@@ -78,19 +82,13 @@ class Battle {
 		this.parent.userInterface.removeFromEnemyList( 0 );
 		this.parent.userInterface.fillBlock( p2 );
 
-		var string = "<b>" + fullNamePlayer + "</b>" + " found new troubles. ";
+		this.parent.userInterface.journal.newContact( fullNameEnemy );
 
 		if( this.teamTwo.length > 1 ){
-			string += "Horde of mobs... ";
-		}else{
-			string += "<b>" + fullNameEnemy + "</b>" + " attacking! It have: " + enemyHp + " Health Points, can attack on " + stringDamage + " phisical and " + stringMDamage + " magical damage!";
-			
-		}
-		this.parent.userInterface.addLineToJournal( string );
-
-		//обнуляем массивы с живыми.
-		this.teamOneAlive.length = 0;
-		this.teamTwoAlive.length = 0;
+			this.parent.userInterface.journal.newContactManyTargets();
+			// TODO: сделать полнцю картину всех мобов, с которомы столкнулся игрок.
+		}else
+			this.parent.userInterface.journal.newContactSingleTarget( fullNameEnemy, enemyHp, pdamage, mdamage );
 
 		//заполняем живых creature в массивы по командам.
 		for( var j = 0; j < this.teamOne.length; j++ ){
@@ -109,7 +107,7 @@ class Battle {
 	private beginRound( time ){
 		var p1 = null;
 		var p2 = null;
-		this.updateInterface = false;
+		this.entitiesToUpdateInterface.length = 0;
 
 		//обнуляем массивы, кто может атаковать.
 		this.teamOneReady.length = 0;
@@ -176,14 +174,14 @@ class Battle {
 	private attack( player, target ):void{ //target always Array; Player always entity
 		var playerName = player.getComponent( "Name" ).getFullName();
 		var playerFightStats = player.getComponent( "FightingStats" );
-		var pshysicalPlayerDamage = playerFightStats.getCurrentStat( "STR" );
-		var playerMaxDamage = pshysicalPlayerDamage*2;
-		var playerMinDamage = pshysicalPlayerDamage/2;
+		var phsysicalPlayerDamage = playerFightStats.getCurrentStat( "STR" );
+		var playerMaxDamage = phsysicalPlayerDamage*2;
+		var playerMinDamage = phsysicalPlayerDamage/2;
 		var magicalPlayerDamage = playerFightStats.getCurrentStat( "INT" );
 		var playerMaxDamageM = magicalPlayerDamage*2;
 		var playerMinDamageM = magicalPlayerDamage/2;
 
-		pshysicalPlayerDamage = Math.round( playerMinDamage + Math.random()*( playerMaxDamage - playerMinDamage ) );
+		phsysicalPlayerDamage = Math.round( playerMinDamage + Math.random()*( playerMaxDamage - playerMinDamage ) );
 		magicalPlayerDamage = Math.round( playerMinDamage + Math.random()*( playerMaxDamageM - playerMinDamageM ) );
 
 		// выберем рандомную атаку АОЕ или сингл. 
@@ -204,142 +202,117 @@ class Battle {
 			var targetDodgeChanse = targetFightStats.getCurrentStat( "DDG" ) + targetAgility;
 			var targetBlockChanse = targetFightStats.getCurrentStat( "BLK" );
 			var targetHP = targetFightStats.getCurrentStat( "HP" );
+			var targetChansePercent = targetDodgeChanse/100;
 
 			var randomNum = Math.floor((Math.random()*101)*100); // 0 - 10000;
 			if( targetDodgeChanse >= randomNum ){
-				this.parent.userInterface.addLineToJournal( "<b>" + playerName + "</b>" + " attacking, but " + "<b>" + targetName + "</b>" + " dodge the attack!" );
+				this.parent.userInterface.evade( playerName, targetName, targetChansePercent );
 				return;
 			}
 			
-			pshysicalPlayerDamage -= pshysicalPlayerDamage * ( targetPhysicsDefense / 100 ) / 100;
+			phsysicalPlayerDamage -= phsysicalPlayerDamage * ( targetPhysicsDefense / 100 ) / 100;
 			magicalPlayerDamage -= magicalPlayerDamage * ( targetMagicalDefense / 100 ) / 100;
-			var totalDamage = pshysicalPlayerDamage + magicalPlayerDamage;
+			var totalDamage = phsysicalPlayerDamage + magicalPlayerDamage;
 
 			// вычислить, получилось ли заблокировать атаку
 			// и отнять % от блокированного урона из общего урона.
 
 			targetHP -= totalDamage;
 			targetFightStats.setStats( "current", { "HP": targetHP } );
-			this.parent.userInterface.addLineToJournal( "<b>" + playerName + "</b>" +" attacking " + "<b>" + targetName + "</b>" + " on " + '<font color="purple">' + totalDamage + "</font>" + ". Physics: " + '<font color="red">' + pshysicalPlayerDamage + "</font>" + ". Magical: " + '<font color="blue">' + magicalPlayerDamage + "</font>" + ". TargetResists: physics: " + targetPhysicsDefense + ", magical: " + targetMagicalDefense + "." );
+			this.parent.userInterface.journal.hit( playerName, targetName, totalDamage, phsysicalPlayerDamage, magicalPlayerDamage );
+
 
 			if( targetHP <= 0 )
 				targetFightStats.killedBy = player;
 
+			this.entitiesToUpdateInterface.push( singleTarget );
 
 		}else{
 			//TODO: AOE attack to all entities in alive array;
 		}
-
-		this.updateInterface = true;	
-
 		
 	}
 
 	private endRound( time ){
-		var updateRightBlock = false;
+
+		//обновляем UI для каждого актера, котоырй был под атакой.
+		for( var k = 0; k < this.entitiesToUpdateInterface.length; k++ ){
+			var entity = this.entitiesToUpdateInterface[k];
+			var index = 0
+			if( entity.type == "Mob" )
+				index = this.teamTwo.indexOf( entity );
+
+			this.parent.userInterface.updateUIForEntity( entity, index );
+		}
+
 
 		for( var i = 0; i < this.teamOneAlive.length; i++ ){
 			var p1 = this.teamOneAlive[i];
 			if( p1.getComponent( "FightingStats" ).killedBy != null ){ // is dead;
 				if( p1.type == "Player" ){
-					this.parent.userInterface.addLineToJournal( "You are dead!" );
+					this.killPlayer( p1 );
 					this.isBattleEnd = true;
-					return;
+					return; // only 1 player available, so if he dead - fighting is over;
 				}else{
+					this.killHelper( p1 );
 					// player's mob is dead;
-					//remove player's mob from interface, remove from alive list, and remove entity if need;
 				}
-			}else{
-				// player and player's mob survived in this round;
 			}
 		}
 
 		for( var j = 0; j < this.teamTwoAlive.length; j++ ){
 			var p2 = this.teamTwoAlive[j];
 			var p2FightingComponent = p2.getComponent( "FightingStats" );
-			if( p2FightingComponent.killedBy != null ){ // is dead;
-				if( p2FightingComponent.killedBy.type == "Player" ){
-					var player = p2FightingComponent.killedBy;
-					var playerName = player.getComponent( "Name" ).getFullName();
-					var bounty = p2.getComponent( "ExperienceStats" ).bounty;
-					this.gainExperience( player, bounty );
-					this.parent.userInterface.addLineToJournal( p2.getComponent( "Name" ).getFullName() + " - Killed by " + playerName );
-					var index = this.teamTwoAlive.indexOf( p2 );
-					if( index == 0 )
-						updateRightBlock = true; // need to update main right block;
-					else{
-						//this.parent.userInterface.killMob( p2 );
-						this.teamTwoAlive.splice( index, 1 );
-					}
-				}else{
-					// player's mob add exp to Player;
-				}
-			}else{
-				
-			}
+			if( p2FightingComponent.killedBy != null ) // is dead;
+				this.killMob( p2 );
 		}
 
-		if( this.updateInterface )
-			this.parent.userInterface.updateInterface();
-
-		if( updateRightBlock ){
-			var p2 = this.teamTwoAlive[0];
-			//this.parent.userInterface.removeFromMainBlock( p2 );
-			//this.parent.userInterface.killMob( p2 );
-			//var index = this.teamTwo.indexOf( p2 );
-			//this.parent.userInterface.addToEnemyList( p2, index );
-			this.teamTwoAlive.splice( 0, 1 );
-
-			if( this.teamTwoAlive.length == 0 ){ //all dead;
-				this.parent.userInterface.addLineToJournal( "No one mob survived!" );
-				this.isBattleEnd = true;
-				return;
-			}
-
-			var newP2 = this.teamTwoAlive[0];
-			//this.parent.userInterface.removeFromEnemyList( newP2 );
-			//this.parent.userInterface.fillBlock( newP2 );			
-		}		
+		//update interface or update it in battle.		
 
 		if( this.teamOneAlive.length == 0 || this.teamTwoAlive.length == 0)
-			this.battleEnd();
+			this.isBattleEnd = true;
 
 	}
 
 	private battleEnd(){
+		
+
+		//обнуляем массивы с мобами начисто, удаляя их насовсем и навсегда безвозвратно!!!!!!!!!!!;
+		for( var i = 0; i < this.teamTwo.length; i++ ){
+			var entity = this.teamTwo[i];
+			this.killEntity( entity );
+		}
+		this.teamTwo.length = 0;
+
+		//обнуляем массив с игроком, только если он умер, либо убираем только хелпера;
+		for( var j = 0; j < this.teamOne.length; j++ ){
+			var entity = this.teamOne[j];
+			if( entity.type == "Helper" && entity.getComponent( "FightingStats" ).killedBy != null )
+				this.teamOne.splice( j, 1 );
+
+			if( entity.type == "Player" && entity.getComponent( "FightingStats" ).killedBy != null )
+				this.teamOne.splice( j, 1 );
+		}
+
 		this.isFighting = false;
 		this.isFightPrepare = false;
-	}
+		this.parent.userInterface.journal.addLineToJournal( "Battle is end!" );
 
-	private resetStats(){
-		if( this.teamTwo.length == 0 ){
-			this.teamOne[0].getComponent( "FightingStats" ).resetStats();
-			this.parent.userInterface.fillBlock( this.teamOne[0] );
-			this.parent.userInterface.addLineToJournal("Grats, u kill them all" );
-		}
-	}
+		if( this.whoWin == "Player" )
+			this.playerWin();
+		else
+			this.playerLose();
 
-	private killEntity( entity ){
-		var entityType = entity.type;
-		var index;
-		if( entityType == "Player" ){
-			index = this.teamOne.indexOf( entity );
-			this.teamOne.splice( index, 1 );
-			// do something with mob, who killed player, clear interface, popup tooltip, start respwn function;
-		}else{
-			index = this.teamTwo.indexOf( entity );
-			this.teamTwo.splice( index, 1 );
-			this.parent.entityRoot.removeEntity( entity );
-		}
-
-	}
+		//обнуляем массивы с живыми.
+		this.teamOneAlive.length = 0;
+		this.teamTwoAlive.length = 0;
+	}	
 
 	private gainExperience( entity, value ){
 		if( entity.type == "Player" ){
 			entity.getComponent( "ExperienceStats" ).gainExperience( value );
 			var entityFullname = entity.getComponent( "Name" ).getFullName();
-			this.parent.userInterface.addLineToJournal( entityFullname + " gained " + value + " experience." );
-			this.parent.userInterface.fillBlock( entity );
+			this.parent.userInterface.journal.gainExp( entityFullname, value );
 		}
 		
 	}
@@ -350,6 +323,74 @@ class Battle {
 
 	public startFight(){
 		this.isFighting = true;
+	}
+
+	private checkAliveMobs():any{
+		if( this.teamTwoAlive.length > 0 )
+			return this.teamTwoAlive[0];
+
+		return null;
+	}
+
+	private playerWin(){
+		var player = this.teamOne[0];
+		player.getComponent( "FightingStats" ).resetStats();
+		var playerName = player.getComponent.getFullName();
+		this.parent.userInterfase.journal.win( playerName );
+	}
+
+	private playerLose(){
+		var player = this.teamOne[0];
+		player.getComponent( "FightingStats" ).resetStats();
+		var playerName = player.getComponent.getFullName();
+		this.parent.userInterfase.journal.win( playerName );
+	}
+
+	private killEntity( entity ){
+		this.parent.entityRoot.removeEntity( entity );
+	}
+
+	private killMob( mob ){
+
+		var player = mob.getComponent( "FightingStats" ).killedBy;
+		var playerName = player.getComponent( "Name" ).getFullName();
+		var bounty = mob.getComponent( "ExperienceStats" ).bounty;
+		var mobName = mob.getComponent( "Name" ).getFullName();
+		this.parent.userInterface.journal.kill( playerName, mobName );
+
+		var index = this.teamTwoAlive.indexOf( mob );
+		var mainIndex = this.teamTwo.indexOf( mob );
+		this.teamTwoAlive.splice( index, 1 );
+		if ( index == 0 ){ // если индекс 0 - значит мы убили моба, который находился в главном блоке - задача заменить на другого. Если нет мобов - конец игры.
+			this.parent.userInterface.addMobFromMainBlockToEnemyList( mob, mainIndex );
+			var newMob = this.checkAliveMobs();
+			if( newMob == null ){
+				this.isBattleEnd = true;
+				this.whoWin = "Player";
+			}else{
+				var newMobIndex = this.teamTwo.indexOf( newMob );
+				this.parent.userInterface.addMobFromEnemyListToMainBlock( newMob, newMobIndex );
+			}
+		}
+
+		this.gainExperience( player, bounty );
+	}
+
+	private killHelper( helper ){
+		var index = this.teamOneAlive.indexOf( helper )
+		this.teamOneAlive.splice( index, 1 );
+		var helperName = helper.getComponent( "Name" ).getFullName();
+		var killerName = helper.getComponent( "FightingStats" ).killedBy.getComponent( "Name" ).getFullName();
+		this.parent.userInterface.journal.kill( killerName, helperName );
+	}
+
+	private killPlayer( player ){
+		this.whoWin = "Mob";
+		var index = this.teamOneAlive.indexOf( player );
+		this.teamOneAlive.splice( index, 1 );
+		var playerName = player.getComponent( "Name" ).getFullName();
+		var killerName = player.getComponent( "FightingStats" ).killedBy.getComponent( "Name" ).getFullName();
+		this.parent.userInterface.journal.kill( killerName, playerName );
 	}
 
 }

@@ -16,7 +16,7 @@ var creaturesData = {
 		}, // [ min, max ];
 		FightingStats: {
 			stats: {
-				HP:[10, 20], 
+				HP:[30, 35], 
 				STR:[1, 5], 
 				AGI:[1, 5], 
 				INT:[1, 5], 

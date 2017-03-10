@@ -7,13 +7,13 @@ var Game = (function () {
     function Game(fps) {
         this.fps = fps;
     }
-    Game.prototype.init = function (creaturesData, humanoidsData, humanoidsClassData, leftBlock, rightBlock, journal) {
+    Game.prototype.init = function (creaturesData, humanoidsData, humanoidsClassData, leftBlock, rightBlock, journal, helperBlock, enemylist) {
         this.commonTick = new CommonTick(this, this.fps);
         this.entityRoot = new EntityRoot(this);
         this.entityRoot.init(creaturesData, humanoidsData, humanoidsClassData);
         this.battle = new Battle(this);
         this.userInterface = new UserInterface(this);
-        this.userInterface.init(leftBlock, rightBlock, journal);
+        this.userInterface.init(leftBlock, rightBlock, journal, helperBlock, enemylist);
     };
     Game.prototype.start = function () {
         this.commonTick.startLoop();
@@ -32,7 +32,7 @@ var Game = (function () {
         this.battle.addPlayerToFight(1, player);
         var fullName = player.getComponent("Name").getFullName();
         var string = fullName + " created and added to fight!";
-        this.userInterface.addLineToJournal(string);
+        this.userInterface.journal.addLineToJournal(string);
     };
     Game.prototype.generateMob = function () {
         var entityList = this.entityRoot.getListOfEntities();
@@ -57,14 +57,64 @@ var Game = (function () {
     };
     return Game;
 }());
+var Journal = (function () {
+    function Journal(block) {
+        this.jorunalBlock = document.getElementById(block);
+    }
+    Journal.prototype.init = function () {
+    };
+    Journal.prototype.addLineToJournal = function (string) {
+        var container = this.jorunalBlock;
+        var li = document.createElement("li");
+        li.innerHTML = string;
+        container.insertBefore(li, container.firstChild);
+    };
+    Journal.prototype.newContactManyTargets = function () {
+        var string = "Horde of enemies attacking!";
+        this.addLineToJournal(string);
+    };
+    Journal.prototype.newContactSingleTarget = function (target, hp, pdamage, mdamage) {
+        var string = "<b>" + target + "</b>" + " ( HP: " + hp + ", " + pdamage + ", " + mdamage + " ) attacking!";
+        this.addLineToJournal(string);
+    };
+    Journal.prototype.newContact = function (player) {
+        var string = "<b>" + player + "</b>" + " found new troubles. Prepare to fight!";
+        this.addLineToJournal(string);
+    };
+    Journal.prototype.hit = function (player, target, damage, pdamage, mdamage) {
+        var string = "<b>" + player + "</b>" + " attacking " + "<b>" + target + "</b>" + " on " + '<font color="purple"><b>' + Math.round(damage) + "</b></font>" + " ( "
+            + '<font color="red"><b>' + Math.round(pdamage) + "</b></font>" + " + " + '<font color="blue"><b>' + Math.round(mdamage) + "</b></font>" + " ).";
+        this.addLineToJournal(string);
+    };
+    Journal.prototype.evade = function (player, target, chanse) {
+        var string = "<b>" + player + "</b>" + " attacking, but " + "<b>" + target + "</b>" + " dodge the attack with chanse: " + "<b>" + chanse + "</b>.";
+        this.addLineToJournal(string);
+    };
+    Journal.prototype.block = function (player, target, blocked, chanse) {
+        var string = "<b>" + target + "</b>" + " blocked " + "<b>" + player + "</b>" + "attack on " + '<font color="purple">' + blocked + "</font>" + "damage with " + chanse + "% chanse.";
+        this.addLineToJournal(string);
+    };
+    Journal.prototype.kill = function (player, target) {
+        var string = "<b>" + player + "</b>" + " kill " + "<b>" + target + "</b>.";
+        this.addLineToJournal(string);
+    };
+    Journal.prototype.gainExp = function (player, exp) {
+        var string = "<b>" + player + "</b>" + " obtain " + exp + " experience.";
+        this.addLineToJournal(string);
+    };
+    return Journal;
+}());
 var UserInterface = (function () {
     function UserInterface(parent) {
         this.parent = parent;
     }
-    UserInterface.prototype.init = function (leftBlock, rightBlock, journal) {
+    UserInterface.prototype.init = function (leftBlock, rightBlock, journal, helperBlock, enemyList) {
         this.leftCharacterBlock = document.getElementById(leftBlock);
         this.rightCharacterBlock = document.getElementById(rightBlock);
-        this.journal = document.getElementById(journal);
+        this.leftHelperBlock = document.getElementById(helperBlock);
+        this.enemyList = document.getElementById(enemyList);
+        this.journal = new Journal(journal);
+        //this.journal.init();
     };
     UserInterface.prototype.fillLeftCharacterBlock = function (entity) {
         //data =  { name:"full name", hp:100, sp:100, exp:[0,100], lvl: str:1, end:1, int:1 };
@@ -74,7 +124,7 @@ var UserInterface = (function () {
         var fullName = nameContainer["fullname"];
         var fightingStatsContainer = data["FightingStats"];
         var currentStatsContainer = fightingStatsContainer["currentStats"];
-        var hp = currentStatsContainer["HP"];
+        var hp = Math.round(currentStatsContainer["HP"]);
         var str = currentStatsContainer["STR"];
         var end = currentStatsContainer["AGI"];
         var int = currentStatsContainer["INT"];
@@ -87,7 +137,7 @@ var UserInterface = (function () {
         var lvl = experienceStats["lvl"];
         var staticHp = staticStatsContainer["HP"] + lvlUpStatsContainer["HP"] * lvl;
         container.getElementsByClassName("name")[0].innerHTML = fullName;
-        container.getElementsByClassName("red")[0].innerHTML = hp + "/" + staticHp;
+        container.getElementsByClassName("red")[0].innerHTML = Math.round(hp) + "/" + staticHp;
         var hpBar = Math.round((hp / staticHp) * 100);
         if (hpBar < 0)
             hpBar = 0;
@@ -115,24 +165,51 @@ var UserInterface = (function () {
         var lvl = experienceStats["lvl"];
         var staticHp = staticStatsContainer["HP"] + lvlUpStatsContainer["HP"] * lvl;
         container.getElementsByClassName("name")[0].innerHTML = fullName;
-        container.getElementsByClassName("red")[0].innerHTML = hp + "/" + staticHp;
+        container.getElementsByClassName("red")[0].innerHTML = Math.round(hp) + "/" + staticHp;
         var hpBar = Math.round((hp / staticHp) * 100);
         if (hpBar < 0)
             hpBar = 0;
         container.getElementsByClassName("red")[0].style.width = hpBar + "%";
         container.getElementsByClassName("level")[0].innerHTML = lvl;
     };
-    UserInterface.prototype.addLineToJournal = function (string) {
-        var container = this.journal;
-        var li = document.createElement("li");
-        li.innerHTML = string;
-        container.insertBefore(li, container.firstChild);
+    UserInterface.prototype.fillLeftHelperBlock = function (entity) {
+        var data = this.parent.entityRoot.collectDataFromEntity(entity);
+        var container = this.leftHelperBlock;
+        var nameContainer = data["Name"];
+        var fullName = nameContainer["fullname"];
+        var fightingStatsContainer = data["FightingStats"];
+        var currentStatsContainer = fightingStatsContainer["currentStats"];
+        var hp = Math.round(currentStatsContainer["HP"]);
+        var str = currentStatsContainer["STR"];
+        var end = currentStatsContainer["AGI"];
+        var int = currentStatsContainer["INT"];
+        var staticStatsContainer = fightingStatsContainer["staticStats"];
+        var lvlUpStatsContainer = fightingStatsContainer["levelUpStats"];
+        var lvlUpClassStatsContainer = fightingStatsContainer["levelUpClassStats"];
+        var experienceStats = data["ExperienceStats"];
+        var exp = experienceStats["exp"];
+        var expToNextLvl = experienceStats["expToNextLvl"];
+        var lvl = experienceStats["lvl"];
+        var staticHp = staticStatsContainer["HP"] + lvlUpStatsContainer["HP"] * lvl;
+        container.getElementsByClassName("name")[0].innerHTML = fullName;
+        container.getElementsByClassName("red")[0].innerHTML = Math.round(hp) + "/" + staticHp;
+        var hpBar = Math.round((hp / staticHp) * 100);
+        if (hpBar < 0)
+            hpBar = 0;
+        container.getElementsByClassName("red")[0].style.width = hpBar + "%";
+        container.getElementsByClassName("violet")[0].innerHTML = exp + "/" + expToNextLvl;
+        var percent = Math.floor((exp / expToNextLvl) * 100);
+        var stringPercent = percent + "%";
+        container.getElementsByClassName("violet")[0].style.width = stringPercent;
+        container.getElementsByClassName("level")[0].innerHTML = lvl;
     };
     UserInterface.prototype.fillBlock = function (entity) {
         if (entity.type == "Player")
             this.fillLeftCharacterBlock(entity);
         else if (entity.type == "Mob")
             this.fillRightCharacterBlock(entity);
+        else if (entity.type == "Helper")
+            this.fillLeftHelperBlock(entity);
         else
             console.log("Error no key with name: " + entity.type + ". Error in UserInterface/fillBlock");
     };
@@ -145,17 +222,26 @@ var UserInterface = (function () {
     };
     UserInterface.prototype.removeFromEnemyList = function (index) {
         var child = document.getElementById(index);
-        var container = document.getElementById("enemy-list");
+        var container = this.enemyList;
         container.removeChild(child);
+    };
+    UserInterface.prototype.addMobFromEnemyListToMainBlock = function (mob, index) {
+        this.removeFromEnemyList(index);
+        this.fillBlock(mob);
+    };
+    UserInterface.prototype.addMobFromMainBlockToEnemyList = function (mob, index) {
+        this.addToEnemyList(mob, index);
+        this.clearRightBlock();
     };
     UserInterface.prototype.addToEnemyList = function (entity, id) {
         var race = entity.getComponent("Type").race; // for image ( avatar );
         var level = entity.getComponent("ExperienceStats").lvl;
         var fightingComponent = entity.getComponent("FightingStats");
-        var currentHPStat = fightingComponent.getCurrentStat("HP");
+        var currentHPStat = Math.round(fightingComponent.getCurrentStat("HP"));
         var staticHPStat = fightingComponent.getStaticStat("HP");
         var lvlUpHPStat = fightingComponent.getLevelUpStat("HP");
         var staticHP = staticHPStat + lvlUpHPStat * level;
+        var hpWidth = Math.round((currentHPStat / staticHP) * 100);
         var li = document.createElement("li");
         li.id = "" + id;
         var divAvatar = document.createElement("div");
@@ -169,14 +255,87 @@ var UserInterface = (function () {
         var spanBar = document.createElement("span");
         spanBar.className = "red";
         spanBar.innerHTML = currentHPStat + "/" + staticHP;
-        spanBar.style.width = "100%";
+        spanBar.style.width = hpWidth + "%";
         li.appendChild(divAvatar);
         divAvatar.appendChild(divLevel);
         divAvatar.appendChild(divBar);
         divBar.appendChild(spanBar);
-        var container = document.getElementById("enemy-list");
+        var container = this.enemyList;
         container.appendChild(li);
         //create tooltip;
+    };
+    UserInterface.prototype.clearBlock = function (blockName) {
+        if (blockName == "Left")
+            this.clearLeftBlock();
+        else if (blockName == "Right")
+            this.clearRightBlock();
+        else if (blockName == "Helper")
+            this.clearLeftHelperBlock();
+        else if (blockName == "EnemyList")
+            this.clearEnemyList();
+        else
+            console.log("Error, block name : " + blockName + " not found. Error in UserInterface/clearBlock.");
+    };
+    UserInterface.prototype.clearRightBlock = function () {
+        var container = this.rightCharacterBlock;
+        container.getElementsByClassName("name")[0].innerHTML = "";
+        container.getElementsByClassName("red")[0].innerHTML = "0/0";
+        container.getElementsByClassName("red")[0].style.width = "0%";
+        container.getElementsByClassName("level")[0].innerHTML = "0";
+    };
+    UserInterface.prototype.clearLeftBlock = function () {
+        var container = this.leftCharacterBlock;
+        container.getElementsByClassName("name")[0].innerHTML = "";
+        container.getElementsByClassName("red")[0].innerHTML = "0/0";
+        container.getElementsByClassName("red")[0].style.width = "0%";
+        container.getElementsByClassName("level")[0].innerHTML = "0";
+    };
+    UserInterface.prototype.clearLeftHelperBlock = function () {
+        var container = this.leftHelperBlock;
+        container.getElementsByClassName("name")[0].innerHTML = "";
+        container.getElementsByClassName("red")[0].innerHTML = "0/0";
+        container.getElementsByClassName("red")[0].style.width = "0%";
+        container.getElementsByClassName("level")[0].innerHTML = "0";
+        this.leftHelperBlock = null;
+    };
+    UserInterface.prototype.clearEnemyList = function () {
+        var container = this.enemyList;
+        while (container.firstChild) {
+            container.removeChild(container.firstChild);
+        }
+    };
+    UserInterface.prototype.updateUIForEntity = function (entity, index) {
+        if (entity.type == "Player" || entity.type == "Helper")
+            this.fillBlock(entity);
+        else if (entity.type == "Mob") {
+            var result = this.checkMobInEnemyList(index);
+            if (result != null)
+                this.updateMobInEnemyList(entity, result);
+            else
+                this.fillBlock(entity);
+        }
+    };
+    UserInterface.prototype.checkMobInEnemyList = function (index) {
+        var container = this.enemyList;
+        var list = container.getElementsByTagName("li");
+        for (var i = 0; i < list.length; i++) {
+            if (list[i].id == index)
+                return list[i];
+        }
+        return null;
+    };
+    UserInterface.prototype.updateMobInEnemyList = function (entity, container) {
+        var currentHPStat = Math.round(entity.getComponent("FightingStats").getCurrentStat("HP"));
+        var lvl = entity.getComponent("ExperienceStats").lvl;
+        var staticHp = entity.getComponent("FightingStats").getStaticStat("HP");
+        var lvlUpHp = entity.getComponent("FightingStats").getLevelUpStat("HP");
+        staticHp = staticHp + lvlUpHp * lvl;
+        var hpWidth = Math.round((staticHp / currentHPStat) * 100);
+        if (hpWidth < 0)
+            hpWidth = 0;
+        var hpBar = container.getElementsByClassName("red");
+        hpBar.innerHTML = currentHPStat + "/" + staticHp;
+        hpBar.style.width = hpWidth + "%";
     };
     UserInterface.prototype.createToolTip = function (entity) {
     };
@@ -198,7 +357,8 @@ var Battle = (function () {
         this.teamTwoReady = new Array();
         this.isFightPrepare = false;
         this.isBattleEnd = false;
-        this.updateInterface = false;
+        this.entitiesToUpdateInterface = new Array();
+        this.whoWin = null;
     }
     Battle.prototype.update = function (delta) {
         if (this.isFighting) {
@@ -230,7 +390,7 @@ var Battle = (function () {
         var p1 = this.teamOne[0]; // 1 player right now;
         var fullNamePlayer = p1.getComponent("Name").getFullName();
         this.parent.userInterface.fillBlock(p1);
-        var p2 = this.teamTwo[0];
+        var p2 = this.teamTwo[0]; // always select first mob in array;
         var fullNameEnemy = p2.getComponent("Name").getFullName();
         var enemyHp = p2.getComponent("FightingStats").getCurrentStat("HP");
         var pdamage = p2.getComponent("FightingStats").getCurrentStat("STR");
@@ -239,17 +399,12 @@ var Battle = (function () {
         var stringMDamage = Math.round(mdamage / 2) + " - " + Math.round(mdamage * 2);
         this.parent.userInterface.removeFromEnemyList(0);
         this.parent.userInterface.fillBlock(p2);
-        var string = "<b>" + fullNamePlayer + "</b>" + " found new troubles. ";
+        this.parent.userInterface.journal.newContact(fullNameEnemy);
         if (this.teamTwo.length > 1) {
-            string += "Horde of mobs... ";
+            this.parent.userInterface.journal.newContactManyTargets();
         }
-        else {
-            string += "<b>" + fullNameEnemy + "</b>" + " attacking! It have: " + enemyHp + " Health Points, can attack on " + stringDamage + " phisical and " + stringMDamage + " magical damage!";
-        }
-        this.parent.userInterface.addLineToJournal(string);
-        //обнуляем массивы с живыми.
-        this.teamOneAlive.length = 0;
-        this.teamTwoAlive.length = 0;
+        else
+            this.parent.userInterface.journal.newContactSingleTarget(fullNameEnemy, enemyHp, pdamage, mdamage);
         //заполняем живых creature в массивы по командам.
         for (var j = 0; j < this.teamOne.length; j++) {
             this.teamOneAlive.push(this.teamOne[j]);
@@ -263,7 +418,7 @@ var Battle = (function () {
     Battle.prototype.beginRound = function (time) {
         var p1 = null;
         var p2 = null;
-        this.updateInterface = false;
+        this.entitiesToUpdateInterface.length = 0;
         //обнуляем массивы, кто может атаковать.
         this.teamOneReady.length = 0;
         this.teamTwoReady.length = 0;
@@ -318,13 +473,13 @@ var Battle = (function () {
     Battle.prototype.attack = function (player, target) {
         var playerName = player.getComponent("Name").getFullName();
         var playerFightStats = player.getComponent("FightingStats");
-        var pshysicalPlayerDamage = playerFightStats.getCurrentStat("STR");
-        var playerMaxDamage = pshysicalPlayerDamage * 2;
-        var playerMinDamage = pshysicalPlayerDamage / 2;
+        var phsysicalPlayerDamage = playerFightStats.getCurrentStat("STR");
+        var playerMaxDamage = phsysicalPlayerDamage * 2;
+        var playerMinDamage = phsysicalPlayerDamage / 2;
         var magicalPlayerDamage = playerFightStats.getCurrentStat("INT");
         var playerMaxDamageM = magicalPlayerDamage * 2;
         var playerMinDamageM = magicalPlayerDamage / 2;
-        pshysicalPlayerDamage = Math.round(playerMinDamage + Math.random() * (playerMaxDamage - playerMinDamage));
+        phsysicalPlayerDamage = Math.round(playerMinDamage + Math.random() * (playerMaxDamage - playerMinDamage));
         magicalPlayerDamage = Math.round(playerMinDamage + Math.random() * (playerMaxDamageM - playerMinDamageM));
         // выберем рандомную атаку АОЕ или сингл. 
         var typeOfDamage = 0; // Math.floor( Math.random()*2 ); //0 , 1;
@@ -342,88 +497,81 @@ var Battle = (function () {
             var targetDodgeChanse = targetFightStats.getCurrentStat("DDG") + targetAgility;
             var targetBlockChanse = targetFightStats.getCurrentStat("BLK");
             var targetHP = targetFightStats.getCurrentStat("HP");
+            var targetChansePercent = targetDodgeChanse / 100;
             var randomNum = Math.floor((Math.random() * 101) * 100); // 0 - 10000;
             if (targetDodgeChanse >= randomNum) {
-                this.parent.userInterface.addLineToJournal("<b>" + playerName + "</b>" + " attacking, but " + "<b>" + targetName + "</b>" + " dodge the attack!");
+                this.parent.userInterface.evade(playerName, targetName, targetChansePercent);
                 return;
             }
-            pshysicalPlayerDamage -= pshysicalPlayerDamage * (targetPhysicsDefense / 100) / 100;
+            phsysicalPlayerDamage -= phsysicalPlayerDamage * (targetPhysicsDefense / 100) / 100;
             magicalPlayerDamage -= magicalPlayerDamage * (targetMagicalDefense / 100) / 100;
-            var totalDamage = pshysicalPlayerDamage + magicalPlayerDamage;
+            var totalDamage = phsysicalPlayerDamage + magicalPlayerDamage;
             // вычислить, получилось ли заблокировать атаку
             // и отнять % от блокированного урона из общего урона.
             targetHP -= totalDamage;
             targetFightStats.setStats("current", { "HP": targetHP });
-            this.parent.userInterface.addLineToJournal("<b>" + playerName + "</b>" + " attacking " + "<b>" + targetName + "</b>" + " on " + '<font color="purple">' + totalDamage + "</font>" + ". Physics: " + '<font color="red">' + pshysicalPlayerDamage + "</font>" + ". Magical: " + '<font color="blue">' + magicalPlayerDamage + "</font>" + ". TargetResists: physics: " + targetPhysicsDefense + ", magical: " + targetMagicalDefense + ".");
+            this.parent.userInterface.journal.hit(playerName, targetName, totalDamage, phsysicalPlayerDamage, magicalPlayerDamage);
             if (targetHP <= 0)
                 targetFightStats.killedBy = player;
+            this.entitiesToUpdateInterface.push(singleTarget);
         }
         else {
         }
-        this.updateInterface = true;
     };
     Battle.prototype.endRound = function (time) {
-        var updateRightBlock = false;
+        //обновляем UI для каждого актера, котоырй был под атакой.
+        for (var k = 0; k < this.entitiesToUpdateInterface.length; k++) {
+            var entity = this.entitiesToUpdateInterface[k];
+            var index = 0;
+            if (entity.type == "Mob")
+                index = this.teamTwo.indexOf(entity);
+            this.parent.userInterface.updateUIForEntity(entity, index);
+        }
         for (var i = 0; i < this.teamOneAlive.length; i++) {
             var p1 = this.teamOneAlive[i];
             if (p1.getComponent("FightingStats").killedBy != null) {
                 if (p1.type == "Player") {
-                    this.parent.userInterface.addLineToJournal("You are dead!");
+                    this.killPlayer(p1);
                     this.isBattleEnd = true;
-                    return;
+                    return; // only 1 player available, so if he dead - fighting is over;
                 }
                 else {
+                    this.killHelper(p1);
                 }
-            }
-            else {
             }
         }
         for (var j = 0; j < this.teamTwoAlive.length; j++) {
             var p2 = this.teamTwoAlive[j];
             var p2FightingComponent = p2.getComponent("FightingStats");
-            if (p2FightingComponent.killedBy != null) {
-                if (p2FightingComponent.killedBy.type == "Player") {
-                    var player = p2FightingComponent.killedBy;
-                    var playerName = player.getComponent("Name").getFullName();
-                    var bounty = p2.getComponent("ExperienceStats").bounty;
-                    this.gainExperience(player, bounty);
-                    this.parent.userInterface.addLineToJournal(p2.getComponent("Name").getFullName() + " - Killed by " + playerName);
-                    var index = this.teamTwoAlive.indexOf(p2);
-                    if (index == 0)
-                        updateRightBlock = true; // need to update main right block;
-                    else {
-                        //this.parent.userInterface.killMob( p2 );
-                        this.teamTwoAlive.splice(index, 1);
-                    }
-                }
-                else {
-                }
-            }
-            else {
-            }
+            if (p2FightingComponent.killedBy != null)
+                this.killMob(p2);
         }
-        if (this.updateInterface)
-            this.parent.userInterface.updateInterface();
-        if (updateRightBlock) {
-            var p2 = this.teamTwoAlive[0];
-            //this.parent.userInterface.removeFromMainBlock( p2 );
-            //this.parent.userInterface.killMob( p2 );
-            //var index = this.teamTwo.indexOf( p2 );
-            //this.parent.userInterface.addToEnemyList( p2, index );
-            this.teamTwoAlive.splice(0, 1);
-            if (this.teamTwoAlive.length == 0) {
-                this.parent.userInterface.addLineToJournal("No one mob survived!");
-                this.isBattleEnd = true;
-                return;
-            }
-            var newP2 = this.teamTwoAlive[0];
-        }
+        //update interface or update it in battle.		
         if (this.teamOneAlive.length == 0 || this.teamTwoAlive.length == 0)
-            this.battleEnd();
+            this.isBattleEnd = true;
     };
     Battle.prototype.battleEnd = function () {
+        //обнуляем массивы с мобами начисто, удаляя их насовсем и навсегда безвозвратно!!!!!!!!!!!;
+        for (var i = 0; i < this.teamTwo.length; i++) {
+            var entity = this.teamTwo[i];
+            this.killEntity(entity);
+        }
+        this.teamTwo.length = 0;
+        //обнуляем массив с игроком, только если он умер, либо убираем только хелпера;
+        for (var j = 0; j < this.teamOne.length; j++) {
+            var entity = this.teamOne[j];
+            if (entity.type == "Helper" && entity.getComponent("FightingStats").killedBy != null)
+                this.teamOne.splice(j, 1);
+            if (entity.type == "Player" && entity.getComponent("FightingStats").killedBy != null)
+                this.teamOne.splice(j, 1);
+        }
         this.isFighting = false;
         this.isFightPrepare = false;
+        this.parent.userInterface.journal.addLineToJournal("Battle End! Grats");
+        // start clear all arrays, all entities, and user interface;
+        //обнуляем массивы с живыми.
+        this.teamOneAlive.length = 0;
+        this.teamTwoAlive.length = 0;
     };
     Battle.prototype.resetStats = function () {
         if (this.teamTwo.length == 0) {
@@ -432,25 +580,11 @@ var Battle = (function () {
             this.parent.userInterface.addLineToJournal("Grats, u kill them all");
         }
     };
-    Battle.prototype.killEntity = function (entity) {
-        var entityType = entity.type;
-        var index;
-        if (entityType == "Player") {
-            index = this.teamOne.indexOf(entity);
-            this.teamOne.splice(index, 1);
-        }
-        else {
-            index = this.teamTwo.indexOf(entity);
-            this.teamTwo.splice(index, 1);
-            this.parent.entityRoot.removeEntity(entity);
-        }
-    };
     Battle.prototype.gainExperience = function (entity, value) {
         if (entity.type == "Player") {
             entity.getComponent("ExperienceStats").gainExperience(value);
             var entityFullname = entity.getComponent("Name").getFullName();
-            this.parent.userInterface.addLineToJournal(entityFullname + " gained " + value + " experience.");
-            this.parent.userInterface.fillBlock(entity);
+            this.parent.userInterface.journal.gainExp(entityFullname, value);
         }
     };
     Battle.prototype.stopFight = function () {
@@ -459,12 +593,61 @@ var Battle = (function () {
     Battle.prototype.startFight = function () {
         this.isFighting = true;
     };
+    Battle.prototype.checkAliveMobs = function () {
+        if (this.teamTwoAlive.length > 0)
+            return this.teamTwoAlive[0];
+        return null;
+    };
+    Battle.prototype.updateUI = function () {
+    };
+    Battle.prototype.killEntity = function (entity) {
+        this.parent.entityRoot.removeEntity(entity);
+    };
+    Battle.prototype.killMob = function (mob) {
+        var player = mob.getComponent("FightingStats").killedBy;
+        var playerName = player.getComponent("Name").getFullName();
+        var bounty = mob.getComponent("ExperienceStats").bounty;
+        var mobName = mob.getComponent("Name").getFullName();
+        this.parent.userInterface.journal.kill(playerName, mobName);
+        var index = this.teamTwoAlive.indexOf(mob);
+        var mainIndex = this.teamTwo.indexOf(mob);
+        this.teamTwoAlive.splice(index, 1);
+        if (index == 0) {
+            this.parent.userInterface.addMobFromMainBlockToEnemyList(mob, mainIndex);
+            var newMob = this.checkAliveMobs();
+            if (newMob == null) {
+                this.isBattleEnd = true;
+                this.whoWin = "Player";
+            }
+            else {
+                var newMobIndex = this.teamTwo.indexOf(newMob);
+                this.parent.userInterface.addMobFromEnemyListToMainBlock(newMob, newMobIndex);
+            }
+        }
+        this.gainExperience(player, bounty);
+    };
+    Battle.prototype.killHelper = function (helper) {
+        var index = this.teamOneAlive.indexOf(helper);
+        this.teamOneAlive.splice(index, 1);
+        var helperName = helper.getComponent("Name").getFullName();
+        var killerName = helper.getComponent("FightingStats").killedBy.getComponent("Name").getFullName();
+        this.parent.userInterface.journal.kill(killerName, helperName);
+    };
+    Battle.prototype.killPlayer = function (player) {
+        this.whoWin = "Mob";
+        var index = this.teamOneAlive.indexOf(player);
+        this.teamOneAlive.splice(index, 1);
+        var playerName = player.getComponent("Name").getFullName();
+        var killerName = player.getComponent("FightingStats").killedBy.getComponent("Name").getFullName();
+        this.parent.userInterface.journal.kill(killerName, playerName);
+    };
     return Battle;
 }());
 var EntityRoot = (function () {
     function EntityRoot(parent) {
         this.entities = new Array();
         this.parent = parent;
+        this.entityIdNumber = 0;
     }
     EntityRoot.prototype.init = function (creaturesData, humanoidsData, humanoidsClassData) {
         this.entityParametersGenerator = new EntityParametersGenerator(creaturesData, humanoidsData, humanoidsClassData);
@@ -502,7 +685,9 @@ var EntityRoot = (function () {
         return this.entities;
     };
     EntityRoot.prototype.createId = function () {
-        return "0";
+        var string = "" + this.entityIdNumber;
+        this.entityIdNumber++;
+        return string;
     };
     EntityRoot.prototype.removeEntity = function (entity) {
         for (var i = 0; i < this.entities.length; i++) {

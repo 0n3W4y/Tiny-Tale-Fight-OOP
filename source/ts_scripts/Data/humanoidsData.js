@@ -16,7 +16,7 @@ var humanoidsData = {
 		},
 		FightingStats: { 
 			stats: {
-				HP:50, 
+				HP:100, 
 				STR:5, 
 				AGI:5, 
 				INT:5, 
