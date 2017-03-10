@@ -6,10 +6,12 @@ class Game {
 	public battle:any;
 	public userInterface:any;
 
+	private preStartDone:boolean;
 	private player:any;
 
 	constructor( fps ){
 		this.fps = fps;
+		this.preStartDone = false;
 	}
 
 	public init( creaturesData, humanoidsData, humanoidsClassData, leftBlock, rightBlock, journal, helperBlock, enemylist ){
@@ -34,14 +36,23 @@ class Game {
 	}
 
 	public update( delta ){
+
 		this.battle.update( delta );
+
+		if( this.preStartDone ){
+			if( !this.battle.isFighting ){
+				this.askForNextBattle();
+			}
+		}
 	}
 
 	public generatePlayer(){
 		var player = this.entityRoot.generatePlayer( null );
 		this.battle.addPlayerToFight( 1,  player );
 		var fullName = player.getComponent( "Name" ).getFullName();
-		var string = fullName + " created and added to fight!";
+		var playerClass = player.getComponent( "Type" ).class;
+
+		var string = fullName + " created! Class: " + playerClass;
 		this.userInterface.journal.addLineToJournal( string );
 		this.player = player;
 	}
@@ -74,16 +85,37 @@ class Game {
 	}
 
 
+
+
+
+
+
+
 	//must be deleted!!!
-	private loop( delta ){
-		var currentHp = this.player.getComponent( "FightingStats" ).getCurrentStat( "HP" );
-	}
 
 	public preStart(){
 		//TODO: create player - > generate Mobs -> start fight;
+		this.generatePlayer();
+		var playerLvl = this.player.getComponent( "ExperienceStats" ).lvl;
+		var max = Math.round( 4 + playerLvl/5 );
+		var min = Math.round( 1 + playerLvl/5 );
+		this.generateSomeMobs( min, max );
+		this.preStartDone = true;
+		this.battle.startFight();
 	}
 
 	public reset(){
 		location.reload(true);
+	}
+
+	private askForNextBattle(){
+		this.stop();
+	}
+
+	private generateSomeMobs( min, max ){
+		var randomNum = Math.floor( min + Math.random() * ( max - min + 1 ) );
+		for( var i = 0; i < randomNum; i++ ){
+			this.generateMob();
+		}
 	}
 }

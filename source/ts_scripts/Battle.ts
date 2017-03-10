@@ -85,10 +85,10 @@ class Battle {
 		this.parent.userInterface.journal.newContact( fullNameEnemy );
 
 		if( this.teamTwo.length > 1 ){
-			this.parent.userInterface.journal.newContactManyTargets();
+			this.parent.userInterface.journal.newContactManyTargets( this.teamTwo.length );
 			// TODO: сделать полнцю картину всех мобов, с которомы столкнулся игрок.
 		}else
-			this.parent.userInterface.journal.newContactSingleTarget( fullNameEnemy, enemyHp, pdamage, mdamage );
+			this.parent.userInterface.journal.newContactSingleTarget( fullNameEnemy, enemyHp, stringDamage, stringMDamage );
 
 		//заполняем живых creature в массивы по командам.
 		for( var j = 0; j < this.teamOne.length; j++ ){
@@ -203,10 +203,11 @@ class Battle {
 			var targetBlockChanse = targetFightStats.getCurrentStat( "BLK" );
 			var targetHP = targetFightStats.getCurrentStat( "HP" );
 			var targetChansePercent = targetDodgeChanse/100;
+			this.parent.userInterface.journal.attack( playerName, targetName );
 
 			var randomNum = Math.floor((Math.random()*101)*100); // 0 - 10000;
 			if( targetDodgeChanse >= randomNum ){
-				this.parent.userInterface.evade( playerName, targetName, targetChansePercent );
+				this.parent.userInterface.evade( targetName, targetChansePercent );
 				return;
 			}
 			
@@ -219,7 +220,7 @@ class Battle {
 
 			targetHP -= totalDamage;
 			targetFightStats.setStats( "current", { "HP": targetHP } );
-			this.parent.userInterface.journal.hit( playerName, targetName, totalDamage, phsysicalPlayerDamage, magicalPlayerDamage );
+			this.parent.userInterface.journal.hit( targetName, totalDamage, phsysicalPlayerDamage, magicalPlayerDamage );
 
 
 			if( targetHP <= 0 )
@@ -276,6 +277,10 @@ class Battle {
 
 	private battleEnd(){
 		
+		if( this.whoWin == "Player" )
+			this.playerWin();
+		else
+			this.playerLose();
 
 		//обнуляем массивы с мобами начисто, удаляя их насовсем и навсегда безвозвратно!!!!!!!!!!!;
 		for( var i = 0; i < this.teamTwo.length; i++ ){
@@ -298,10 +303,6 @@ class Battle {
 		this.isFightPrepare = false;
 		this.parent.userInterface.journal.addLineToJournal( "Battle is end!" );
 
-		if( this.whoWin == "Player" )
-			this.playerWin();
-		else
-			this.playerLose();
 
 		//обнуляем массивы с живыми.
 		this.teamOneAlive.length = 0;
@@ -328,22 +329,22 @@ class Battle {
 	private checkAliveMobs():any{
 		if( this.teamTwoAlive.length > 0 )
 			return this.teamTwoAlive[0];
-
-		return null;
+		else
+			return null;
 	}
 
 	private playerWin(){
 		var player = this.teamOne[0];
 		player.getComponent( "FightingStats" ).resetStats();
-		var playerName = player.getComponent.getFullName();
-		this.parent.userInterfase.journal.win( playerName );
+		var playerName = player.getComponent( "Name" ).getFullName();
+		this.parent.userInterface.journal.win( playerName );
 	}
 
 	private playerLose(){
 		var player = this.teamOne[0];
 		player.getComponent( "FightingStats" ).resetStats();
-		var playerName = player.getComponent.getFullName();
-		this.parent.userInterfase.journal.win( playerName );
+		var playerName = player.getComponent( "Name" ).getFullName();
+		this.parent.userInterface.journal.win( playerName );
 	}
 
 	private killEntity( entity ){

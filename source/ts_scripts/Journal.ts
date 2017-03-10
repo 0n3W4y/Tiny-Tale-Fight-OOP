@@ -16,13 +16,13 @@ class Journal {
 		container.insertBefore(li, container.firstChild);
 	}
 
-	public newContactManyTargets(){
-		var string = "Horde of enemies attacking!";
+	public newContactManyTargets( number ){
+		var string = number + " creatures are coming!";
 		this.addLineToJournal( string );
 	}
 
 	public newContactSingleTarget( target, hp, pdamage, mdamage ){
-		var string = "<b>" + target + "</b>" + " ( HP: " + hp + ", " + pdamage + ", " + mdamage + " ) attacking!" ;
+		var string = "<b>" + target + "</b>" + " ( HP: " + "<b>" + hp + "</b>" + ", Pdmg: " + '<font color="red"><b>' + pdamage + "</b></font>" +", Mdmg: " + '<font color="blue"><b>' + mdamage + "</b></font>" + " ) attacking!" ;
 		this.addLineToJournal( string );
 	}
 
@@ -31,24 +31,24 @@ class Journal {
 		this.addLineToJournal( string );
 	}
 
-	public hit( player, target, damage, pdamage, mdamage ){
-		var string = "<b>" + player + "</b>" +" attacking " + "<b>" + target + "</b>" + " on " + '<font color="purple"><b>' + Math.round( damage ) + "</b></font>" + " ( "
+	public hit( target, damage, pdamage, mdamage ){
+		var string = "<b>" + target + "</b>" + " hitted on " + '<font color="purple"><b>' + Math.round( damage ) + "</b></font>" + " ( "
 					 + '<font color="red"><b>' + Math.round( pdamage ) + "</b></font>" + " + " + '<font color="blue"><b>' + Math.round( mdamage ) + "</b></font>" + " ).";
 		this.addLineToJournal( string );
 	}
 
 	public evade( player, target, chanse ){
-		var string = "<b>" + player + "</b>" + " attacking, but " + "<b>" + target + "</b>" + " dodge the attack with chanse: " + "<b>" + chanse + "</b>.";
+		var string = "<b>" + target + "</b>" + " dodge the attack with chanse: " + "<b>" + chanse + "</b>.";
 		this.addLineToJournal( string );
 	}
 
-	public block( player, target, blocked, chanse ){
-		var string =  "<b>" + target + "</b>" + " blocked " + "<b>" + player + "</b>" + "attack on " + '<font color="purple">' + blocked + "</font>" + "damage with " + chanse + "% chanse.";
+	public block( target, blocked, chanse ){
+		var string =  "<b>" + target + "</b>" + " blocked on " + '<font color="purple">' + blocked + "</font>" + "damage with " + chanse + "% chanse.";
 		this.addLineToJournal( string );
 	}
 
 	public kill( player, target ){
-		var string = "<b>" + player + "</b>" + " kill " + "<b>" + target + "</b>.";
+		var string = "<b>" + target + "</b>" + " killed by " + "<b>" + player + "</b>.";
 		this.addLineToJournal( string );
 	}
 
@@ -64,6 +64,11 @@ class Journal {
 
 	public lose( player ){
 		var string = "So sad! " + "<b>" + player + "</b>" + " LOSE this battle!";
+		this.addLineToJournal( string );
+	}
+
+	public attack( player, target ){
+		var string = "<b>" + player + "</b>" +" is attacking " + "<b>" + target + "</b>.";
 		this.addLineToJournal( string );
 	}
 }

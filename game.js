@@ -6,6 +6,7 @@ var __extends = (this && this.__extends) || function (d, b) {
 var Game = (function () {
     function Game(fps) {
         this.fps = fps;
+        this.preStartDone = false;
     }
     Game.prototype.init = function (creaturesData, humanoidsData, humanoidsClassData, leftBlock, rightBlock, journal, helperBlock, enemylist) {
         this.commonTick = new CommonTick(this, this.fps);
@@ -26,13 +27,20 @@ var Game = (function () {
     };
     Game.prototype.update = function (delta) {
         this.battle.update(delta);
+        if (this.preStartDone) {
+            if (!this.battle.isFighting) {
+                this.askForNextBattle();
+            }
+        }
     };
     Game.prototype.generatePlayer = function () {
         var player = this.entityRoot.generatePlayer(null);
         this.battle.addPlayerToFight(1, player);
         var fullName = player.getComponent("Name").getFullName();
-        var string = fullName + " created and added to fight!";
+        var playerClass = player.getComponent("Type")["class"];
+        var string = fullName + " created! Class: " + playerClass;
         this.userInterface.journal.addLineToJournal(string);
+        this.player = player;
     };
     Game.prototype.generateMob = function () {
         var entityList = this.entityRoot.getListOfEntities();
@@ -55,6 +63,29 @@ var Game = (function () {
         mob.getComponent("ExperienceStats").updateComponent();
         this.battle.addPlayerToFight(2, mob);
     };
+    //must be deleted!!!
+    Game.prototype.preStart = function () {
+        //TODO: create player - > generate Mobs -> start fight;
+        this.generatePlayer();
+        var playerLvl = this.player.getComponent("ExperienceStats").lvl;
+        var max = Math.round(4 + playerLvl / 5);
+        var min = Math.round(1 + playerLvl / 5);
+        this.generateSomeMobs(min, max);
+        this.preStartDone = true;
+        this.battle.startFight();
+    };
+    Game.prototype.reset = function () {
+        location.reload(true);
+    };
+    Game.prototype.askForNextBattle = function () {
+        this.stop();
+    };
+    Game.prototype.generateSomeMobs = function (min, max) {
+        var randomNum = Math.floor(min + Math.random() * (max - min + 1));
+        for (var i = 0; i < randomNum; i++) {
+            this.generateMob();
+        }
+    };
     return Game;
 }());
 var Journal = (function () {
@@ -69,37 +100,49 @@ var Journal = (function () {
         li.innerHTML = string;
         container.insertBefore(li, container.firstChild);
     };
-    Journal.prototype.newContactManyTargets = function () {
-        var string = "Horde of enemies attacking!";
+    Journal.prototype.newContactManyTargets = function (number) {
+        var string = number + " creatures are coming!";
         this.addLineToJournal(string);
     };
     Journal.prototype.newContactSingleTarget = function (target, hp, pdamage, mdamage) {
-        var string = "<b>" + target + "</b>" + " ( HP: " + hp + ", " + pdamage + ", " + mdamage + " ) attacking!";
+        var string = "<b>" + target + "</b>" + " ( HP: " + "<b>" + hp + "</b>" + ", Pdmg: " + '<font color="red"><b>' + pdamage + "</b></font>" + ", Mdmg: " + '<font color="blue"><b>' + mdamage + "</b></font>" + " ) attacking!";
         this.addLineToJournal(string);
     };
     Journal.prototype.newContact = function (player) {
         var string = "<b>" + player + "</b>" + " found new troubles. Prepare to fight!";
         this.addLineToJournal(string);
     };
-    Journal.prototype.hit = function (player, target, damage, pdamage, mdamage) {
-        var string = "<b>" + player + "</b>" + " attacking " + "<b>" + target + "</b>" + " on " + '<font color="purple"><b>' + Math.round(damage) + "</b></font>" + " ( "
+    Journal.prototype.hit = function (target, damage, pdamage, mdamage) {
+        var string = "<b>" + target + "</b>" + " hitted on " + '<font color="purple"><b>' + Math.round(damage) + "</b></font>" + " ( "
             + '<font color="red"><b>' + Math.round(pdamage) + "</b></font>" + " + " + '<font color="blue"><b>' + Math.round(mdamage) + "</b></font>" + " ).";
         this.addLineToJournal(string);
     };
     Journal.prototype.evade = function (player, target, chanse) {
-        var string = "<b>" + player + "</b>" + " attacking, but " + "<b>" + target + "</b>" + " dodge the attack with chanse: " + "<b>" + chanse + "</b>.";
+        var string = "<b>" + target + "</b>" + " dodge the attack with chanse: " + "<b>" + chanse + "</b>.";
         this.addLineToJournal(string);
     };
-    Journal.prototype.block = function (player, target, blocked, chanse) {
-        var string = "<b>" + target + "</b>" + " blocked " + "<b>" + player + "</b>" + "attack on " + '<font color="purple">' + blocked + "</font>" + "damage with " + chanse + "% chanse.";
+    Journal.prototype.block = function (target, blocked, chanse) {
+        var string = "<b>" + target + "</b>" + " blocked on " + '<font color="purple">' + blocked + "</font>" + "damage with " + chanse + "% chanse.";
         this.addLineToJournal(string);
     };
     Journal.prototype.kill = function (player, target) {
-        var string = "<b>" + player + "</b>" + " kill " + "<b>" + target + "</b>.";
+        var string = "<b>" + target + "</b>" + " killed by " + "<b>" + player + "</b>.";
         this.addLineToJournal(string);
     };
     Journal.prototype.gainExp = function (player, exp) {
         var string = "<b>" + player + "</b>" + " obtain " + exp + " experience.";
+        this.addLineToJournal(string);
+    };
+    Journal.prototype.win = function (player) {
+        var string = "Congratulation! " + "<b>" + player + "</b>" + " WIN this battle!";
+        this.addLineToJournal(string);
+    };
+    Journal.prototype.lose = function (player) {
+        var string = "So sad! " + "<b>" + player + "</b>" + " LOSE this battle!";
+        this.addLineToJournal(string);
+    };
+    Journal.prototype.attack = function (player, target) {
+        var string = "<b>" + player + "</b>" + " is attacking " + "<b>" + target + "</b>.";
         this.addLineToJournal(string);
     };
     return Journal;
@@ -401,10 +444,10 @@ var Battle = (function () {
         this.parent.userInterface.fillBlock(p2);
         this.parent.userInterface.journal.newContact(fullNameEnemy);
         if (this.teamTwo.length > 1) {
-            this.parent.userInterface.journal.newContactManyTargets();
+            this.parent.userInterface.journal.newContactManyTargets(this.teamTwo.length);
         }
         else
-            this.parent.userInterface.journal.newContactSingleTarget(fullNameEnemy, enemyHp, pdamage, mdamage);
+            this.parent.userInterface.journal.newContactSingleTarget(fullNameEnemy, enemyHp, stringDamage, stringMDamage);
         //заполняем живых creature в массивы по командам.
         for (var j = 0; j < this.teamOne.length; j++) {
             this.teamOneAlive.push(this.teamOne[j]);
@@ -498,9 +541,10 @@ var Battle = (function () {
             var targetBlockChanse = targetFightStats.getCurrentStat("BLK");
             var targetHP = targetFightStats.getCurrentStat("HP");
             var targetChansePercent = targetDodgeChanse / 100;
+            this.parent.userInterface.journal.attack(playerName, targetName);
             var randomNum = Math.floor((Math.random() * 101) * 100); // 0 - 10000;
             if (targetDodgeChanse >= randomNum) {
-                this.parent.userInterface.evade(playerName, targetName, targetChansePercent);
+                this.parent.userInterface.evade(targetName, targetChansePercent);
                 return;
             }
             phsysicalPlayerDamage -= phsysicalPlayerDamage * (targetPhysicsDefense / 100) / 100;
@@ -510,7 +554,7 @@ var Battle = (function () {
             // и отнять % от блокированного урона из общего урона.
             targetHP -= totalDamage;
             targetFightStats.setStats("current", { "HP": targetHP });
-            this.parent.userInterface.journal.hit(playerName, targetName, totalDamage, phsysicalPlayerDamage, magicalPlayerDamage);
+            this.parent.userInterface.journal.hit(targetName, totalDamage, phsysicalPlayerDamage, magicalPlayerDamage);
             if (targetHP <= 0)
                 targetFightStats.killedBy = player;
             this.entitiesToUpdateInterface.push(singleTarget);
@@ -551,6 +595,10 @@ var Battle = (function () {
             this.isBattleEnd = true;
     };
     Battle.prototype.battleEnd = function () {
+        if (this.whoWin == "Player")
+            this.playerWin();
+        else
+            this.playerLose();
         //обнуляем массивы с мобами начисто, удаляя их насовсем и навсегда безвозвратно!!!!!!!!!!!;
         for (var i = 0; i < this.teamTwo.length; i++) {
             var entity = this.teamTwo[i];
@@ -567,18 +615,10 @@ var Battle = (function () {
         }
         this.isFighting = false;
         this.isFightPrepare = false;
-        this.parent.userInterface.journal.addLineToJournal("Battle End! Grats");
-        // start clear all arrays, all entities, and user interface;
+        this.parent.userInterface.journal.addLineToJournal("Battle is end!");
         //обнуляем массивы с живыми.
         this.teamOneAlive.length = 0;
         this.teamTwoAlive.length = 0;
-    };
-    Battle.prototype.resetStats = function () {
-        if (this.teamTwo.length == 0) {
-            this.teamOne[0].getComponent("FightingStats").resetStats();
-            this.parent.userInterface.fillBlock(this.teamOne[0]);
-            this.parent.userInterface.addLineToJournal("Grats, u kill them all");
-        }
     };
     Battle.prototype.gainExperience = function (entity, value) {
         if (entity.type == "Player") {
@@ -596,9 +636,20 @@ var Battle = (function () {
     Battle.prototype.checkAliveMobs = function () {
         if (this.teamTwoAlive.length > 0)
             return this.teamTwoAlive[0];
-        return null;
+        else
+            return null;
     };
-    Battle.prototype.updateUI = function () {
+    Battle.prototype.playerWin = function () {
+        var player = this.teamOne[0];
+        player.getComponent("FightingStats").resetStats();
+        var playerName = player.getComponent("Name").getFullName();
+        this.parent.userInterface.journal.win(playerName);
+    };
+    Battle.prototype.playerLose = function () {
+        var player = this.teamOne[0];
+        player.getComponent("FightingStats").resetStats();
+        var playerName = player.getComponent("Name").getFullName();
+        this.parent.userInterface.journal.win(playerName);
     };
     Battle.prototype.killEntity = function (entity) {
         this.parent.entityRoot.removeEntity(entity);
