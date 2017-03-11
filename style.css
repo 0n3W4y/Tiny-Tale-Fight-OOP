@@ -16,7 +16,7 @@ body {
 
 #wrapper{
   display:block;
-  position:flex;
+  position:relative;
   width:1300px;
   height:600px;
   background-color: #444444;
@@ -286,7 +286,7 @@ body {
   width:81px;
   height:10px;
   position: relative;
-  top:53px;
+  top:48px;
   background: #808080;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;

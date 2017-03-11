@@ -235,7 +235,7 @@ class EntityParametersGenerator {
 				console.log( "Error, no key with name: " + key + ". Error in EntityParametersGenerator/generateFightingStats." );
 		}
 
-		var result = { "stats": stats, "lvlup": lvlup, "lvlupClass": lvlupClass };
+		var result = { "stats": stats, "levelUpStats": lvlup, "levelUpClassStats": lvlupClass };
 		return result;
 	}
 

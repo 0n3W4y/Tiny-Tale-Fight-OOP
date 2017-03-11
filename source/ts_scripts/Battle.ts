@@ -185,17 +185,22 @@ class Battle {
 		magicalPlayerDamage = Math.round( playerMinDamage + Math.random()*( playerMaxDamageM - playerMinDamageM ) );
 
 		// выберем рандомную атаку АОЕ или сингл. 
-		var typeOfDamage = 0;// Math.floor( Math.random()*2 ); //0 , 1;
+		var typeOfDamage = Math.floor( Math.random()*2 ); //0 , 1;
+		var timesToAttack = 1;
 
-		if( typeOfDamage == 0 ){ //single target;
-			var singleTarget = target[0]; // для игрока это будет тот, который стоит первым. Он же отображен в оснвоном интерфейсе в главном фрейме.
-			if( player.type == "Mob" ){
-				var rnum = Math.floor( Math.random()*target.length );
-				singleTarget = target[rnum];
+		if( typeOfDamage == 0 ) //AOE targets;
+			timesToAttack = target.length;
+
+		for( var i = 0; i < timesToAttack; i++ ){
+			var newTarget = target[i];
+			if( timesToAttack == 1 ){ 
+				if( player.type == "Mob" ){ // для игрока это будет тот, который стоит первым. Он же отображен в оснвоном интерфейсе в главном фрейме. Его индекс 0
+					var rnum = Math.floor( Math.random()*target.length );
+					newTarget = target[rnum];
+				}
 			}
-
-			var targetName = singleTarget.getComponent( "Name" ).getFullName();
-			var targetFightStats = singleTarget.getComponent( "FightingStats" );
+			var targetName = newTarget.getComponent( "Name" ).getFullName();
+			var targetFightStats = newTarget.getComponent( "FightingStats" );
 			var targetPhysicsDefense = targetFightStats.getCurrentStat( "STR" ) + targetFightStats.getCurrentStat( "PDEF" );
 			var targetMagicalDefense = targetFightStats.getCurrentStat( "INT" ) + targetFightStats.getCurrentStat( "MDEF" );
 			var targetAgility = targetFightStats.getCurrentStat( "AGI" );
@@ -207,7 +212,7 @@ class Battle {
 
 			var randomNum = Math.floor((Math.random()*101)*100); // 0 - 10000;
 			if( targetDodgeChanse >= randomNum ){
-				this.parent.userInterface.evade( targetName, targetChansePercent );
+				this.parent.userInterface.journal.evade( targetName, targetChansePercent );
 				return;
 			}
 			
@@ -226,26 +231,18 @@ class Battle {
 			if( targetHP <= 0 )
 				targetFightStats.killedBy = player;
 
-			this.entitiesToUpdateInterface.push( singleTarget );
+			//обновляем UI для каждого актера, котоырй был под атакой.
+			var index;
+			if( newTarget.type == "Mob" )
+				index = this.teamTwo.indexOf( newTarget );
+			else
+				index == this.teamOne.indexOf( newTarget );
 
-		}else{
-			//TODO: AOE attack to all entities in alive array;
-		}
-		
+			this.parent.userInterface.updateUIForEntity( newTarget, index );
+		}		
 	}
 
 	private endRound( time ){
-
-		//обновляем UI для каждого актера, котоырй был под атакой.
-		for( var k = 0; k < this.entitiesToUpdateInterface.length; k++ ){
-			var entity = this.entitiesToUpdateInterface[k];
-			var index = 0
-			if( entity.type == "Mob" )
-				index = this.teamTwo.indexOf( entity );
-
-			this.parent.userInterface.updateUIForEntity( entity, index );
-		}
-
 
 		for( var i = 0; i < this.teamOneAlive.length; i++ ){
 			var p1 = this.teamOneAlive[i];
@@ -282,28 +279,32 @@ class Battle {
 		else
 			this.playerLose();
 
-		//обнуляем массивы с мобами начисто, удаляя их насовсем и навсегда безвозвратно!!!!!!!!!!!;
+		//обнуляем массивы с мобами начисто, складывая их в массив с трупами.;
 		for( var i = 0; i < this.teamTwo.length; i++ ){
 			var entity = this.teamTwo[i];
 			this.killEntity( entity );
 		}
-		this.teamTwo.length = 0;
 
-		//обнуляем массив с игроком, только если он умер, либо убираем только хелпера;
+		this.isFighting = false;
+		this.parent.userInterface.journal.addLineToJournal( "Battle is end!" );
+
+		this.clearBattleGround();
+
+	}
+
+	private clearBattleGround(){
+		//обнуляем массив с игроком.
 		this.teamOne.length = 0;
 		this.teamTwo.length = 0;
 
-		this.isFighting = false;
 		this.isFightPrepare = false;
-		this.parent.userInterface.journal.addLineToJournal( "Battle is end!" );
-
 
 		//обнуляем массивы с живыми.
 		this.teamOneAlive.length = 0;
 		this.teamTwoAlive.length = 0;
 
 		this.parent.userInterface.clearAllBlocks();
-	}	
+	}
 
 	private gainExperience( entity, value ){
 		if( entity.type == "Player" ){

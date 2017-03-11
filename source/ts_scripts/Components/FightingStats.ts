@@ -15,7 +15,6 @@ class FightingStats extends Component{
 		this.killedBy = null;
 		this.currentStats = {
 			HP:0,
-			SP:0,
 			STR:0,
 			AGI:0,
 			INT:0,
@@ -28,7 +27,6 @@ class FightingStats extends Component{
 
 		this.staticStats = {
 			HP:0,
-			SP:0,
 			STR:0,
 			AGI:0,
 			INT:0,
@@ -41,7 +39,6 @@ class FightingStats extends Component{
 
 		this.levelUpStats = {
 			HP:0,
-			SP:0,
 			STR:0,
 			AGI:0,
 			INT:0,
@@ -80,7 +77,7 @@ class FightingStats extends Component{
 						console.log( "Error, no key with name: " + newKey + ". Error in FightingStats/init." );
 				}
 			}
-			else if( key == "lvlUpStats" ){
+			else if( key == "levelUpStats" ){
 				for( var newKey in container ){
 					if ( !( this.levelUpStats[newKey] === undefined) ){
 						this.levelUpStats[newKey] = container[newKey];

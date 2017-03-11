@@ -389,10 +389,10 @@ var UserInterface = (function () {
         var staticHp = entity.getComponent("FightingStats").getStaticStat("HP");
         var lvlUpHp = entity.getComponent("FightingStats").getLevelUpStat("HP");
         staticHp = staticHp + lvlUpHp * lvl;
-        var hpWidth = Math.round((staticHp / currentHPStat) * 100);
+        var hpWidth = Math.round((currentHPStat / staticHp) * 100);
         if (hpWidth < 0)
             hpWidth = 0;
-        var hpBar = container.getElementsByClassName("red");
+        var hpBar = container.getElementsByClassName("red")[0];
         hpBar.innerHTML = currentHPStat + "/" + staticHp;
         hpBar.style.width = hpWidth + "%";
     };
@@ -541,15 +541,20 @@ var Battle = (function () {
         phsysicalPlayerDamage = Math.round(playerMinDamage + Math.random() * (playerMaxDamage - playerMinDamage));
         magicalPlayerDamage = Math.round(playerMinDamage + Math.random() * (playerMaxDamageM - playerMinDamageM));
         // выберем рандомную атаку АОЕ или сингл. 
-        var typeOfDamage = 0; // Math.floor( Math.random()*2 ); //0 , 1;
-        if (typeOfDamage == 0) {
-            var singleTarget = target[0]; // для игрока это будет тот, который стоит первым. Он же отображен в оснвоном интерфейсе в главном фрейме.
-            if (player.type == "Mob") {
-                var rnum = Math.floor(Math.random() * target.length);
-                singleTarget = target[rnum];
+        var typeOfDamage = Math.floor(Math.random() * 2); //0 , 1;
+        var timesToAttack = 1;
+        if (typeOfDamage == 0)
+            timesToAttack = target.length;
+        for (var i = 0; i < timesToAttack; i++) {
+            var newTarget = target[i];
+            if (timesToAttack == 1) {
+                if (player.type == "Mob") {
+                    var rnum = Math.floor(Math.random() * target.length);
+                    newTarget = target[rnum];
+                }
             }
-            var targetName = singleTarget.getComponent("Name").getFullName();
-            var targetFightStats = singleTarget.getComponent("FightingStats");
+            var targetName = newTarget.getComponent("Name").getFullName();
+            var targetFightStats = newTarget.getComponent("FightingStats");
             var targetPhysicsDefense = targetFightStats.getCurrentStat("STR") + targetFightStats.getCurrentStat("PDEF");
             var targetMagicalDefense = targetFightStats.getCurrentStat("INT") + targetFightStats.getCurrentStat("MDEF");
             var targetAgility = targetFightStats.getCurrentStat("AGI");
@@ -560,7 +565,7 @@ var Battle = (function () {
             this.parent.userInterface.journal.attack(playerName, targetName);
             var randomNum = Math.floor((Math.random() * 101) * 100); // 0 - 10000;
             if (targetDodgeChanse >= randomNum) {
-                this.parent.userInterface.evade(targetName, targetChansePercent);
+                this.parent.userInterface.journal.evade(targetName, targetChansePercent);
                 return;
             }
             phsysicalPlayerDamage -= phsysicalPlayerDamage * (targetPhysicsDefense / 100) / 100;
@@ -573,20 +578,16 @@ var Battle = (function () {
             this.parent.userInterface.journal.hit(targetName, totalDamage, phsysicalPlayerDamage, magicalPlayerDamage);
             if (targetHP <= 0)
                 targetFightStats.killedBy = player;
-            this.entitiesToUpdateInterface.push(singleTarget);
-        }
-        else {
+            //обновляем UI для каждого актера, котоырй был под атакой.
+            var index;
+            if (newTarget.type == "Mob")
+                index = this.teamTwo.indexOf(newTarget);
+            else
+                index == this.teamOne.indexOf(newTarget);
+            this.parent.userInterface.updateUIForEntity(newTarget, index);
         }
     };
     Battle.prototype.endRound = function (time) {
-        //обновляем UI для каждого актера, котоырй был под атакой.
-        for (var k = 0; k < this.entitiesToUpdateInterface.length; k++) {
-            var entity = this.entitiesToUpdateInterface[k];
-            var index = 0;
-            if (entity.type == "Mob")
-                index = this.teamTwo.indexOf(entity);
-            this.parent.userInterface.updateUIForEntity(entity, index);
-        }
         for (var i = 0; i < this.teamOneAlive.length; i++) {
             var p1 = this.teamOneAlive[i];
             if (p1.getComponent("FightingStats").killedBy != null) {
@@ -615,18 +616,20 @@ var Battle = (function () {
             this.playerWin();
         else
             this.playerLose();
-        //обнуляем массивы с мобами начисто, удаляя их насовсем и навсегда безвозвратно!!!!!!!!!!!;
+        //обнуляем массивы с мобами начисто, складывая их в массив с трупами.;
         for (var i = 0; i < this.teamTwo.length; i++) {
             var entity = this.teamTwo[i];
             this.killEntity(entity);
         }
-        this.teamTwo.length = 0;
-        //обнуляем массив с игроком, только если он умер, либо убираем только хелпера;
+        this.isFighting = false;
+        this.parent.userInterface.journal.addLineToJournal("Battle is end!");
+        this.clearBattleGround();
+    };
+    Battle.prototype.clearBattleGround = function () {
+        //обнуляем массив с игроком.
         this.teamOne.length = 0;
         this.teamTwo.length = 0;
-        this.isFighting = false;
         this.isFightPrepare = false;
-        this.parent.userInterface.journal.addLineToJournal("Battle is end!");
         //обнуляем массивы с живыми.
         this.teamOneAlive.length = 0;
         this.teamTwoAlive.length = 0;
@@ -713,6 +716,7 @@ var EntityRoot = (function () {
         this.entities = new Array();
         this.parent = parent;
         this.entityIdNumber = 0;
+        this.deadEntities = new Array();
     }
     EntityRoot.prototype.init = function (creaturesData, humanoidsData, humanoidsClassData) {
         this.entityParametersGenerator = new EntityParametersGenerator(creaturesData, humanoidsData, humanoidsClassData);
@@ -738,6 +742,12 @@ var EntityRoot = (function () {
         entity.createComponentsWithParams(params);
         return entity;
     };
+    EntityRoot.prototype.generateHelper = function (type) {
+        var entity = this.createEntity("Helper");
+        var params = this.entityParametersGenerator.generate("Helper", type);
+        entity.createComponentsWithParams(params);
+        return entity;
+    };
     EntityRoot.prototype.createEntity = function (type) {
         if (type != "Player" && type != "Mob")
             console.log("Error, no type with name: " + type + ". Error in EntityRoot/createEntity");
@@ -756,8 +766,10 @@ var EntityRoot = (function () {
     };
     EntityRoot.prototype.removeEntity = function (entity) {
         for (var i = 0; i < this.entities.length; i++) {
-            if (entity.getComponent("Name").getFullName() == this.entities[i].getComponent("Name").getFullName())
+            if (entity.id == this.entities[i].id) {
+                this.deadEntities.push(this.entities[i]);
                 this.entities.splice(i, 1);
+            }
         }
     };
     EntityRoot.prototype.collectDataFromEntity = function (entity) {
@@ -1028,7 +1040,7 @@ var EntityParametersGenerator = (function () {
             else
                 console.log("Error, no key with name: " + key + ". Error in EntityParametersGenerator/generateFightingStats.");
         }
-        var result = { "stats": stats, "lvlup": lvlup, "lvlupClass": lvlupClass };
+        var result = { "stats": stats, "levelUpStats": lvlup, "levelUpClassStats": lvlupClass };
         return result;
     };
     EntityParametersGenerator.prototype.generateExperienceStats = function (object) {
@@ -1153,7 +1165,6 @@ var FightingStats = (function (_super) {
         _this.killedBy = null;
         _this.currentStats = {
             HP: 0,
-            SP: 0,
             STR: 0,
             AGI: 0,
             INT: 0,
@@ -1165,7 +1176,6 @@ var FightingStats = (function (_super) {
         };
         _this.staticStats = {
             HP: 0,
-            SP: 0,
             STR: 0,
             AGI: 0,
             INT: 0,
@@ -1177,7 +1187,6 @@ var FightingStats = (function (_super) {
         };
         _this.levelUpStats = {
             HP: 0,
-            SP: 0,
             STR: 0,
             AGI: 0,
             INT: 0,
@@ -1216,7 +1225,7 @@ var FightingStats = (function (_super) {
                         console.log("Error, no key with name: " + newKey + ". Error in FightingStats/init.");
                 }
             }
-            else if (key == "lvlUpStats") {
+            else if (key == "levelUpStats") {
                 for (var newKey in container) {
                     if (!(this.levelUpStats[newKey] === undefined)) {
                         this.levelUpStats[newKey] = container[newKey];

@@ -283,11 +283,11 @@ class UserInterface {
 
 		staticHp = staticHp + lvlUpHp*lvl;
 
-		var hpWidth = Math.round( ( staticHp / currentHPStat ) * 100);
+		var hpWidth = Math.round( ( currentHPStat / staticHp ) * 100);
 		if( hpWidth < 0 )
 			hpWidth = 0;
 
-		var hpBar = container.getElementsByClassName( "red" );
+		var hpBar = container.getElementsByClassName( "red" )[0];
 		hpBar.innerHTML = currentHPStat + "/" + staticHp;
 		hpBar.style.width = hpWidth + "%";
 	}

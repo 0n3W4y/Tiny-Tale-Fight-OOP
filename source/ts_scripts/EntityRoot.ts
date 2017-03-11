@@ -5,11 +5,14 @@ class EntityRoot {
 
 	private parent;
 	private entityIdNumber:number;
+
+	private deadEntities:Array<any>;
 	
 	constructor( parent ){
 		this.entities = new Array();
 		this.parent = parent;
 		this.entityIdNumber = 0;
+		this.deadEntities = new Array();
 	}
 
 	public init( creaturesData, humanoidsData, humanoidsClassData ){
@@ -38,6 +41,13 @@ class EntityRoot {
 		return entity;
 	}
 
+	public generateHelper( type ){
+		var entity = this.createEntity( "Helper" );
+		var params = this.entityParametersGenerator.generate( "Helper", type );
+		entity.createComponentsWithParams( params );
+		return entity;
+	}
+
 	public createEntity( type ):any{
 		if( type != "Player" && type != "Mob" )
 			console.log( "Error, no type with name: " + type + ". Error in EntityRoot/createEntity" );
@@ -62,8 +72,10 @@ class EntityRoot {
 
 	public removeEntity( entity ){
 		for( var i = 0; i < this.entities.length; i++ ){
-			if( entity.getComponent( "Name" ).getFullName() == this.entities[i].getComponent( "Name" ).getFullName() )
+			if( entity.id == this.entities[i].id ){
+				this.deadEntities.push( this.entities[i] );
 				this.entities.splice(i, 1);
+			}
 		}
 	}
 
