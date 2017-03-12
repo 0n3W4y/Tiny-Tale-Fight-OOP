@@ -91,8 +91,6 @@ class UserInterface {
 		var data = this.parent.entityRoot.collectDataFromEntity( entity );
 		var container = this.leftHelperBlock;
 
-		var nameContainer = data["Name"];
-		var fullName = nameContainer["fullname"];
 		var fightingStatsContainer = data["FightingStats"];
 		var currentStatsContainer = fightingStatsContainer["currentStats"];
 		var hp = Math.round( currentStatsContainer["HP"] );
@@ -109,7 +107,6 @@ class UserInterface {
 
 		var staticHp = staticStatsContainer["HP"] + lvlUpStatsContainer["HP"]*lvl;
 
-		container.getElementsByClassName("name")[0].innerHTML = fullName;
 		container.getElementsByClassName("red")[0].innerHTML = Math.round( hp ) + "/" + staticHp;
 		var hpBar = Math.round( ( hp/staticHp ) * 100 );
 		if( hpBar < 0 )
@@ -171,8 +168,10 @@ class UserInterface {
 
 		var li = document.createElement("li");
 		li.id = "" + id;
+		var enemyBlock = document.createElement("div");
+		enemyBlock.id="enemy-block";
 		var divAvatar = document.createElement("div");
-		divAvatar.id = "avatar";
+		divAvatar.id = "avatar-small";
 		//divAvatar.style.background-image = 
 
 		var divLevel = document.createElement("div");
@@ -187,9 +186,10 @@ class UserInterface {
 		spanBar.innerHTML = currentHPStat + "/" + staticHP;
 		spanBar.style.width = hpWidth + "%";
 
-		li.appendChild( divAvatar );
+		li.appendChild( enemyBlock );
+		enemyBlock.appendChild( divAvatar );
 		divAvatar.appendChild( divLevel );
-		divAvatar.appendChild( divBar );
+		enemyBlock.appendChild( divBar );
 		divBar.appendChild( spanBar );
 
 		var container = this.enemyList;
@@ -215,33 +215,35 @@ class UserInterface {
 	public clearAllBlocks(){
 		this.clearLeftBlock();
 		this.clearRightBlock();
-		//this.clearLeftHelperBlock();
+		this.clearLeftHelperBlock();
 		this.clearEnemyList();
 	}
 
 	private clearRightBlock(){
 		var container = this.rightCharacterBlock;
-		container.getElementsByClassName("name")[0].innerHTML = "";
-		container.getElementsByClassName("red")[0].innerHTML = "0/0";
-		container.getElementsByClassName("red")[0].style.width = "0%";
-		container.getElementsByClassName("level")[0].innerHTML = "0";
+		container.getElementsByClassName( "name" )[0].innerHTML = "";
+		container.getElementsByClassName( "red" )[0].innerHTML = "0/0";
+		container.getElementsByClassName( "red" )[0].style.width = "0%";
+		container.getElementsByClassName( "level" )[0].innerHTML = "0";
 	}
 
 	private clearLeftBlock(){
 		var container = this.leftCharacterBlock;
-		container.getElementsByClassName("name")[0].innerHTML = "";
-		container.getElementsByClassName("red")[0].innerHTML = "0/0";
-		container.getElementsByClassName("red")[0].style.width = "0%";
-		container.getElementsByClassName("level")[0].innerHTML = "0";
+		container.getElementsByClassName( "name" )[0].innerHTML = "";
+		container.getElementsByClassName( "red" )[0].innerHTML = "0/0";
+		container.getElementsByClassName( "red" )[0].style.width = "0%";
+		container.getElementsByClassName( "violet" )[0].innerHTML = "0/0";
+		container.getElementsByClassName( "violet" )[0].style.width = "0%";
+		container.getElementsByClassName( "level" )[0].innerHTML = "0";
 	}
 
 	private clearLeftHelperBlock(){
 		var container = this.leftHelperBlock;
-		container.getElementsByClassName("name")[0].innerHTML = "";
-		container.getElementsByClassName("red")[0].innerHTML = "0/0";
-		container.getElementsByClassName("red")[0].style.width = "0%";
-		container.getElementsByClassName("level")[0].innerHTML = "0";
-		this.leftHelperBlock = null;
+		container.getElementsByClassName( "red" )[0].innerHTML = "0/0";
+		container.getElementsByClassName( "red" )[0].style.width = "0%";
+		container.getElementsByClassName( "violet" )[0].innerHTML = "0/0";
+		container.getElementsByClassName( "violet" )[0].style.width = "0%";
+		container.getElementsByClassName( "level" )[0].innerHTML = "0";
 	}
 
 	private clearEnemyList(){

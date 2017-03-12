@@ -15,41 +15,20 @@ class EntityRoot {
 		this.deadEntities = new Array();
 	}
 
-	public init( creaturesData, humanoidsData, humanoidsClassData ){
-		this.entityParametersGenerator = new EntityParametersGenerator( creaturesData, humanoidsData, humanoidsClassData );
+	public init( creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData ){
+		this.entityParametersGenerator = new EntityParametersGenerator( creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData );
 	}
-/*
-	public generateEntity( entityType ):any{
+
+	public generateEntity( entityType, secondType ):any{
 
 		var entity = this.createEntity( entityType );
-		var params = this.entityParametersGenerator.generate( entityType );
-		entity.createComponentsWithParams( params );
-		return entity;
-	}
-*/
-	public generatePlayer( type ){
-		var entity = this.createEntity( "Player" );
-		var params = this.entityParametersGenerator.generate( "Player", type );
-		entity.createComponentsWithParams( params );
-		return entity;
-	}
-
-	public generateMob(){
-		var entity = this.createEntity( "Mob" );
-		var params = this.entityParametersGenerator.generate( "Mob", null );
-		entity.createComponentsWithParams( params );
-		return entity;
-	}
-
-	public generateHelper( type ){
-		var entity = this.createEntity( "Helper" );
-		var params = this.entityParametersGenerator.generate( "Helper", type );
+		var params = this.entityParametersGenerator.generate( entityType, secondType );
 		entity.createComponentsWithParams( params );
 		return entity;
 	}
 
 	public createEntity( type ):any{
-		if( type != "Player" && type != "Mob" )
+		if( type != "Player" && type != "Mob" && type != "Helper"  )
 			console.log( "Error, no type with name: " + type + ". Error in EntityRoot/createEntity" );
 
 		var id = this.createId();

@@ -67,18 +67,29 @@ class Battle {
 	}	
 
 	private prepareFight( time ){
-		var p1 = this.teamOne[0]; // 1 player right now;
+		var p1;
+		var h1;
+
+		for( var i = 0; i < this.teamOne.length; i++ ){
+			var actor = this.teamOne[i];
+			if( actor.type == "Player" )
+				p1 = actor; // only 1 player available rght now;
+			else if( actor.type == "Helper" )
+				h1 = actor; // only1  helper available right now;
+		}
 
 		var fullNamePlayer = p1.getComponent( "Name" ).getFullName();
 		this.parent.userInterface.fillBlock( p1 );
 
-		var p2 = this.teamTwo[0]; // always select first mob in array;
+		if( h1 != null )
+			this.parent.userInterface.fillBlock( h1 );
+
+		var p2 = this.teamTwo[0];
 		var fullNameEnemy = p2.getComponent( "Name" ).getFullName();
 		var enemyHp = p2.getComponent( "FightingStats" ).getCurrentStat( "HP" );
 		var pdamage = p2.getComponent( "FightingStats" ).getCurrentStat( "STR" );
 		var mdamage = p2.getComponent( "FightingStats" ).getCurrentStat( "INT" );
-		var stringDamage = Math.round( pdamage/2 ) + " - " + Math.round( pdamage*2 );
-		var stringMDamage = Math.round( mdamage/2 ) + " - " + Math.round( mdamage*2 );
+
 		this.parent.userInterface.removeFromEnemyList( 0 );
 		this.parent.userInterface.fillBlock( p2 );
 
@@ -86,9 +97,9 @@ class Battle {
 
 		if( this.teamTwo.length > 1 ){
 			this.parent.userInterface.journal.newContactManyTargets( this.teamTwo.length );
-			// TODO: сделать полнцю картину всех мобов, с которомы столкнулся игрок.
+			// TODO: сделать полнцю картину всех мобов, с котороми столкнулся игрок.
 		}else
-			this.parent.userInterface.journal.newContactSingleTarget( fullNameEnemy, enemyHp, stringDamage, stringMDamage );
+			this.parent.userInterface.journal.newContactSingleTarget( fullNameEnemy, enemyHp, pdamage, mdamage );
 
 		//заполняем живых creature в массивы по командам.
 		for( var j = 0; j < this.teamOne.length; j++ ){
@@ -161,7 +172,7 @@ class Battle {
 		for( var k = 0; k < queueArray.length; k++ ){
 			var p1 = queueArray[k];
 			var p2;
-			if( p1.type == "Player" ){
+			if( p1.type == "Player" || p1.type == "Helper" ){
 				p2 = this.teamTwoAlive;
 			}else{
 				p2 = this.teamOneAlive;
@@ -175,14 +186,7 @@ class Battle {
 		var playerName = player.getComponent( "Name" ).getFullName();
 		var playerFightStats = player.getComponent( "FightingStats" );
 		var phsysicalPlayerDamage = playerFightStats.getCurrentStat( "STR" );
-		var playerMaxDamage = phsysicalPlayerDamage*2;
-		var playerMinDamage = phsysicalPlayerDamage/2;
 		var magicalPlayerDamage = playerFightStats.getCurrentStat( "INT" );
-		var playerMaxDamageM = magicalPlayerDamage*2;
-		var playerMinDamageM = magicalPlayerDamage/2;
-
-		phsysicalPlayerDamage = Math.round( playerMinDamage + Math.random()*( playerMaxDamage - playerMinDamage ) );
-		magicalPlayerDamage = Math.round( playerMinDamage + Math.random()*( playerMaxDamageM - playerMinDamageM ) );
 
 		// выберем рандомную атаку АОЕ или сингл. 
 		var typeOfDamage = Math.floor( Math.random()*2 ); //0 , 1;
@@ -198,6 +202,14 @@ class Battle {
 					var rnum = Math.floor( Math.random()*target.length );
 					newTarget = target[rnum];
 				}
+			}
+			// просчитаем крит. в данный момент, критшанс будет 5%
+			var criticalHit = Math.floor( Math.random() * 100 ); //0 - 99;
+			var crit = 0;
+			if( criticalHit < 5){// 0, 1, 2, 3, 4;
+				phsysicalPlayerDamage *= 2;
+				magicalPlayerDamage *= 2;
+				crit = 1;
 			}
 			var targetName = newTarget.getComponent( "Name" ).getFullName();
 			var targetFightStats = newTarget.getComponent( "FightingStats" );
@@ -225,7 +237,12 @@ class Battle {
 
 			targetHP -= totalDamage;
 			targetFightStats.setStats( "current", { "HP": targetHP } );
-			this.parent.userInterface.journal.hit( targetName, totalDamage, phsysicalPlayerDamage, magicalPlayerDamage );
+			if( crit == 0 )
+				this.parent.userInterface.journal.hit( targetName, totalDamage, phsysicalPlayerDamage, magicalPlayerDamage );
+			else
+				this.parent.userInterface.journal.crit( targetName, totalDamage, phsysicalPlayerDamage, magicalPlayerDamage );
+
+			
 
 
 			if( targetHP <= 0 )
@@ -306,11 +323,17 @@ class Battle {
 		this.parent.userInterface.clearAllBlocks();
 	}
 
-	private gainExperience( entity, value ){
-		if( entity.type == "Player" ){
-			entity.getComponent( "ExperienceStats" ).gainExperience( value );
+	private gainExperience( entityArray, value ){
+		var players = entityArray.length;
+		var bounty = Math.round( value / players );
+		if( bounty < 1 )
+			bounty = 1;
+
+		for( var i = 0; i < players; i++ ){
+			var entity = entityArray[i];
+			entity.getComponent( "ExperienceStats" ).gainExperience( bounty );
 			var entityFullname = entity.getComponent( "Name" ).getFullName();
-			this.parent.userInterface.journal.gainExp( entityFullname, value );
+			this.parent.userInterface.journal.gainExp( entityFullname, bounty );
 			this.parent.userInterface.updateUIForEntity( entity, 0 );
 		}
 		
@@ -333,15 +356,28 @@ class Battle {
 	}
 
 	private playerWin(){
-		var player = this.teamOne[0];
+		var player;
+		var helper;
+		for( var i = 0 ; i < this.teamOneAlive.length; i++ ){
+			var entity = this.teamOneAlive[i];
+			if( entity.type == "Player" )
+				player = entity;
+			else
+				helper = entity;
+		}
+
 		player.getComponent( "FightingStats" ).resetStats();
+
+		if( helper != null )
+			helper.getComponent( "FightingStats" ).resetStats();
+
 		var playerName = player.getComponent( "Name" ).getFullName();
 		this.parent.userInterface.journal.win( playerName );
 	}
 
 	private playerLose(){
 		var player = this.teamOne[0];
-		player.getComponent( "FightingStats" ).resetStats();
+		//player.getComponent( "FightingStats" ).resetStats();
 		var playerName = player.getComponent( "Name" ).getFullName();
 		this.parent.userInterface.journal.lose( playerName );
 	}
@@ -373,7 +409,8 @@ class Battle {
 			}
 		}
 
-		this.gainExperience( player, bounty );
+		// опыт получают только живые.
+		this.gainExperience( this.teamOneAlive, bounty );
 	}
 
 	private killHelper( helper ){

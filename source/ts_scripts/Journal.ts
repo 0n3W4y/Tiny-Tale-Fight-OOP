@@ -37,6 +37,12 @@ class Journal {
 		this.addLineToJournal( string );
 	}
 
+	public crit( target, damage, pdamage, mdamage ){
+		var string = "<b>" + target + "</b>" + " critically hitted on " + '<font color="purple" style="font-size:24px;"><b>' + Math.round( damage ) + "</b></font>" + " ( "
+					 + '<font color="red" style="font-size:24px;"><b>' + Math.round( pdamage ) + "</b></font>" + " + " + '<font color="blue" style="font-size:24px;"><b>' + Math.round( mdamage ) + "</b></font>" + " ).";
+		this.addLineToJournal( string );
+	}
+
 	public evade( player, target, chanse ){
 		var string = "<b>" + target + "</b>" + " dodge the attack with chanse: " + "<b>" + chanse + "</b>.";
 		this.addLineToJournal( string );

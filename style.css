@@ -14,7 +14,91 @@ body {
   text-align: center;
 }
 
-#wrapper{
+/* MAIN BUTTONS */
+
+.game-control-buttons{
+  background-color: #99aa99;
+  color: black;
+  border: 1px solid black;
+  border-radius: 2px;
+  height:25px;
+  width: 70px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+  margin: 4px 2px;
+  -webkit-transition-duration: 0.4s; /* Safari */
+  transition-duration: 0.4s;
+}
+.game-control-buttons:hover{
+  background-color: #00cc00; /* Green */
+  color: white;
+}
+
+/* MODAL WINDOW */
+
+#modal-window  {
+  display: none;
+  position: absolute;
+  left:50%;
+  top:20%;
+  width:auto;
+  height:auto;
+  margin-left:-100px;
+  margin-top:0px;
+  border:1px solid white;
+  border-radius: 6px;
+  background: #001122;
+  z-index:11;
+  color:white;
+  font-size: 24px;
+  text-align: center;
+}
+
+#overlay {
+  display: none;
+  position: absolute;
+  left:0px;
+  top:0px;
+  right:0px;
+  bottom:0px;
+  width:100%;
+  height:100%;
+  margin:0px;
+  background: black;
+  opacity: 0.5;
+  z-index:10;
+}
+
+
+
+
+
+
+
+
+
+#hero-creater{
+  display:none;
+  position:relative;
+  width:1300px;
+  height:600px;
+  background-color: #444444;
+  padding:0px;
+  margin:10px;
+  margin-left:auto;
+  margin-right: auto;
+  overflow:hidden;
+}
+
+
+
+
+/* BATTLE BLOCK */
+
+/* main blocks */
+#batlle-wrapper{
   display:block;
   position:relative;
   width:1300px;
@@ -65,7 +149,7 @@ body {
 
 #right-character-main-block { 
   display:block;
-  position:absolute; 
+  position:absolute;
   width:450px; 
   height:100px; 
   margin:5px; 
@@ -89,15 +173,41 @@ body {
   border:1px solid black;  
 }
 
-#inventory-block {
+#helper-block {
   display:block;
-  position:relative;
-  float: left;
-  width:300px; 
-  height:458px; 
+  position:absolute; 
+  width:200px; 
+  height:55px; 
+  margin:5px; 
+  overflow:hide; 
+  top:106px;
+  left:0px;
+  background: #999999;
+  border:1px solid black;  
+}
+
+#enemy-block {
+  display:block;
+  position:absolute; 
+  width:200px; 
+  height:55px; 
   margin:5px; 
   overflow:hide; 
   top:0px;
+  left:0px;
+  background: #999999;
+  border:1px solid black;  
+}
+
+#inventory-block {
+  display:block;
+  position:absolute;
+  float: left;
+  width:200px; 
+  height:420px; 
+  margin:5px; 
+  overflow:hide; 
+  bottom:0px;
   left:0px;
   background: #999999;
   border:1px solid black; 
@@ -105,49 +215,61 @@ body {
 
 #journal-block {
   display:block; 
-  position:relative;
-  float:left;
+  position:absolute;
   width:850px; 
-  height:350px; 
+  height:376px; 
   margin: 5px; 
   margin-left:0px;
   overflow:hide; 
-  top:0px;
-  left:0px;
+  top:106px;
+  left:210px;
   background: #dddddd;
   border: 1px solid black; 
 }
 
 #orbs-block {
   display:block; 
-  position:relative;
-  float:left;
+  position:absolute;
   width:850px; 
   height:100px; 
   margin:5px;
   margin-top: 0px;
   margin-left:0px;
   overflow:hide; 
-  top:0px;
-  left:0px;
+  bottom:0px;
+  left:210px;
   background: #999999;
   border: 1px solid black; 
 }
 
 #enemy-list {
   display: block;
-  position: relative;
-  overflow: auto;
+  position: absolute;
   list-style-type: none;
-  width:100%;
-  height:100%;
-  margin:0px;
+  width:228px;
+  height:482px;
+  margin:5px;
   padding:0px;
+  right:0px;
+  bottom:0px;
+  background: #999999;
+  border:1px solid black;
+  overflow-y: show;
+  overflow-x: hide;
+}
+
+#enemy-list li {
+  display: block;
+  position: relative;
+  float:left;
+  width:226px;
+  height:60px;
+  margin:0px;
 }
 
 #journal{
   display: block;
-  position: relative;
+  position: absolute;
   overflow: auto;
   padding: 0px;
   margin: 5px;
@@ -155,113 +277,23 @@ body {
   color:black;
   background: white;
   width:838px;
-  height:338px;
+  height:365px;
+  top:0px;
+  left:0px;
   border:1px solid black;
   list-style-type: circle;
 }
 
 #journal li{
   position: relative;
+  top:0px;
+  left:0px;
+  margin:10px;
   margin-left: 25px;
 }
 
 
-
-/* BUTTONS */
-
-.game-control-buttons{
-  background-color: #99aa99;
-  color: black;
-  border: 1px solid black;
-  border-radius: 2px;
-  height:25px;
-  width: 70px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 12px;
-  margin: 4px 2px;
-  -webkit-transition-duration: 0.4s; /* Safari */
-  transition-duration: 0.4s;
-}
-.game-control-buttons:hover{
-  background-color: #00cc00; /* Green */
-  color: white;
-}
-
-
-/* DECOR CHARACTER BLOCK */
-#avatar {
-  display: block;
-  float:left;
-  position: relative;
-  overflow: hide;
-  width:85px;
-  height:85px;
-  background: #ffffff;
-  border:2px solid blue;
-  border-radius: 4px;
-  margin:5px;
-}
-
-#stats-text{
-  display: block;
-  float:left;
-  position: relative;
-  overflow: hide;
-  width:330px;
-  height:20px;
-  margin:5px;
-  padding:0px;
-  font-size: 14px;
-}
-
-.name {
-  display: block;
-  position: relative;
-  overflow: hide;
-  text-overflow: hide;
-  width:300px;
-  height:20px;
-  margin:5px;
-  padding: 0px;
-  color:white;
-  font-size:24px;
-}
-
-.level {
-  display: block;
-  position: relative;
-  overflow: hide;
-  text-overflow: hide;
-  width:24px;
-  height:20px;
-  margin:2px;
-  padding:0px;
-  color: orange;
-  font-size: 20px;
-  font-weight: bold;
-  text-align: left;
-  text-shadow: 1px 1px black;
-
-}
-
-
-
 /* BARS */
-
-#bars{
-  display: block;
-  float: left;
-  position: relative;
-  width:340px;
-  height:55px;
-  overflow: hide;
-  text-overflow: hide;
-  margin:5px;
-  margin-left: 0px;
-  margin-right: 0px;
-}
 
 .bar {
   width:340px;
@@ -283,10 +315,10 @@ body {
 }
 
 .bar-li {
-  width:81px;
-  height:10px;
+  width:137px;
+  height:20px;
   position: relative;
-  top:48px;
+  top:10px;
   background: #808080;
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
@@ -297,8 +329,9 @@ body {
   -webkit-box-shadow: inset 0 -1px 1px rgba(255,255,255,0.3);
   -moz-box-shadow   : inset 0 -1px 1px rgba(255,255,255,0.3);
   box-shadow        : inset 0 -1px 1px rgba(255,255,255,0.3);
-  font-size:10px;
+  font-size:16px;
   font-family: Georgia, fantasy;
+  font-weight:bolder;
   
 }
 
@@ -316,7 +349,26 @@ body {
   -webkit-box-shadow: inset 0 -1px 1px rgba(255,255,255,0.3);
   -moz-box-shadow   : inset 0 -1px 1px rgba(255,255,255,0.3);
   box-shadow        : inset 0 -1px 1px rgba(255,255,255,0.3);
-  font-size:10px;
+  font-size:8px;
+  font-family: Georgia, fantasy;
+}
+
+.bar-exp-helper {
+  width:137px;
+  height:10px;
+  position: relative;
+  top:10px;
+  background: #808080;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  border-radius: 4px;
+  padding: 2px;
+  margin:0px;
+  overflow: hidden;
+  -webkit-box-shadow: inset 0 -1px 1px rgba(255,255,255,0.3);
+  -moz-box-shadow   : inset 0 -1px 1px rgba(255,255,255,0.3);
+  box-shadow        : inset 0 -1px 1px rgba(255,255,255,0.3);
+  font-size:8px;
   font-family: Georgia, fantasy;
 }
 
@@ -391,38 +443,111 @@ span.red {
 
 
 
-/* MODAL WINDOW */
-
-#overlay {
-  display: none;
-  position: absolute;
-  left:0px;
-  top:0px;
-  right:0px;
-  bottom:0px;
-  width:100%;
-  height:100%;
-  margin:0px;
-  background: black;
-  opacity: 0.5;
-  z-index:10;
+/* DECOR CHARACTER BLOCK */
+#avatar {
+  display: block;
+  float:left;
+  position: relative;
+  overflow: hide;
+  width:85px;
+  height:85px;
+  background: #ffffff;
+  border:2px solid blue;
+  border-radius: 4px;
+  margin:5px;
 }
 
-#askNextBattle  {
-  display: none;
-  position: absolute;
-  left:50%;
-  top:20%;
-  width:auto;
-  height:auto;
-  margin-left:-100px;
-  margin-top:0px;
-  border:1px solid white;
-  border-radius: 6px;
-  background: #001122;
-  z-index:11;
+#avatar-small {
+  display: block;
+  float:left;
+  position: relative;
+  overflow: hide;
+  width:40px;
+  height:40px;
+  background: #ffffff;
+  border:2px solid blue;
+  border-radius: 4px;
+  margin:5px;
+}
+
+
+#stats-text{
+  display: block;
+  float:left;
+  position: relative;
+  overflow: hide;
+  width:330px;
+  height:20px;
+  margin:5px;
+  padding:0px;
+  font-size: 14px;
+}
+
+.name {
+  display: block;
+  position: relative;
+  overflow: hide;
+  text-overflow: hide;
+  width:300px;
+  height:20px;
+  margin:5px;
+  padding: 0px;
   color:white;
-  font-size: 24px;
-  text-align: center;
+  font-size:24px;
 }
 
+.level {
+  display: block;
+  position: relative;
+  overflow: hide;
+  text-overflow: hide;
+  width:24px;
+  height:20px;
+  margin:2px;
+  margin-top: -2px;
+  padding:0px;
+  color: orange;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: left;
+  text-shadow: 1px 1px black;
+
+}
+
+/* END OF BATTLE WRAPPER */
+
+
+/* INVENTORY WRAPPER */
+
+#inventory-wrapper {
+  display:none;
+  position:relative;
+  width:1300px;
+  height:600px;
+  background-color: #444444;
+  padding:0px;
+  margin:10px;
+  margin-left:auto;
+  margin-right: auto;
+  overflow:hidden;
+}
+
+/* END OF ENVENTORY WRAPPER */
+
+
+/* SHOP WRAPPER */
+
+#shop-wrapper {
+  display:none;
+  position:relative;
+  width:1300px;
+  height:600px;
+  background-color: #444444;
+  padding:0px;
+  margin:10px;
+  margin-left:auto;
+  margin-right: auto;
+  overflow:hidden;
+}
+
+/* END OF SHOP WRAPPER */

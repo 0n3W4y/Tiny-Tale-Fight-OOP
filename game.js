@@ -8,10 +8,10 @@ var Game = (function () {
         this.fps = fps;
         this.preStartDone = false;
     }
-    Game.prototype.init = function (creaturesData, humanoidsData, humanoidsClassData, leftBlock, rightBlock, journal, helperBlock, enemylist) {
+    Game.prototype.init = function (creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, leftBlock, rightBlock, journal, helperBlock, enemylist) {
         this.commonTick = new CommonTick(this, this.fps);
         this.entityRoot = new EntityRoot(this);
-        this.entityRoot.init(creaturesData, humanoidsData, humanoidsClassData);
+        this.entityRoot.init(creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData);
         this.battle = new Battle(this);
         this.userInterface = new UserInterface(this);
         this.userInterface.init(leftBlock, rightBlock, journal, helperBlock, enemylist);
@@ -34,7 +34,7 @@ var Game = (function () {
         }
     };
     Game.prototype.generatePlayer = function () {
-        var player = this.entityRoot.generatePlayer(null);
+        var player = this.entityRoot.generateEntity("Player", null);
         this.battle.addPlayerToFight(1, player);
         var fullName = player.getComponent("Name").getFullName();
         var playerClass = player.getComponent("Type")["class"];
@@ -58,15 +58,25 @@ var Game = (function () {
         if (max > 100)
             max = 100;
         var mobLevel = Math.floor(Math.random() * (max - min + 1) + min);
-        var mob = this.entityRoot.generateMob("Mob", "Creature");
+        var mob = this.entityRoot.generateEntity("Mob", "Creature");
         mob.getComponent("ExperienceStats").lvl = mobLevel;
         mob.getComponent("ExperienceStats").updateComponent();
         this.battle.addPlayerToFight(2, mob);
+    };
+    Game.prototype.generateHelper = function () {
+        var helper = this.entityRoot.generateEntity("Helper", null);
+        this.battle.addPlayerToFight(1, helper);
+        var fullName = helper.getComponent("Name").getFullName();
+        var playerClass = helper.getComponent("Type")["class"];
+        var string = fullName + " created! Class: " + playerClass;
+        this.userInterface.journal.addLineToJournal(string);
+        this.helper = helper;
     };
     //must be deleted!!!
     Game.prototype.preStart = function () {
         //TODO: create player - > generate Mobs -> start fight;
         this.generatePlayer();
+        this.generateHelper();
         var playerLvl = this.player.getComponent("ExperienceStats").lvl;
         var max = Math.round(4 + playerLvl / 5);
         var min = Math.round(1 + playerLvl / 5);
@@ -79,16 +89,17 @@ var Game = (function () {
     };
     Game.prototype.askForNextBattle = function () {
         if (this.player.getComponent("FightingStats").killedBy != null)
-            this.preStart();
-        else {
-            this.battle.addPlayerToFight(1, this.player);
-            var playerLvl = this.player.getComponent("ExperienceStats").lvl;
-            var max = Math.round(4 + playerLvl / 5);
-            var min = Math.round(1 + playerLvl / 5);
-            this.generateSomeMobs(min, max);
-            this.preStartDone = true;
-            this.battle.startFight();
-        }
+            this.generatePlayer();
+        this.battle.addPlayerToFight(1, this.player);
+        if (this.helper.getComponent("FightingStats").killedBy != null)
+            this.generateHelper();
+        this.battle.addPlayerToFight(1, this.helper);
+        var playerLvl = this.player.getComponent("ExperienceStats").lvl;
+        var max = Math.round(4 + playerLvl / 5);
+        var min = Math.round(1 + playerLvl / 5);
+        this.generateSomeMobs(min, max);
+        this.preStartDone = true;
+        this.battle.startFight();
     };
     Game.prototype.generateSomeMobs = function (min, max) {
         var randomNum = Math.floor(min + Math.random() * (max - min + 1));
@@ -125,6 +136,11 @@ var Journal = (function () {
     Journal.prototype.hit = function (target, damage, pdamage, mdamage) {
         var string = "<b>" + target + "</b>" + " hitted on " + '<font color="purple"><b>' + Math.round(damage) + "</b></font>" + " ( "
             + '<font color="red"><b>' + Math.round(pdamage) + "</b></font>" + " + " + '<font color="blue"><b>' + Math.round(mdamage) + "</b></font>" + " ).";
+        this.addLineToJournal(string);
+    };
+    Journal.prototype.crit = function (target, damage, pdamage, mdamage) {
+        var string = "<b>" + target + "</b>" + " critically hitted on " + '<font color="purple" style="font-size:24px;"><b>' + Math.round(damage) + "</b></font>" + " ( "
+            + '<font color="red" style="font-size:24px;"><b>' + Math.round(pdamage) + "</b></font>" + " + " + '<font color="blue" style="font-size:24px;"><b>' + Math.round(mdamage) + "</b></font>" + " ).";
         this.addLineToJournal(string);
     };
     Journal.prototype.evade = function (player, target, chanse) {
@@ -228,8 +244,6 @@ var UserInterface = (function () {
     UserInterface.prototype.fillLeftHelperBlock = function (entity) {
         var data = this.parent.entityRoot.collectDataFromEntity(entity);
         var container = this.leftHelperBlock;
-        var nameContainer = data["Name"];
-        var fullName = nameContainer["fullname"];
         var fightingStatsContainer = data["FightingStats"];
         var currentStatsContainer = fightingStatsContainer["currentStats"];
         var hp = Math.round(currentStatsContainer["HP"]);
@@ -244,7 +258,6 @@ var UserInterface = (function () {
         var expToNextLvl = experienceStats["expToNextLvl"];
         var lvl = experienceStats["lvl"];
         var staticHp = staticStatsContainer["HP"] + lvlUpStatsContainer["HP"] * lvl;
-        container.getElementsByClassName("name")[0].innerHTML = fullName;
         container.getElementsByClassName("red")[0].innerHTML = Math.round(hp) + "/" + staticHp;
         var hpBar = Math.round((hp / staticHp) * 100);
         if (hpBar < 0)
@@ -297,8 +310,10 @@ var UserInterface = (function () {
         var hpWidth = Math.round((currentHPStat / staticHP) * 100);
         var li = document.createElement("li");
         li.id = "" + id;
+        var enemyBlock = document.createElement("div");
+        enemyBlock.id = "enemy-block";
         var divAvatar = document.createElement("div");
-        divAvatar.id = "avatar";
+        divAvatar.id = "avatar-small";
         //divAvatar.style.background-image = 
         var divLevel = document.createElement("div");
         divLevel.className = "level";
@@ -309,9 +324,10 @@ var UserInterface = (function () {
         spanBar.className = "red";
         spanBar.innerHTML = currentHPStat + "/" + staticHP;
         spanBar.style.width = hpWidth + "%";
-        li.appendChild(divAvatar);
+        li.appendChild(enemyBlock);
+        enemyBlock.appendChild(divAvatar);
         divAvatar.appendChild(divLevel);
-        divAvatar.appendChild(divBar);
+        enemyBlock.appendChild(divBar);
         divBar.appendChild(spanBar);
         var container = this.enemyList;
         container.appendChild(li);
@@ -332,7 +348,7 @@ var UserInterface = (function () {
     UserInterface.prototype.clearAllBlocks = function () {
         this.clearLeftBlock();
         this.clearRightBlock();
-        //this.clearLeftHelperBlock();
+        this.clearLeftHelperBlock();
         this.clearEnemyList();
     };
     UserInterface.prototype.clearRightBlock = function () {
@@ -347,15 +363,17 @@ var UserInterface = (function () {
         container.getElementsByClassName("name")[0].innerHTML = "";
         container.getElementsByClassName("red")[0].innerHTML = "0/0";
         container.getElementsByClassName("red")[0].style.width = "0%";
+        container.getElementsByClassName("violet")[0].innerHTML = "0/0";
+        container.getElementsByClassName("violet")[0].style.width = "0%";
         container.getElementsByClassName("level")[0].innerHTML = "0";
     };
     UserInterface.prototype.clearLeftHelperBlock = function () {
         var container = this.leftHelperBlock;
-        container.getElementsByClassName("name")[0].innerHTML = "";
         container.getElementsByClassName("red")[0].innerHTML = "0/0";
         container.getElementsByClassName("red")[0].style.width = "0%";
+        container.getElementsByClassName("violet")[0].innerHTML = "0/0";
+        container.getElementsByClassName("violet")[0].style.width = "0%";
         container.getElementsByClassName("level")[0].innerHTML = "0";
-        this.leftHelperBlock = null;
     };
     UserInterface.prototype.clearEnemyList = function () {
         var container = this.enemyList;
@@ -446,16 +464,24 @@ var Battle = (function () {
         }
     };
     Battle.prototype.prepareFight = function (time) {
-        var p1 = this.teamOne[0]; // 1 player right now;
+        var p1;
+        var h1;
+        for (var i = 0; i < this.teamOne.length; i++) {
+            var actor = this.teamOne[i];
+            if (actor.type == "Player")
+                p1 = actor; // only 1 player available rght now;
+            else if (actor.type == "Helper")
+                h1 = actor; // only1  helper available right now;
+        }
         var fullNamePlayer = p1.getComponent("Name").getFullName();
         this.parent.userInterface.fillBlock(p1);
-        var p2 = this.teamTwo[0]; // always select first mob in array;
+        if (h1 != null)
+            this.parent.userInterface.fillBlock(h1);
+        var p2 = this.teamTwo[0];
         var fullNameEnemy = p2.getComponent("Name").getFullName();
         var enemyHp = p2.getComponent("FightingStats").getCurrentStat("HP");
         var pdamage = p2.getComponent("FightingStats").getCurrentStat("STR");
         var mdamage = p2.getComponent("FightingStats").getCurrentStat("INT");
-        var stringDamage = Math.round(pdamage / 2) + " - " + Math.round(pdamage * 2);
-        var stringMDamage = Math.round(mdamage / 2) + " - " + Math.round(mdamage * 2);
         this.parent.userInterface.removeFromEnemyList(0);
         this.parent.userInterface.fillBlock(p2);
         this.parent.userInterface.journal.newContact(fullNamePlayer);
@@ -463,7 +489,7 @@ var Battle = (function () {
             this.parent.userInterface.journal.newContactManyTargets(this.teamTwo.length);
         }
         else
-            this.parent.userInterface.journal.newContactSingleTarget(fullNameEnemy, enemyHp, stringDamage, stringMDamage);
+            this.parent.userInterface.journal.newContactSingleTarget(fullNameEnemy, enemyHp, pdamage, mdamage);
         //заполняем живых creature в массивы по командам.
         for (var j = 0; j < this.teamOne.length; j++) {
             this.teamOneAlive.push(this.teamOne[j]);
@@ -520,7 +546,7 @@ var Battle = (function () {
         for (var k = 0; k < queueArray.length; k++) {
             var p1 = queueArray[k];
             var p2;
-            if (p1.type == "Player") {
+            if (p1.type == "Player" || p1.type == "Helper") {
                 p2 = this.teamTwoAlive;
             }
             else {
@@ -533,13 +559,7 @@ var Battle = (function () {
         var playerName = player.getComponent("Name").getFullName();
         var playerFightStats = player.getComponent("FightingStats");
         var phsysicalPlayerDamage = playerFightStats.getCurrentStat("STR");
-        var playerMaxDamage = phsysicalPlayerDamage * 2;
-        var playerMinDamage = phsysicalPlayerDamage / 2;
         var magicalPlayerDamage = playerFightStats.getCurrentStat("INT");
-        var playerMaxDamageM = magicalPlayerDamage * 2;
-        var playerMinDamageM = magicalPlayerDamage / 2;
-        phsysicalPlayerDamage = Math.round(playerMinDamage + Math.random() * (playerMaxDamage - playerMinDamage));
-        magicalPlayerDamage = Math.round(playerMinDamage + Math.random() * (playerMaxDamageM - playerMinDamageM));
         // выберем рандомную атаку АОЕ или сингл. 
         var typeOfDamage = Math.floor(Math.random() * 2); //0 , 1;
         var timesToAttack = 1;
@@ -552,6 +572,14 @@ var Battle = (function () {
                     var rnum = Math.floor(Math.random() * target.length);
                     newTarget = target[rnum];
                 }
+            }
+            // просчитаем крит. в данный момент, критшанс будет 5%
+            var criticalHit = Math.floor(Math.random() * 100); //0 - 99;
+            var crit = 0;
+            if (criticalHit < 5) {
+                phsysicalPlayerDamage *= 2;
+                magicalPlayerDamage *= 2;
+                crit = 1;
             }
             var targetName = newTarget.getComponent("Name").getFullName();
             var targetFightStats = newTarget.getComponent("FightingStats");
@@ -575,7 +603,10 @@ var Battle = (function () {
             // и отнять % от блокированного урона из общего урона.
             targetHP -= totalDamage;
             targetFightStats.setStats("current", { "HP": targetHP });
-            this.parent.userInterface.journal.hit(targetName, totalDamage, phsysicalPlayerDamage, magicalPlayerDamage);
+            if (crit == 0)
+                this.parent.userInterface.journal.hit(targetName, totalDamage, phsysicalPlayerDamage, magicalPlayerDamage);
+            else
+                this.parent.userInterface.journal.crit(targetName, totalDamage, phsysicalPlayerDamage, magicalPlayerDamage);
             if (targetHP <= 0)
                 targetFightStats.killedBy = player;
             //обновляем UI для каждого актера, котоырй был под атакой.
@@ -635,11 +666,16 @@ var Battle = (function () {
         this.teamTwoAlive.length = 0;
         this.parent.userInterface.clearAllBlocks();
     };
-    Battle.prototype.gainExperience = function (entity, value) {
-        if (entity.type == "Player") {
-            entity.getComponent("ExperienceStats").gainExperience(value);
+    Battle.prototype.gainExperience = function (entityArray, value) {
+        var players = entityArray.length;
+        var bounty = Math.round(value / players);
+        if (bounty < 1)
+            bounty = 1;
+        for (var i = 0; i < players; i++) {
+            var entity = entityArray[i];
+            entity.getComponent("ExperienceStats").gainExperience(bounty);
             var entityFullname = entity.getComponent("Name").getFullName();
-            this.parent.userInterface.journal.gainExp(entityFullname, value);
+            this.parent.userInterface.journal.gainExp(entityFullname, bounty);
             this.parent.userInterface.updateUIForEntity(entity, 0);
         }
     };
@@ -657,14 +693,24 @@ var Battle = (function () {
             return null;
     };
     Battle.prototype.playerWin = function () {
-        var player = this.teamOne[0];
+        var player;
+        var helper;
+        for (var i = 0; i < this.teamOneAlive.length; i++) {
+            var entity = this.teamOneAlive[i];
+            if (entity.type == "Player")
+                player = entity;
+            else
+                helper = entity;
+        }
         player.getComponent("FightingStats").resetStats();
+        if (helper != null)
+            helper.getComponent("FightingStats").resetStats();
         var playerName = player.getComponent("Name").getFullName();
         this.parent.userInterface.journal.win(playerName);
     };
     Battle.prototype.playerLose = function () {
         var player = this.teamOne[0];
-        player.getComponent("FightingStats").resetStats();
+        //player.getComponent( "FightingStats" ).resetStats();
         var playerName = player.getComponent("Name").getFullName();
         this.parent.userInterface.journal.lose(playerName);
     };
@@ -692,7 +738,8 @@ var Battle = (function () {
                 this.parent.userInterface.addMobFromEnemyListToMainBlock(newMob, newMobIndex);
             }
         }
-        this.gainExperience(player, bounty);
+        // опыт получают только живые.
+        this.gainExperience(this.teamOneAlive, bounty);
     };
     Battle.prototype.killHelper = function (helper) {
         var index = this.teamOneAlive.indexOf(helper);
@@ -718,38 +765,17 @@ var EntityRoot = (function () {
         this.entityIdNumber = 0;
         this.deadEntities = new Array();
     }
-    EntityRoot.prototype.init = function (creaturesData, humanoidsData, humanoidsClassData) {
-        this.entityParametersGenerator = new EntityParametersGenerator(creaturesData, humanoidsData, humanoidsClassData);
+    EntityRoot.prototype.init = function (creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData) {
+        this.entityParametersGenerator = new EntityParametersGenerator(creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData);
     };
-    /*
-        public generateEntity( entityType ):any{
-    
-            var entity = this.createEntity( entityType );
-            var params = this.entityParametersGenerator.generate( entityType );
-            entity.createComponentsWithParams( params );
-            return entity;
-        }
-    */
-    EntityRoot.prototype.generatePlayer = function (type) {
-        var entity = this.createEntity("Player");
-        var params = this.entityParametersGenerator.generate("Player", type);
-        entity.createComponentsWithParams(params);
-        return entity;
-    };
-    EntityRoot.prototype.generateMob = function () {
-        var entity = this.createEntity("Mob");
-        var params = this.entityParametersGenerator.generate("Mob", null);
-        entity.createComponentsWithParams(params);
-        return entity;
-    };
-    EntityRoot.prototype.generateHelper = function (type) {
-        var entity = this.createEntity("Helper");
-        var params = this.entityParametersGenerator.generate("Helper", type);
+    EntityRoot.prototype.generateEntity = function (entityType, secondType) {
+        var entity = this.createEntity(entityType);
+        var params = this.entityParametersGenerator.generate(entityType, secondType);
         entity.createComponentsWithParams(params);
         return entity;
     };
     EntityRoot.prototype.createEntity = function (type) {
-        if (type != "Player" && type != "Mob")
+        if (type != "Player" && type != "Mob" && type != "Helper")
             console.log("Error, no type with name: " + type + ". Error in EntityRoot/createEntity");
         var id = this.createId();
         var entity = new Entity(id, type);
@@ -830,13 +856,15 @@ var CommonTick = (function () {
     return CommonTick;
 }());
 var EntityParametersGenerator = (function () {
-    function EntityParametersGenerator(creaturesData, humanoidsData, humanoidsClassData) {
+    function EntityParametersGenerator(creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData) {
         this.creaturesData = creaturesData;
         this.humanoidsData = humanoidsData;
         this.humanoidsClassData = humanoidsClassData;
+        this.humanoidsHelperData = humanoidsHelperData;
         this.creaturesDataArray = new Array();
         this.humanoidsDataArray = new Array();
         this.humanoidsClassDataArray = new Array();
+        this.humanoidsHelperDataArray = new Array();
         this.storeObjKeysInArray();
     }
     EntityParametersGenerator.prototype.generate = function (entityType, type) {
@@ -846,6 +874,17 @@ var EntityParametersGenerator = (function () {
         if (entityType == "Player") {
             container = this.humanoidsDataArray;
             data = this.humanoidsData;
+            if (type == null) {
+                var rIndex = Math.floor(Math.random() * (this.humanoidsClassDataArray.length));
+                playerClass = this.humanoidsClassDataArray[rIndex];
+            }
+            else {
+                playerClass = this.humanoidsClassDataArray[type];
+            }
+        }
+        if (entityType == "Helper") {
+            container = this.humanoidsHelperDataArray;
+            data = this.humanoidsHelperData;
             if (type == null) {
                 var rIndex = Math.floor(Math.random() * (this.humanoidsClassDataArray.length));
                 playerClass = this.humanoidsClassDataArray[rIndex];
@@ -1096,6 +1135,9 @@ var EntityParametersGenerator = (function () {
         }
         for (var num in this.humanoidsClassData) {
             this.humanoidsClassDataArray.push(num);
+        }
+        for (var newKey in this.humanoidsHelperData) {
+            this.humanoidsHelperDataArray.push(newKey);
         }
     };
     return EntityParametersGenerator;

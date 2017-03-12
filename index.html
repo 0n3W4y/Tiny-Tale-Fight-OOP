@@ -10,6 +10,7 @@
 		<script type="text/javascript" src="./source/ts_scripts/Data/humanoidsData.js"></script>
 		<script type="text/javascript" src="./source/ts_scripts/Data/creaturesData.js"></script>
 		<script type="text/javascript" src="./source/ts_scripts/Data/humanoidsClassData.js"></script>
+		<script type="text/javascript" src="./source/ts_scripts/Data/humanoidsHelperData.js"></script>
 		<script type="text/javascript" src="game.js"></script>
 		<script type="text/javascript" src="main.js"></script>
 
@@ -25,57 +26,61 @@
 			<input type="button" id="StartFight" class="game-control-buttons" value="Fight!" onClick="game.battle.startFight()">
 			-->			
 		</div>
-		<div id="wrapper">
 
-			<div id="upper-block">
+		<div id="batlle-wrapper">
 
-				<div id="left-character-main-block">
-					<div id="avatar">
-						<div class="level">0</div>
-					</div>
-					<div class="name"></div>
-					<div id="bars">
-						<div class="bar"><span class="red">0/0</span></div>
-						<div class="bar-exp"><span class="violet">0/0</span></div>
-					</div>
+			<div id="left-character-main-block">
+				<div id="avatar">
+					<div class="level">0</div>
 				</div>
-
-				<div id="right-character-main-block">
-					<div id="avatar">
-						<div class="level">0</div>
-					</div>
-					<div class="name"></div>
-					<div id="bars">
-						<div class="bar"><span class="red">0/0</span></div>
-					</div>
-				</div>
-
+				<div class="name">n/a</div>
+				<div class="bar"><span class="red">0/0</span></div>
+				<div class="bar-exp"><span class="violet">0/0</span></div>
 			</div>
 
-			<div id="left-bottom-block">
-
-				<div id="inventory-block">
+			<div id="helper-block">
+				<div id="avatar-small">
+					<div class="level">0</div>
 				</div>
-				<div id="journal-block">
-					<ul id="journal">
-					</ul>
-				</div>
-				<div id="orbs-block">
-				</div>
-
+				<div class="bar-li"><span class="red">0/0</span></div>
+				<div class="bar-exp-helper"><span class="violet">0/0</span></div>
 			</div>
 
-			<div id="right-bottom-block">
-				<ul id="enemy-list">
+			<div id="right-character-main-block">
+				<div id="avatar">
+					<div class="level">0</div>
+				</div>
+				<div class="name">n/a</div>
+				<div class="bar"><span class="red">0/0</span></div>
+			</div>
+
+			<div id="inventory-block">
+			</div>
+			<div id="journal-block">
+				<ul id="journal">
 				</ul>
 			</div>
+			<div id="orbs-block">
+			</div>
+
+			<ul id="enemy-list">
+			</ul>
+
 		</div>
 
 
 
+
+		<div id="inventory-wrapper">
+		</div>
+
+		</div id="shop-wrapper">
+		</body>
+
+
 		<!-- Modal window ask new battle -->
-		<div id="askNextBattle">
-		<div class="textInModalWindow"> Do you want to continue?</div>
+		<div id="modal-window">
+		<div class="textInModalWindow"></div>
 		<center>
 		<input type="button" id="modalYes" class="game-control-buttons" value="Yes" onClick="">
 		<input type="button" id="mobalNo" class="game-control-buttons" value="No" onClick="">

@@ -3,18 +3,22 @@ class EntityParametersGenerator {
 	private creaturesData:Array<any>;
 	private humanoidsData:Array<any>;
 	private humanoidsClassData:Array<any>;
+	private humanoidsHelperData:Array<any>;
 
 	private creaturesDataArray:Array<any>;
 	private humanoidsDataArray:Array<any>;
 	private humanoidsClassDataArray:Array<any>;
+	private humanoidsHelperDataArray:Array<any>;
 
-	constructor( creaturesData, humanoidsData, humanoidsClassData ){
+	constructor( creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData ){
 		this.creaturesData = creaturesData;
 		this.humanoidsData = humanoidsData;
 		this.humanoidsClassData = humanoidsClassData;
+		this.humanoidsHelperData = humanoidsHelperData;
 		this.creaturesDataArray = new Array();
 		this.humanoidsDataArray = new Array();
 		this.humanoidsClassDataArray = new Array();
+		this.humanoidsHelperDataArray = new Array();
 		this.storeObjKeysInArray();
 	}
 
@@ -26,6 +30,17 @@ class EntityParametersGenerator {
 		if ( entityType == "Player" ){
 			container = this.humanoidsDataArray;
 			data = this.humanoidsData;
+			if( type == null ){
+				var rIndex = Math.floor( Math.random()*( this.humanoidsClassDataArray.length ) );
+				playerClass = this.humanoidsClassDataArray[rIndex];
+			}else{
+				playerClass = this.humanoidsClassDataArray[type];
+			}
+		}
+
+		if ( entityType == "Helper" ){
+			container = this.humanoidsHelperDataArray;
+			data = this.humanoidsHelperData;
 			if( type == null ){
 				var rIndex = Math.floor( Math.random()*( this.humanoidsClassDataArray.length ) );
 				playerClass = this.humanoidsClassDataArray[rIndex];
@@ -296,6 +311,10 @@ class EntityParametersGenerator {
 
 		for( var num in this.humanoidsClassData ){
 			this.humanoidsClassDataArray.push( num );
+		}
+
+		for( var newKey in this.humanoidsHelperData ){
+			this.humanoidsHelperDataArray.push( newKey );
 		}
 	}
 }
