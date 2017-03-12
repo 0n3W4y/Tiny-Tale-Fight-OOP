@@ -45,12 +45,7 @@ var Game = (function () {
     Game.prototype.generateMob = function () {
         var entityList = this.entityRoot.getListOfEntities();
         var lvl = 1;
-        for (var i = 0; i < entityList.length; i++) {
-            if (entityList[i].type == "Player") {
-                lvl = entityList[i].getComponent("ExperienceStats").lvl;
-                break;
-            }
-        }
+        lvl = this.player.getComponent("ExperienceStats").lvl;
         var min = lvl - 2;
         var max = lvl + 2;
         if (min < 1)
