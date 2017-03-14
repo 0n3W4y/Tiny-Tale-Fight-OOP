@@ -31,14 +31,14 @@ class Journal {
 		this.addLineToJournal( string );
 	}
 
-	public hit( target, damage, pdamage, mdamage ){
-		var string = "<b>" + target + "</b>" + " hitted on " + '<font color="purple"><b>' + Math.round( damage ) + "</b></font>" + " ( "
+	public hit( player, target, damage, pdamage, mdamage ){
+		var string = "<b>" + player + "</b>" +" is attacking " + "<b>" + target + "</b>" + " hitted on " + '<font color="purple"><b>' + Math.round( damage ) + "</b></font>" + " ( "
 					 + '<font color="red"><b>' + Math.round( pdamage ) + "</b></font>" + " + " + '<font color="blue"><b>' + Math.round( mdamage ) + "</b></font>" + " ).";
 		this.addLineToJournal( string );
 	}
 
-	public crit( target, damage, pdamage, mdamage ){
-		var string = "<b>" + target + "</b>" + " critically hitted on " + '<font color="purple" style="font-size:24px;"><b>' + Math.round( damage ) + "</b></font>" + " ( "
+	public crit( player, target, damage, pdamage, mdamage ){
+		var string = "<b>" + player + "</b>" +" is attacking " + "<b>" + target + "</b>" + " critically hitted on " + '<font color="purple" style="font-size:24px;"><b>' + Math.round( damage ) + "</b></font>" + " ( "
 					 + '<font color="red" style="font-size:24px;"><b>' + Math.round( pdamage ) + "</b></font>" + " + " + '<font color="blue" style="font-size:24px;"><b>' + Math.round( mdamage ) + "</b></font>" + " ).";
 		this.addLineToJournal( string );
 	}
@@ -70,11 +70,6 @@ class Journal {
 
 	public lose( player ){
 		var string = "So sad! " + "<b>" + player + "</b>" + " LOSE this battle!";
-		this.addLineToJournal( string );
-	}
-
-	public attack( player, target ){
-		var string = "<b>" + player + "</b>" +" is attacking " + "<b>" + target + "</b>.";
 		this.addLineToJournal( string );
 	}
 }

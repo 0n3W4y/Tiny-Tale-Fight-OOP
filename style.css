@@ -38,7 +38,7 @@ body {
 
 /* MODAL WINDOW */
 
-#modal-window  {
+#yes-no-modal-window  {
   display: none;
   position: absolute;
   left:50%;
@@ -79,19 +79,6 @@ body {
 
 
 
-#hero-creater{
-  display:none;
-  position:relative;
-  width:1300px;
-  height:600px;
-  background-color: #444444;
-  padding:0px;
-  margin:10px;
-  margin-left:auto;
-  margin-right: auto;
-  overflow:hidden;
-}
-
 
 
 
@@ -99,7 +86,7 @@ body {
 
 /* main blocks */
 #batlle-wrapper{
-  display:block;
+  display:none;
   position:relative;
   width:1300px;
   height:600px;
@@ -303,7 +290,7 @@ body {
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
   border-radius: 4px;
-  padding: 2px;
+  padding: 0px;
   margin:0px;
   overflow: hidden;
   -webkit-box-shadow: inset 0 -1px 1px rgba(255,255,255,0.3);
@@ -323,7 +310,7 @@ body {
   -moz-border-radius: 2px;
   -webkit-border-radius: 2px;
   border-radius: 2px;
-  padding: 2px;
+  padding: 0px;
   margin:0px;
   overflow: hidden;
   -webkit-box-shadow: inset 0 -1px 1px rgba(255,255,255,0.3);
@@ -337,38 +324,38 @@ body {
 
 .bar-exp {
   width:340px;
-  height:10px;
+  height:12px;
   position: relative;
   background: #808080;
-  -moz-border-radius: 6px;
-  -webkit-border-radius: 6px;
-  border-radius: 4px;
-  padding: 2px;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  padding: 0px;
   margin:0px;
   overflow: hidden;
   -webkit-box-shadow: inset 0 -1px 1px rgba(255,255,255,0.3);
   -moz-box-shadow   : inset 0 -1px 1px rgba(255,255,255,0.3);
   box-shadow        : inset 0 -1px 1px rgba(255,255,255,0.3);
-  font-size:8px;
+  font-size:10px;
   font-family: Georgia, fantasy;
 }
 
 .bar-exp-helper {
   width:137px;
-  height:10px;
+  height:12px;
   position: relative;
   top:10px;
   background: #808080;
-  -moz-border-radius: 6px;
-  -webkit-border-radius: 6px;
-  border-radius: 4px;
-  padding: 2px;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  padding: 0px;
   margin:0px;
   overflow: hidden;
   -webkit-box-shadow: inset 0 -1px 1px rgba(255,255,255,0.3);
   -moz-box-shadow   : inset 0 -1px 1px rgba(255,255,255,0.3);
   box-shadow        : inset 0 -1px 1px rgba(255,255,255,0.3);
-  font-size:8px;
+  font-size:10px;
   font-family: Georgia, fantasy;
 }
 
@@ -517,6 +504,17 @@ span.red {
 /* END OF BATTLE WRAPPER */
 
 
+
+
+
+
+
+
+
+
+
+
+
 /* INVENTORY WRAPPER */
 
 #inventory-wrapper {
@@ -535,6 +533,17 @@ span.red {
 /* END OF ENVENTORY WRAPPER */
 
 
+
+
+
+
+
+
+
+
+
+
+
 /* SHOP WRAPPER */
 
 #shop-wrapper {
@@ -551,3 +560,72 @@ span.red {
 }
 
 /* END OF SHOP WRAPPER */
+
+
+
+
+
+/* HERO CREATER */
+
+/* MAIN */
+#hero-creater{
+  display:block;
+  position:relative;
+  width:1300px;
+  height:600px;
+  background-color: #444444;
+  padding:0px;
+  margin:10px;
+  margin-left:auto;
+  margin-right: auto;
+  overflow:hidden;
+}
+
+#left-selct-block{
+  display: block;
+  position:absolute;
+  width:400px;
+  height:590px;
+  margin:5px;
+  padding:0px;
+  background-color: #999999;
+  left:0px;
+  top:0px;
+  overflow: hidden;
+}
+
+#right-visual-block {
+  display:block;
+  position:absolute;
+  width:600px;
+  height: 590px;
+  margin:5px;
+  padding:0px;
+  background-color: #999999;
+  right:0px;
+  top:0px;
+  overflow: hidden;
+}
+
+
+/* END OF HERO CREATER */
+
+
+
+
+
+
+/* WELCOME */
+
+#welcome{
+  display:none;
+  position:relative;
+  width:1300px;
+  height:600px;
+  background-color: #444444;
+  padding:0px;
+  margin:10px;
+  margin-left:auto;
+  margin-right: auto;
+  overflow:hidden;
+}

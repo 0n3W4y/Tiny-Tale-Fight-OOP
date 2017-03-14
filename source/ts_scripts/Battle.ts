@@ -220,7 +220,6 @@ class Battle {
 			var targetBlockChanse = targetFightStats.getCurrentStat( "BLK" );
 			var targetHP = targetFightStats.getCurrentStat( "HP" );
 			var targetChansePercent = targetDodgeChanse/100;
-			this.parent.userInterface.journal.attack( playerName, targetName );
 
 			var randomNum = Math.floor((Math.random()*101)*100); // 0 - 10000;
 			if( targetDodgeChanse >= randomNum ){
@@ -238,9 +237,9 @@ class Battle {
 			targetHP -= totalDamage;
 			targetFightStats.setStats( "current", { "HP": targetHP } );
 			if( crit == 0 )
-				this.parent.userInterface.journal.hit( targetName, totalDamage, phsysicalPlayerDamage, magicalPlayerDamage );
+				this.parent.userInterface.journal.hit( playerName, targetName, totalDamage, phsysicalPlayerDamage, magicalPlayerDamage );
 			else
-				this.parent.userInterface.journal.crit( targetName, totalDamage, phsysicalPlayerDamage, magicalPlayerDamage );
+				this.parent.userInterface.journal.crit( playerName, targetName, totalDamage, phsysicalPlayerDamage, magicalPlayerDamage );
 
 			
 

@@ -128,13 +128,13 @@ var Journal = (function () {
         var string = "<b>" + player + "</b>" + " found new troubles. Prepare to fight!";
         this.addLineToJournal(string);
     };
-    Journal.prototype.hit = function (target, damage, pdamage, mdamage) {
-        var string = "<b>" + target + "</b>" + " hitted on " + '<font color="purple"><b>' + Math.round(damage) + "</b></font>" + " ( "
+    Journal.prototype.hit = function (player, target, damage, pdamage, mdamage) {
+        var string = "<b>" + player + "</b>" + " is attacking " + "<b>" + target + "</b>" + " hitted on " + '<font color="purple"><b>' + Math.round(damage) + "</b></font>" + " ( "
             + '<font color="red"><b>' + Math.round(pdamage) + "</b></font>" + " + " + '<font color="blue"><b>' + Math.round(mdamage) + "</b></font>" + " ).";
         this.addLineToJournal(string);
     };
-    Journal.prototype.crit = function (target, damage, pdamage, mdamage) {
-        var string = "<b>" + target + "</b>" + " critically hitted on " + '<font color="purple" style="font-size:24px;"><b>' + Math.round(damage) + "</b></font>" + " ( "
+    Journal.prototype.crit = function (player, target, damage, pdamage, mdamage) {
+        var string = "<b>" + player + "</b>" + " is attacking " + "<b>" + target + "</b>" + " critically hitted on " + '<font color="purple" style="font-size:24px;"><b>' + Math.round(damage) + "</b></font>" + " ( "
             + '<font color="red" style="font-size:24px;"><b>' + Math.round(pdamage) + "</b></font>" + " + " + '<font color="blue" style="font-size:24px;"><b>' + Math.round(mdamage) + "</b></font>" + " ).";
         this.addLineToJournal(string);
     };
@@ -160,10 +160,6 @@ var Journal = (function () {
     };
     Journal.prototype.lose = function (player) {
         var string = "So sad! " + "<b>" + player + "</b>" + " LOSE this battle!";
-        this.addLineToJournal(string);
-    };
-    Journal.prototype.attack = function (player, target) {
-        var string = "<b>" + player + "</b>" + " is attacking " + "<b>" + target + "</b>.";
         this.addLineToJournal(string);
     };
     return Journal;
@@ -585,7 +581,6 @@ var Battle = (function () {
             var targetBlockChanse = targetFightStats.getCurrentStat("BLK");
             var targetHP = targetFightStats.getCurrentStat("HP");
             var targetChansePercent = targetDodgeChanse / 100;
-            this.parent.userInterface.journal.attack(playerName, targetName);
             var randomNum = Math.floor((Math.random() * 101) * 100); // 0 - 10000;
             if (targetDodgeChanse >= randomNum) {
                 this.parent.userInterface.journal.evade(targetName, targetChansePercent);
@@ -599,9 +594,9 @@ var Battle = (function () {
             targetHP -= totalDamage;
             targetFightStats.setStats("current", { "HP": targetHP });
             if (crit == 0)
-                this.parent.userInterface.journal.hit(targetName, totalDamage, phsysicalPlayerDamage, magicalPlayerDamage);
+                this.parent.userInterface.journal.hit(playerName, targetName, totalDamage, phsysicalPlayerDamage, magicalPlayerDamage);
             else
-                this.parent.userInterface.journal.crit(targetName, totalDamage, phsysicalPlayerDamage, magicalPlayerDamage);
+                this.parent.userInterface.journal.crit(playerName, targetName, totalDamage, phsysicalPlayerDamage, magicalPlayerDamage);
             if (targetHP <= 0)
                 targetFightStats.killedBy = player;
             //обновляем UI для каждого актера, котоырй был под атакой.
