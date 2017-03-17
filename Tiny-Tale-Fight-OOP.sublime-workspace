@@ -4,20 +4,192 @@
 		"selected_items":
 		[
 			[
-				"team",
-				"teamOne\tproperty"
+				"back",
+				"background-color"
 			],
 			[
-				"isFigh",
-				"isFightEnd\tproperty"
+				"static",
+				"staticHp\tlocal var"
+			],
+			[
+				"helper",
+				"helperName\tlocal var"
+			],
+			[
+				"team",
+				"teamOneAlive\tproperty"
+			],
+			[
+				"newM",
+				"newMobIndex\tlocal var"
+			],
+			[
+				"left",
+				"leftHelperBlock\tproperty"
+			],
+			[
+				"cler",
+				"clearLeftHelperBlock\tmethod"
+			],
+			[
+				"clear",
+				"clearRightBlock\tmethod"
+			],
+			[
+				"add",
+				"addToEnemyList\tmethod"
+			],
+			[
+				"Team",
+				"teamTwoAlive\tproperty"
+			],
+			[
+				"is",
+				"isBattleEnd\tproperty"
+			],
+			[
+				"staticHp",
+				"staticHP\tlocal var"
+			],
+			[
+				"targe",
+				"targetName\tlocal var"
+			],
+			[
+				"player",
+				"playerName\tlocal var"
+			],
+			[
+				"teamT",
+				"teamTwoAlive\tproperty"
+			],
+			[
+				"tar",
+				"targetMagicalDefense\tlocal var"
+			],
+			[
+				"ma",
+				"magicalPlayerDamage\tlocal var"
+			],
+			[
+				"type",
+				"typeOfDamage\tlocal var"
+			],
+			[
+				"tea",
+				"teamTwoAlive\tproperty"
+			],
+			[
+				"re",
+				"teamOneReady\tproperty"
+			],
+			[
+				"teamOne",
+				"teamOneAlive\tproperty"
+			],
+			[
+				"battle",
+				"endBattle\tmethod"
+			],
+			[
+				"list",
+				"list-style-type"
+			],
+			[
+				"marg",
+				"margin"
+			],
+			[
+				"ali",
+				"align-content"
+			],
+			[
+				"lvl",
+				"levelUpClassStats\tproperty"
+			],
+			[
+				"huma",
+				"humanoidsClassData\tproperty"
+			],
+			[
+				"hu",
+				"humanoidsClassData\tproperty"
+			],
+			[
+				"font-",
+				"font-size"
+			],
+			[
+				"margin",
+				"margin-top"
+			],
+			[
+				"margi-",
+				"margin-left"
+			],
+			[
+				"getElemet",
+				"getElementById\tmethod"
+			],
+			[
+				"figh",
+				"isFighting\tproperty"
+			],
+			[
+				"isro",
+				"isRoundEnd\tproperty"
+			],
+			[
+				"p2",
+				"p2Attack\tlocal var"
+			],
+			[
+				"class",
+				"className\tproperty"
+			],
+			[
+				"entity",
+				"entityFullname\tlocal var"
+			],
+			[
+				"update",
+				"updateFightingStats\tmethod"
+			],
+			[
+				"full",
+				"fullNameEnemy\tlocal var"
+			],
+			[
+				"exp",
+				"experienceStats\tlocal var"
+			],
+			[
+				"align",
+				"text-align"
+			],
+			[
+				"font-s",
+				"font-size"
+			],
+			[
+				"text",
+				"text-overflow"
 			],
 			[
 				"get",
-				"getContainer\tmethod"
+				"getElementById\tmethod"
+			],
+			[
+				"fo",
+				"font-size"
+			],
+			[
+				"bor",
+				"border-color"
 			],
 			[
 				"en",
-				"entities\tproperty"
+				"entityParametersGenerator\tproperty"
 			],
 			[
 				"cre",
@@ -30,14 +202,6 @@
 			[
 				"creat",
 				"creaturesDataArray\tproperty"
-			],
-			[
-				"exp",
-				"expToNextLvl\tproperty"
-			],
-			[
-				"is",
-				"isFightEnd\tproperty"
 			],
 			[
 				"time",
@@ -56,10 +220,6 @@
 				"tickFps\tproperty"
 			],
 			[
-				"player",
-				"playersInGroup\tproperty"
-			],
-			[
 				"generate",
 				"generateSurname\tmethod"
 			],
@@ -74,10 +234,6 @@
 			[
 				"compon",
 				"componentName\tparameter"
-			],
-			[
-				"text",
-				"textureLoader"
 			],
 			[
 				"grid",
@@ -178,10 +334,6 @@
 			[
 				"che",
 				"checkedScene"
-			],
-			[
-				"add",
-				"addChild(...)\topenfl.display.DisplayObject"
 			],
 			[
 				"remove",
@@ -362,186 +514,16 @@
 			[
 				"ro",
 				"rocksMaxSize\tvar"
-			],
-			[
-				"MouseEv",
-				"MouseEvent\topenfl.events"
-			],
-			[
-				"event",
-				"Event\topenfl.events"
-			],
-			[
-				"Mou",
-				"MouseEvent\topenfl.events"
-			],
-			[
-				"Event",
-				"Event\topenfl.events"
-			],
-			[
-				"Rect",
-				"Rectangle\topenfl.geom"
-			],
-			[
-				"Tile",
-				"Tile\topenfl.display"
-			],
-			[
-				"rocks",
-				"rocksMinSize\tInt"
-			],
-			[
-				"genertae",
-				"generateWater(...)\tVoid"
-			],
-			[
-				"create",
-				"createWaterTile(  )\tVoid"
-			],
-			[
-				"maxNub",
-				"maxNumberOfWater\tvar"
-			],
-			[
-				"Rock",
-				"Rock"
-			],
-			[
-				"TextFo",
-				"TextFormat\topenfl.text"
-			],
-			[
-				"dra",
-				"drawRoundRect(...)\tVoid"
-			],
-			[
-				"startGameBut",
-				"startGameButtonText\topenfl.text.TextField"
-			],
-			[
-				"start",
-				"startGameButtonText"
-			],
-			[
-				"s",
-				"Sprite"
-			],
-			[
-				"E",
-				"Event\tclass"
-			],
-			[
-				"weapo",
-				"weaponSprite"
-			],
-			[
-				"remov",
-				"removeChild(...)\topenfl.display.DisplayObject"
-			],
-			[
-				"rem",
-				"removeWeapon(  )\tUnknown<9>"
-			],
-			[
-				"Get",
-				"getSprite(  )\tUnknown<2>"
-			],
-			[
-				"M",
-				"MOUSE_MOVE\tString"
-			],
-			[
-				"mouse",
-				"MouseEvent\tflash.events"
-			],
-			[
-				"set",
-				"setAsBox( hx : Float , hy : Float )\tVoid"
-			],
-			[
-				"B2B",
-				"B2BodyDef\tbox2D.dynamics"
-			],
-			[
-				"turn",
-				"myGameTurnControl\tGameTurnControl"
-			],
-			[
-				"_all",
-				"_allPlayerOnScene\tArray<Dynamic>"
-			],
-			[
-				"Scne",
-				"ScenePlayerActor\tclass"
-			],
-			[
-				"stage",
-				"stageHeight\tInt"
-			],
-			[
-				"tage",
-				"stageWidth\tInt"
-			],
-			[
-				"stag",
-				"stageWidth\tInt"
-			],
-			[
-				"rec",
-				"scrollRect\topenfl.geom.Rectangle"
-			],
-			[
-				"Timer",
-				"Timer\tflash.utils"
-			],
-			[
-				"textF",
-				"TextFieldType\tflash.text"
-			],
-			[
-				"Scene",
-				"ScenePlayerActor\tclass"
-			],
-			[
-				"max",
-				"maxSceneHeight\tInt"
-			],
-			[
-				"sc",
-				"scaleX\tFloat"
-			],
-			[
-				"maxWid",
-				"maxWidthPerPolygon\tFloat"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "source/ts_scripts/Game.ts",
+			"file": "style.css",
 			"settings":
 			{
-				"buffer_size": 1583,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "main.js",
-			"settings":
-			{
-				"buffer_size": 245,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "convert.bat",
-			"settings":
-			{
-				"buffer_size": 962,
+				"buffer_size": 11631,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -550,79 +532,7 @@
 			"file": "index.html",
 			"settings":
 			{
-				"buffer_size": 2245,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "style.css",
-			"settings":
-			{
-				"buffer_size": 7307,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "source/ts_scripts/Battle.ts",
-			"settings":
-			{
-				"buffer_size": 5757,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "source/ts_scripts/EntityRoot.ts",
-			"settings":
-			{
-				"buffer_size": 1206,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "source/ts_scripts/Data/humanoidsData.js",
-			"settings":
-			{
-				"buffer_size": 529,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "source/ts_scripts/EntityParametersGenerator.ts",
-			"settings":
-			{
-				"buffer_size": 6943,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "source/ts_scripts/Entities/Entity.ts",
-			"settings":
-			{
-				"buffer_size": 1427,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "source/ts_scripts/UserInterface.ts",
-			"settings":
-			{
-				"buffer_size": 7261,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "source/ts_scripts/Data/creaturesData.js",
-			"settings":
-			{
-				"buffer_size": 691,
+				"buffer_size": 6497,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -664,31 +574,39 @@
 		"/C/projects/Tiny-Tale-Fight-OOP/source",
 		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts",
 		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Components",
-		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Data",
-		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Entities"
+		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Data"
 	],
 	"file_history":
 	[
-		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Data/humanoidsData.js",
-		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Data/HumanoidsData.js",
-		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Data/creaturesData.js",
-		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Data/creaturesData.json",
-		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Data/HumanoidsData.json",
-		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Data/creaturesData.ts",
+		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/EntityRoot.ts",
 		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Components/FightingStats.ts",
-		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Components/Name.ts",
-		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/BattleRoot.ts",
+		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Journal.ts",
+		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/UserInterface.ts",
+		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Game.ts",
+		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Battle.ts",
 		"/C/projects/Tiny-Tale-Fight-OOP/convert.bat",
-		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Components/AgeStats.ts",
+		"/C/projects/Tiny-Tale-Fight-OOP/main.js",
+		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Data/creaturesData.js",
+		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Data/humanoidsData.js",
+		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/EntityParametersGenerator.ts",
+		"/C/projects/Tiny-Tale-Fight-OOP/index.html",
+		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Data/humanoidsClassData.js",
+		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Components/ExperienceStats.ts",
+		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Entities/Entity.ts",
+		"/C/projects/Tiny-Tale-Fight-OOP/style.css",
+		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Data/humanoidsHelperData.js",
+		"/C/projects/Tiny-Tale-Fight-OOP/.gitignore",
 		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Data/HumanoidsData.ts",
-		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Data/humanoidsDataLvlUp.ts",
+		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Data/creaturesData.ts",
+		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Components/Name.ts",
 		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Components/Type.ts",
+		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Components/AgeStats.ts",
+		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Data/humanoidsDataLvlUp.ts",
 		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Components/Stats.ts",
 		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Components/Component.ts",
 		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/CommonTick.ts",
 		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Components/ExperianceStats.ts",
 		"/C/projects/Tiny-Tale-Fight-OOP/game.js",
-		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Entities/Entity.ts",
 		"/C/projects/Tiny-Tale-Fight-OOP/source/ts_scripts/Components/CommonTick.ts",
 		"/C/projects/TinyTaleFight/js/Framework/EntityRoot.ts",
 		"/C/projects/TinyTaleFight/js/Framework/components/Stats.ts",
@@ -787,16 +705,7 @@
 		"/C/Users/Admin/Documents/GitHub/shoot-them-all/index.html",
 		"/C/Users/Admin/Documents/GitHub/hory-card-v2.0/index.html",
 		"/C/Users/Admin/Documents/GitHub/hory-card-v2.0/battle.js",
-		"/C/projects/openfl-samples-master/demos/HerokuShaders/Source/Main.hx",
-		"/C/projects/openfl-samples-master/demos/NyanCat/Source/Main.hx",
-		"/C/projects/openfl-samples-master/demos/PiratePig/Source/piratepig/Tile.hx",
-		"/C/projects/openfl-samples-master/demos/BunnyMark/Source/Main.hx",
-		"/C/projects/openfl-samples-master/demos/PiratePig/Source/piratepig/PiratePigGame.hx",
-		"/C/Users/Admin/Documents/GitHub/roaches-box2d-haxe/source/SceneActor.hx",
-		"/C/projects/DieAnotherDay/project.xml",
-		"/C/Users/Admin/Documents/GitHub/roaches-box2d-haxe/source/UserInterface.hx",
-		"/C/Users/Admin/Documents/GitHub/roaches-box2d-haxe/source/Scene.hx",
-		"/C/Users/Admin/Documents/GitHub/roaches-box2d-haxe/source/Game.hx"
+		"/C/projects/openfl-samples-master/demos/HerokuShaders/Source/Main.hx"
 	],
 	"find":
 	{
@@ -814,6 +723,8 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"80px",
+			"BattleRoot",
 			");",
 			"checkScene",
 			"tileSize",
@@ -859,6 +770,7 @@
 		"regex": false,
 		"replace_history":
 		[
+			"Battle",
 			"findScene",
 			"_tileSize",
 			"firstLeftPoint",
@@ -880,115 +792,60 @@
 	"groups":
 	[
 		{
-			"selected": 4,
+			"selected": 1,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "source/ts_scripts/Game.ts",
+					"file": "style.css",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 1583,
+						"buffer_size": 11631,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								10970,
+								10970
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/TypeScript/TypeScript.tmLanguage",
+							"syntax": "Packages/CSS/CSS.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
 							"typescript_plugin_format_options":
 							{
-								"convertTabsToSpaces": false,
-								"indentSize": 4,
-								"tabSize": 4
-							},
-							"use_tab_stops": false
+								"convertTabsToSpaces": true,
+								"indentSize": 2,
+								"tabSize": 2
+							}
 						},
 						"translation.x": 0.0,
-						"translation.y": 450.0,
+						"translation.y": 7897.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "main.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 245,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 10,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "convert.bat",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 962,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								947,
-								947
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Batch File/Batch File.sublime-syntax"
-						},
-						"translation.x": 5382.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 11,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
 					"file": "index.html",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2245,
+						"buffer_size": 6497,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2136,
-								2136
+								3838,
+								3838
 							]
 						],
 						"settings":
@@ -997,246 +854,10 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 495.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "style.css",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 7307,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1847,
-								1847
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CSS/CSS.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1350.0,
+						"translation.y": 966.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "source/ts_scripts/Battle.ts",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5757,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/TypeScript/TypeScript.tmLanguage",
-							"translate_tabs_to_spaces": false,
-							"use_tab_stops": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 666.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "source/ts_scripts/EntityRoot.ts",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1206,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								563,
-								563
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/TypeScript/TypeScript.tmLanguage",
-							"use_tab_stops": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 90.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "source/ts_scripts/Data/humanoidsData.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 529,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								475,
-								475
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 9,
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "source/ts_scripts/EntityParametersGenerator.ts",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 6943,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/TypeScript/TypeScript.tmLanguage",
-							"use_tab_stops": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 2324.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				},
-				{
-					"buffer": 9,
-					"file": "source/ts_scripts/Entities/Entity.ts",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1427,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/TypeScript/TypeScript.tmLanguage",
-							"translate_tabs_to_spaces": false,
-							"use_tab_stops": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 10,
-					"file": "source/ts_scripts/UserInterface.ts",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 7261,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/TypeScript/TypeScript.tmLanguage",
-							"translate_tabs_to_spaces": false,
-							"use_tab_stops": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1215.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 11,
-					"file": "source/ts_scripts/Data/creaturesData.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 691,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 8,
 					"type": "text"
 				}
 			]
@@ -1323,7 +944,7 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 211.0,
+	"side_bar_width": 252.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{

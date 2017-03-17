@@ -569,7 +569,7 @@ span.red {
 
 /* MAIN */
 #hero-creater{
-  display:block;
+  display:none;
   position:relative;
   width:1300px;
   height:600px;
@@ -581,10 +581,10 @@ span.red {
   overflow:hidden;
 }
 
-#left-selct-block{
+#left-visual-block{
   display: block;
   position:absolute;
-  width:400px;
+  width:285px;
   height:590px;
   margin:5px;
   padding:0px;
@@ -597,7 +597,7 @@ span.red {
 #right-visual-block {
   display:block;
   position:absolute;
-  width:600px;
+  width:1000px;
   height: 590px;
   margin:5px;
   padding:0px;
@@ -605,7 +605,260 @@ span.red {
   right:0px;
   top:0px;
   overflow: hidden;
+
 }
+
+
+
+
+
+#avatar-block {
+  display: block;
+  position: absolute;
+  width:272px;
+  height:330px;
+  margin: 5px;
+  padding: 0px;
+  left:0px;
+  top:0px;
+  overflow: hidden;
+  background-color: #eee;
+  border:1px solid black;
+}
+
+#name-surname {
+  display: block;
+  position: absolute;
+  width:272px;
+  height: 200px;
+  margin:5px;
+  padding: 0px;
+  left:0px;
+  top:335px;
+  overflow: hidden;
+  border:1px solid black;
+
+}
+
+#history-block {
+  display: block;
+  position: absolute;
+  width:988px;
+  height:156px;
+  margin: 5px;
+  padding: 0px;
+  left:0px;
+  bottom: 0px;
+  overflow: auto;
+  background-color: #aaaaaa;
+  border:1px solid black;
+}
+
+#hero-creater-bar-block {
+  display: block;
+  position: relative;
+  top:0px;
+  left:0px;
+  margin:0px;
+  padding: 0px;
+  overflow: hidden;
+  width:120px;
+  height:34px;
+  border:1px solid black;
+  background-color: #000055;
+}
+
+#hero-creater-stats-bar-skelet {
+  display: block;
+  position: absolute;
+  width:77px;
+  height:22px;
+  left:5px;
+  top:5px;
+  list-style-type: none;
+  margin: 0px;
+  padding: 1px;
+  overflow: hidden;
+}
+
+#hero-creater-stats-bar {
+  display: block;
+  position: absolute;
+  width:78px;
+  height:22px;
+  left:5px;
+  top:6px;
+  margin: 0px;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+#hero-creater-stats-bar > span.statsGreen{
+  display:block;
+  width:100%;
+  height:100%;
+  background: green; /* For browsers that do not support gradients */
+  background: -webkit-linear-gradient(left, yellow , green); /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(right, yellow, green); /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(right, yellow, green); /* For Firefox 3.6 to 15 */
+  background: linear-gradient(to right, yellow , green); /* Standard syntax */
+  -webkit-box-shadow: inset 0 2px 9px  rgba(255,255,255,0.3), inset 0 -2px 6px rgba(0,0,0,0.4);
+  -moz-box-shadow: inset 0 2px 9px  rgba(255,255,255,0.3), inset 0 -2px 6px rgba(0,0,0,0.4);
+}
+
+#hero-creater-stats-bar-skelet > li {
+  float: left;
+  display: block;
+  text-align: center;
+  width:6px;
+  height:20px;
+  text-decoration: none;
+  border:1px solid black;
+  margin-left:-1px;
+}
+
+.hero-creater-stats-text {
+  display: block;
+  position: relative;
+  width:80px;
+  height:34px;
+  top:0px;
+  left:0px;
+  font-size: 22px;
+  margin:0px;
+  text-overflow: hidden;
+  color:white;
+  border:1px solid black;
+  background-color: #000055;
+}
+
+.hero-creater-text-after-bar {
+  display: block;
+  position:absolute;
+  width:32px;
+  height:20px;
+  color:white;
+  margin:5px;
+  padding: 0px;
+  top:4px;
+  left:80px;
+  font-size:16px;
+  font-weight: bold;
+  text-overflow: show;
+  text-align: center;
+}
+
+.hero-creater-head-bar-text {
+  display: block;
+  position:relative;
+  width:120px;
+  height:34px;
+  color:white;
+  margin:0px;
+  padding: 0px;
+  top:0px;
+  left:0px;
+  font-size:22px;
+  font-weight: bold;
+  text-overflow: show;
+  text-align: center;
+  border:1px solid black;
+  background-color: #000055;
+}
+
+
+
+#choose-class {
+  display: block;
+  position:absolute;
+  width:122px;
+  height:210px;
+  margin:5px;
+  left:0px;
+  top:35px;
+  overflow:hide;
+  border:1px solid black;
+}
+
+#choose-race {
+  display: block;
+  position:absolute;
+  width:988px;
+  height:35px;
+  margin:5px;
+  left:0px;
+  overflow:hide;
+  border:1px solid black;
+}
+
+#class-chooser {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+}
+
+#race-chooser {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #55dd55;
+}
+
+#race-chooser li {
+    float: left;
+}
+
+#class-chooser li {
+    float: left;
+}
+
+#class-chooser li > input {
+  background-color: #99aa99;
+  color: black;
+  border: 0px solid black;
+  height:35px;
+  width: 122px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 18px;
+  -webkit-transition-duration: 0.4s; /* Safari */
+  transition-duration: 0.4s;
+}
+
+#race-chooser li > input {
+  background-color: #55dd55;
+  color: black;
+  border: 0px;
+  height:35px;
+  width: 123px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 22px;
+  -webkit-transition-duration: 0.4s; /* Safari */
+  transition-duration: 0.4s;
+}
+
+#class-chooser li > input:hover {
+    background-color: #111;
+}
+
+#race-chooser li > input:hover {
+  background-color: #111;
+}
+
+#class-chooser li > input.active {
+    background-color: #444;
+}
+
+#race-chooser li > input.active {
+  background-color: #447;
+}
+
 
 
 /* END OF HERO CREATER */
@@ -617,8 +870,8 @@ span.red {
 
 /* WELCOME */
 
-#welcome{
-  display:none;
+#login {
+  display:block;
   position:relative;
   width:1300px;
   height:600px;
@@ -629,3 +882,76 @@ span.red {
   margin-right: auto;
   overflow:hidden;
 }
+
+#inner-block {
+  display:block;
+  position:absolute;
+  text-align: center;
+  border-radius: 8px;
+  width:400px;
+  height:200px;
+  background-color: #aaccaa;
+  padding:0px;
+  margin:0px;
+  margin-left:-200px;
+  margin-top:-100px;
+  left:50%;
+  top:50%;
+  overflow: hidden;
+}
+
+#login-buttons {
+  display: block;
+  position: absolute;
+  width:390px;
+  height:65px;
+  padding: 0px;
+  margin:5px;
+  left:0px;
+  bottom:0px;
+  overflow:hidden;
+  text-align: center;
+}
+
+
+/* BUTTONS */
+
+.login-buttons{
+  background-color: #ff4433;
+  color: black;
+  border: 1px solid black;
+  border-radius: 8px;
+  height:40px;
+  width: 90px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 20px;
+  margin: 4px 4px;
+  -webkit-transition-duration: 0.4s; /* Safari */
+  transition-duration: 0.4s;
+}
+.login-buttons:hover{
+  background-color: #0000aa; /* Blue */
+  color: white;
+}
+
+/* TEXTAREA */
+
+#inner-block > input[type=text], #inner-block > input[type=password] {
+    width: 200px;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    border-radius:4px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+#inner-block > input[type=text]:focus, #inner-block > input[type=password]:focus {
+  background-color: lightblue;
+}
+
+/* END OF WELCOME */

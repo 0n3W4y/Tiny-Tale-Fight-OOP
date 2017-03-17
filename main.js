@@ -16,15 +16,15 @@ function toHeroCreater(){
 	var heroCreater = document.getElementById( "hero-creater" ).style.display = "block";
 	var inventoryWrapperContainer = document.getElementById( "inventory-wrapper" ).style.display = "none";
 	var shopWrapperContainer = document.getElementById( "shop-wrapper" ).style.display = "none";
-	var welcomeContainer = document.getElementById( "welcome" ).style.display = "none";
+	var welcomeContainer = document.getElementById( "login" ).style.display = "none";
 }
 
-function toWelcome(){
+function toLogin(){
 	var battleContainer = document.getElementById( "batlle-wrapper" ).style.display = "none";
 	var heroCreater = document.getElementById( "hero-creater" ).style.display = "none";
 	var inventoryWrapperContainer = document.getElementById( "inventory-wrapper" ).style.display = "none";
 	var shopWrapperContainer = document.getElementById( "shop-wrapper" ).style.display = "none";
-	var welcomeContainer = document.getElementById( "welcome" ).style.display = "block";
+	var welcomeContainer = document.getElementById( "login" ).style.display = "block";
 }
 
 function toBattle(){
@@ -32,7 +32,7 @@ function toBattle(){
 	var heroCreater = document.getElementById( "hero-creater" ).style.display = "none";
 	var inventoryWrapperContainer = document.getElementById( "inventory-wrapper" ).style.display = "none";
 	var shopWrapperContainer = document.getElementById( "shop-wrapper" ).style.display = "none";
-	var welcomeContainer = document.getElementById( "welcome" ).style.display = "none";
+	var welcomeContainer = document.getElementById( "login" ).style.display = "none";
 }
 
 function toHome(){
@@ -40,7 +40,7 @@ function toHome(){
 	var heroCreater = document.getElementById( "hero-creater" ).style.display = "none";
 	var inventoryWrapperContainer = document.getElementById( "inventory-wrapper" ).style.display = "none";
 	var shopWrapperContainer = document.getElementById( "shop-wrapper" ).style.display = "none";
-	var welcomeContainer = document.getElementById( "welcome" ).style.display = "none";
+	var welcomeContainer = document.getElementById( "login" ).style.display = "none";
 }
 
 function toShop(){
@@ -48,5 +48,5 @@ function toShop(){
 	var heroCreater = document.getElementById( "hero-creater" ).style.display = "none";
 	var inventoryWrapperContainer = document.getElementById( "inventory-wrapper" ).style.display = "none";
 	var shopWrapperContainer = document.getElementById( "shop-wrapper" ).style.display = "block";
-	var welcomeContainer = document.getElementById( "welcome" ).style.display = "none";
+	var welcomeContainer = document.getElementById( "login" ).style.display = "none";
 }
