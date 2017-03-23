@@ -23,6 +23,10 @@ class Entity {
 			component = new Type( this );
 		else if( name == "ExperienceStats" )
 			component = new ExperienceStats( this );
+		else if( name == "InventoryBag" )
+			component = new InventoryBag( this );
+		else if( name == "InventoryEquip" )
+			component = new InventoryEquip( this );
 		else
 			console.log( "Error with add components, component with name: " + name + " not found. Erorr in Entity/createComponent." );
 

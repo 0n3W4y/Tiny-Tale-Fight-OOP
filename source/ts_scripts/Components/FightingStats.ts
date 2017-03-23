@@ -1,10 +1,9 @@
 class FightingStats extends Component{
-	public killedBy:any; // заменить на killedBy, поставиить в занчение ссылку на entity, по ней ориентироватся - умерла ли entity или нет.
+	public killedBy:any;
 
 	public currentStats:any;
 	public staticStats:any;
 	public levelUpStats:any;
-	public levelUpClassStats:any;
 
 	private timeToNextAttack:number;
 	private attackCoolDawn:number;
@@ -48,13 +47,6 @@ class FightingStats extends Component{
 			PDEF:0,
 			MDEF:0
 		}
-
-		this.levelUpClassStats = {
-			STR:0,
-			AGI:0,
-			INT:0
-		}
-
 	}
 
 	public init( params ){
@@ -85,14 +77,8 @@ class FightingStats extends Component{
 						console.log( "Error, no key with name: " + newKey + ". Error in FightingStats/init." );
 				}
 			}
-			else if( key == "levelUpClassStats" ){
-				for( var elseKey in container ){
-					if ( !( this.levelUpClassStats[elseKey] === undefined) ){
-						this.levelUpClassStats[elseKey] = container[elseKey];
-					}else
-						console.log( "Error, no key with name: " + elseKey + ". Error in FightingStats/init." );
-				}
-			}
+			else
+				console.log( "Error, no key with name: " + key + ". Error in FightingStats/init." );
 		}
 
 		this.updateAttackCoolDawn();
@@ -110,18 +96,12 @@ class FightingStats extends Component{
 		return this.levelUpStats[stat];
 	}
 
-	public getLevelUpClassStats( stat ){
-		return this.levelUpClassStats[stat];
-	}
-
 	public setStats( to, stat ){
 		var container = this.staticStats;
 		if( to == "current" )
 			container = this.currentStats;
 		else if( to == "lvlUpStats" )
 			container = this.levelUpStats;
-		else if( to == "levelUpClassStats" )
-			container = this.levelUpClassStats;
 		else{
 			console.log( "Error, no container with name: " + to + ". Error in FightingStats/setStats.");
 			return;
@@ -154,11 +134,7 @@ class FightingStats extends Component{
 
 		if( value != null ){
 			for( var key in this.levelUpStats ){
-				var lvlupClassStat = 0;
-				if( !( this.levelUpClassStats[key] === undefined ) )
-					lvlupClassStat = this.levelUpClassStats[key];
-
-				var stat = this.levelUpStats[key] * value.lvl + this.staticStats[key] + lvlupClassStat * value.lvl;
+				var stat = this.levelUpStats[key] * value.lvl + this.staticStats[key];
 				this.currentStats[key] = stat;
 			}
 		}else
@@ -166,7 +142,7 @@ class FightingStats extends Component{
 	}
 
 	public exportDataToObject():any{
-		var result = { "currentStats": this.currentStats, "staticStats": this.staticStats, "levelUpStats": this.levelUpStats, "levelUpClassStats": this.levelUpClassStats };
+		var result = { "currentStats": this.currentStats, "staticStats": this.staticStats, "levelUpStats": this.levelUpStats };
 		return result;
 	}
 

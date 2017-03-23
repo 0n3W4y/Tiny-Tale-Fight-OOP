@@ -1,6 +1,12 @@
 class EntityRoot {
 	public entities:Array<any>;
 
+	//TODO:
+	/*
+		create actorEntities array, create itemsEntity array
+		maybe create orbsEntity array.
+	*/
+
 	public entityParametersGenerator:any;
 
 	private parent;
@@ -15,20 +21,21 @@ class EntityRoot {
 		this.deadEntities = new Array();
 	}
 
-	public init( creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData ){
-		this.entityParametersGenerator = new EntityParametersGenerator( creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData );
+	public init( creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData ){
+		this.entityParametersGenerator = new EntityParametersGenerator( creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData );
 	}
 
-	public generateEntity( entityType, secondType ):any{
+	public generateEntity( entityType, type, subtype ):any{
 
 		var entity = this.createEntity( entityType );
-		var params = this.entityParametersGenerator.generate( entityType, secondType );
+		var params = this.entityParametersGenerator.generate( entityType, type, subtype );
 		entity.createComponentsWithParams( params );
+
 		return entity;
 	}
 
 	public createEntity( type ):any{
-		if( type != "Player" && type != "Mob" && type != "Helper"  )
+		if( type != "Player" && type != "Mob" && type != "Helper" && type != "Orb" )
 			console.log( "Error, no type with name: " + type + ". Error in EntityRoot/createEntity" );
 
 		var id = this.createId();

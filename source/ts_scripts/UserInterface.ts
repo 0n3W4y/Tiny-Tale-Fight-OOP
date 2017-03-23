@@ -6,6 +6,7 @@ class UserInterface {
 	private rightCharacterBlock:any;
 	private leftHelperBlock:any;
 	private enemyList:any;
+	private orbsBlock:any;
 
 	private parent:any;
 
@@ -13,12 +14,13 @@ class UserInterface {
 		this.parent = parent;
 	}
 
-	public init( leftBlock, rightBlock, journal, helperBlock, enemyList ){
+	public init( leftBlock, rightBlock, journal, helperBlock, enemyList, orbsBlock ){
 		this.leftCharacterBlock =  document.getElementById( leftBlock );
 		this.rightCharacterBlock =  document.getElementById( rightBlock);
 		this.leftHelperBlock = document.getElementById( helperBlock );
 		this.enemyList = document.getElementById( enemyList );
 		this.journal = new Journal( journal );
+		this.orbsBlock = document.getElementById( orbsBlock );
 		//this.journal.init();
 	}
 
@@ -292,6 +294,29 @@ class UserInterface {
 		var hpBar = container.getElementsByClassName( "red" )[0];
 		hpBar.innerHTML = currentHPStat + "/" + staticHp;
 		hpBar.style.width = hpWidth + "%";
+	}
+
+	public addOrbToBlock( id ){
+		var container = this.orbsBlock;
+		var child = document.createElement( "li" );
+		child.id = id;
+		container.appendChild( child );
+	}
+
+	public removeOrbFromBlock( id ){
+		var container = this.orbsBlock;
+		var orb;
+		var list = container.getElementsByTagName("li");
+		for( var i = 0; i < list.length; i++ ){
+			if ( list[i].id == id ){
+				orb = list[i];
+				list.removeChild( list[i] );
+				break;
+			}
+		}
+
+		return orb;
+		
 	}
 
 	public createToolTip( entity ){

@@ -15,13 +15,13 @@ class Game {
 		this.preStartDone = false;
 	}
 
-	public init( creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, leftBlock, rightBlock, journal, helperBlock, enemylist ){
+	public init( creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData, leftBlock, rightBlock, journal, helperBlock, enemylist, orbsBlock ){
 		this.commonTick = new CommonTick( this, this.fps );
 		this.entityRoot = new EntityRoot( this );
-		this.entityRoot.init( creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData );
+		this.entityRoot.init( creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData );
 		this.battle = new Battle( this );
 		this.userInterface = new UserInterface( this );
-		this.userInterface.init( leftBlock, rightBlock, journal, helperBlock, enemylist );
+		this.userInterface.init( leftBlock, rightBlock, journal, helperBlock, enemylist, orbsBlock );
 	}
 
 	public start(){

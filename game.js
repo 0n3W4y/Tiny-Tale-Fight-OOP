@@ -8,13 +8,13 @@ var Game = (function () {
         this.fps = fps;
         this.preStartDone = false;
     }
-    Game.prototype.init = function (creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, leftBlock, rightBlock, journal, helperBlock, enemylist) {
+    Game.prototype.init = function (creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData, leftBlock, rightBlock, journal, helperBlock, enemylist, orbsBlock) {
         this.commonTick = new CommonTick(this, this.fps);
         this.entityRoot = new EntityRoot(this);
-        this.entityRoot.init(creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData);
+        this.entityRoot.init(creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData);
         this.battle = new Battle(this);
         this.userInterface = new UserInterface(this);
-        this.userInterface.init(leftBlock, rightBlock, journal, helperBlock, enemylist);
+        this.userInterface.init(leftBlock, rightBlock, journal, helperBlock, enemylist, orbsBlock);
     };
     Game.prototype.start = function () {
         this.commonTick.startLoop();
@@ -168,12 +168,13 @@ var UserInterface = (function () {
     function UserInterface(parent) {
         this.parent = parent;
     }
-    UserInterface.prototype.init = function (leftBlock, rightBlock, journal, helperBlock, enemyList) {
+    UserInterface.prototype.init = function (leftBlock, rightBlock, journal, helperBlock, enemyList, orbsBlock) {
         this.leftCharacterBlock = document.getElementById(leftBlock);
         this.rightCharacterBlock = document.getElementById(rightBlock);
         this.leftHelperBlock = document.getElementById(helperBlock);
         this.enemyList = document.getElementById(enemyList);
         this.journal = new Journal(journal);
+        this.orbsBlock = document.getElementById(orbsBlock);
         //this.journal.init();
     };
     UserInterface.prototype.fillLeftCharacterBlock = function (entity) {
@@ -404,6 +405,25 @@ var UserInterface = (function () {
         var hpBar = container.getElementsByClassName("red")[0];
         hpBar.innerHTML = currentHPStat + "/" + staticHp;
         hpBar.style.width = hpWidth + "%";
+    };
+    UserInterface.prototype.addOrbToBlock = function (id) {
+        var container = this.orbsBlock;
+        var child = document.createElement("li");
+        child.id = id;
+        container.appendChild(child);
+    };
+    UserInterface.prototype.removeOrbFromBlock = function (id) {
+        var container = this.orbsBlock;
+        var orb;
+        var list = container.getElementsByTagName("li");
+        for (var i = 0; i < list.length; i++) {
+            if (list[i].id == id) {
+                orb = list[i];
+                list.removeChild(list[i]);
+                break;
+            }
+        }
+        return orb;
     };
     UserInterface.prototype.createToolTip = function (entity) {
     };
@@ -755,17 +775,17 @@ var EntityRoot = (function () {
         this.entityIdNumber = 0;
         this.deadEntities = new Array();
     }
-    EntityRoot.prototype.init = function (creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData) {
-        this.entityParametersGenerator = new EntityParametersGenerator(creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData);
+    EntityRoot.prototype.init = function (creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData) {
+        this.entityParametersGenerator = new EntityParametersGenerator(creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData);
     };
-    EntityRoot.prototype.generateEntity = function (entityType, secondType) {
+    EntityRoot.prototype.generateEntity = function (entityType, type, subtype) {
         var entity = this.createEntity(entityType);
-        var params = this.entityParametersGenerator.generate(entityType, secondType);
+        var params = this.entityParametersGenerator.generate(entityType, type, subtype);
         entity.createComponentsWithParams(params);
         return entity;
     };
     EntityRoot.prototype.createEntity = function (type) {
-        if (type != "Player" && type != "Mob" && type != "Helper")
+        if (type != "Player" && type != "Mob" && type != "Helper" && type != "Orb")
             console.log("Error, no type with name: " + type + ". Error in EntityRoot/createEntity");
         var id = this.createId();
         var entity = new Entity(id, type);
@@ -846,53 +866,66 @@ var CommonTick = (function () {
     return CommonTick;
 }());
 var EntityParametersGenerator = (function () {
-    function EntityParametersGenerator(creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData) {
+    function EntityParametersGenerator(creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData) {
         this.creaturesData = creaturesData;
         this.humanoidsData = humanoidsData;
         this.humanoidsClassData = humanoidsClassData;
         this.humanoidsHelperData = humanoidsHelperData;
+        this.orbsData = orbsData;
         this.creaturesDataArray = new Array();
         this.humanoidsDataArray = new Array();
         this.humanoidsClassDataArray = new Array();
         this.humanoidsHelperDataArray = new Array();
+        this.orbsDataArray = new Array();
         this.storeObjKeysInArray();
     }
-    EntityParametersGenerator.prototype.generate = function (entityType, type) {
-        var container = this.creaturesDataArray;
-        var data = this.creaturesData;
+    EntityParametersGenerator.prototype.generate = function (entityType, type, subtype) {
+        var params;
+        if (entityType == "Player" || entityType == "Helper")
+            params = this.generatePlayer(type, subtype);
+        else if (entityType == "Item")
+            params = this.generateItem(type, subtype);
+        else if (entityType == "Mob")
+            params = this.generateMob(type, subtype);
+        else
+            console.log("Errorm no Entity Type : " + entityType + ". Error in EntityParametersGenerator/generate.");
+        return params;
+    };
+    EntityParametersGenerator.prototype.generateItem = function (type, subtype) {
+    };
+    EntityParametersGenerator.prototype.generateMob = function (type, subtype) {
+    };
+    EntityParametersGenerator.prototype.generatePlayer = function (type, subtype) {
+        var PlayerRaceContainer = this.humanoidsDataArray;
+        var playerRacedata = this.humanoidsData;
+        var playerClassData = this.humanoidsClassData;
+        var playerClassContainer = this.humanoidsClassDataArray;
         var playerClass;
-        if (entityType == "Player") {
-            container = this.humanoidsDataArray;
-            data = this.humanoidsData;
-            if (type == null) {
-                var rIndex = Math.floor(Math.random() * (this.humanoidsClassDataArray.length));
-                playerClass = this.humanoidsClassDataArray[rIndex];
-            }
-            else {
-                playerClass = this.humanoidsClassDataArray[type];
-            }
+        var playerRace;
+        if (subtype == null) {
+            var rIndex = Math.floor(Math.random() * (playerClassContainer.length));
+            playerClass = playerClassContainer[rIndex];
         }
-        if (entityType == "Helper") {
-            container = this.humanoidsHelperDataArray;
-            data = this.humanoidsHelperData;
-            if (type == null) {
-                var rIndex = Math.floor(Math.random() * (this.humanoidsClassDataArray.length));
-                playerClass = this.humanoidsClassDataArray[rIndex];
-            }
-            else {
-                playerClass = this.humanoidsClassDataArray[type];
-            }
+        else {
+            playerClass = playerClassContainer[type];
+        }
+        if (type == null) {
+            var randomIndex = Math.floor(Math.random() * (PlayerRaceContainer.length));
+            playerRace = PlayerRaceContainer[randomIndex];
+        }
+        else {
+            playerRace = PlayerRaceContainer[subtype];
         }
         var params = {
             Name: null,
             Type: null,
             AgeStats: null,
             FightingStats: null,
-            ExperienceStats: null
+            ExperienceStats: null,
+            InventoryEquip: null,
+            InventoryBag: null
         };
-        var randomIndex = Math.floor(Math.random() * (container.length));
-        var creature = container[randomIndex];
-        var creatureParams = data[creature];
+        var creatureParams = PlayerRaceContainer[playerRace];
         for (var key in params) {
             var value;
             if (key == "Name")
@@ -902,9 +935,13 @@ var EntityParametersGenerator = (function () {
             else if (key == "AgeStats")
                 value = this.generateAgeStats(creatureParams[key]);
             else if (key == "FightingStats")
-                value = this.generateFightingStats(creatureParams[key], params.Type["class"]);
+                value = this.generateFightingStats(creatureParams[key], playerClass);
             else if (key == "ExperienceStats")
                 value = this.generateExperienceStats(creatureParams[key]);
+            else if (key == "InventoryEquip")
+                value = this.generateInventoryEquip(creatureParams[key]);
+            else if (key == "InventoryBag")
+                value = this.generateInventoryBag(creatureParams[key]);
             else
                 console.log("Error key with name: " + key + " not found. Error in EntityParametersGenerator/generate.");
             params[key] = value;
@@ -1024,18 +1061,16 @@ var EntityParametersGenerator = (function () {
         var creatureClassParams;
         var min;
         var max;
-        if (playerClass != "NoClass") {
-            creatureClassParams = this.humanoidsClassData[playerClass];
-            for (var newKey in creatureClassParams) {
-                var innerContainer = creatureClassParams[newKey];
-                if (typeof creatureClassParams[newKey] === "number")
-                    lvlupClass[newKey] = creatureClassParams[newKey];
-                else {
-                    min = innerContainer[0];
-                    max = innerContainer[1];
-                    var rnum = Math.floor(min + Math.random() * (max - min + 1));
-                    lvlupClass[newKey] = rnum;
-                }
+        creatureClassParams = this.humanoidsClassData[playerClass];
+        for (var newKey in creatureClassParams) {
+            var innerContainer = creatureClassParams[newKey];
+            if (typeof creatureClassParams[newKey] === "number")
+                lvlupClass[newKey] = creatureClassParams[newKey];
+            else {
+                min = innerContainer[0];
+                max = innerContainer[1];
+                var rnum = Math.floor(min + Math.random() * (max - min + 1));
+                lvlupClass[newKey] = rnum;
             }
         }
         for (var key in object) {
@@ -1069,7 +1104,10 @@ var EntityParametersGenerator = (function () {
             else
                 console.log("Error, no key with name: " + key + ". Error in EntityParametersGenerator/generateFightingStats.");
         }
-        var result = { "stats": stats, "levelUpStats": lvlup, "levelUpClassStats": lvlupClass };
+        lvlup["STR"] += lvlupClass["STR"];
+        lvlup["AGI"] += lvlupClass["AGI"];
+        lvlup["INT"] += lvlupClass["INT"];
+        var result = { "stats": stats, "levelUpStats": lvlup };
         return result;
     };
     EntityParametersGenerator.prototype.generateExperienceStats = function (object) {
@@ -1078,6 +1116,13 @@ var EntityParametersGenerator = (function () {
         var bounty = 0; //default;
         var min;
         var max;
+        /*
+        TODO:
+        Сделать bounty как {}, разместив в нем наименования предметов экспы, и прочего лута.
+        Сделать правильную функцию, которая сможет это правильно сгенерировать
+        По умолчанию, Посл егенерации моба, лут будет уже внутри сгенерирован,
+        получение лута будет функция перебора внутреннего инвентаря и сопосталвение шанса + шанс игрока на получение предмета.
+        */
         for (var key in object) {
             var container = object[key];
             if (key == "exp") {
@@ -1116,6 +1161,16 @@ var EntityParametersGenerator = (function () {
         var result = { "lvl": lvl, "exp": exp, "bounty": bounty };
         return result;
     };
+    EntityParametersGenerator.prototype.generateInventoryEquip = function (object) {
+        var result;
+        for (var key in object) {
+        }
+        return result;
+    };
+    EntityParametersGenerator.prototype.generateInventoryBag = function (object) {
+        var result;
+        return result;
+    };
     EntityParametersGenerator.prototype.storeObjKeysInArray = function () {
         for (var key in this.creaturesData) {
             this.creaturesDataArray.push(key);
@@ -1128,6 +1183,9 @@ var EntityParametersGenerator = (function () {
         }
         for (var newKey in this.humanoidsHelperData) {
             this.humanoidsHelperDataArray.push(newKey);
+        }
+        for (var newInt in this.orbsData) {
+            this.orbsDataArray.push(newInt);
         }
     };
     return EntityParametersGenerator;
@@ -1150,6 +1208,10 @@ var Entity = (function () {
             component = new Type(this);
         else if (name == "ExperienceStats")
             component = new ExperienceStats(this);
+        else if (name == "InventoryBag")
+            component = new InventoryBag(this);
+        else if (name == "InventoryEquip")
+            component = new InventoryEquip(this);
         else
             console.log("Error with add components, component with name: " + name + " not found. Erorr in Entity/createComponent.");
         return component;
@@ -1228,11 +1290,6 @@ var FightingStats = (function (_super) {
             PDEF: 0,
             MDEF: 0
         };
-        _this.levelUpClassStats = {
-            STR: 0,
-            AGI: 0,
-            INT: 0
-        };
         return _this;
     }
     FightingStats.prototype.init = function (params) {
@@ -1266,15 +1323,8 @@ var FightingStats = (function (_super) {
                         console.log("Error, no key with name: " + newKey + ". Error in FightingStats/init.");
                 }
             }
-            else if (key == "levelUpClassStats") {
-                for (var elseKey in container) {
-                    if (!(this.levelUpClassStats[elseKey] === undefined)) {
-                        this.levelUpClassStats[elseKey] = container[elseKey];
-                    }
-                    else
-                        console.log("Error, no key with name: " + elseKey + ". Error in FightingStats/init.");
-                }
-            }
+            else
+                console.log("Error, no key with name: " + key + ". Error in FightingStats/init.");
         }
         this.updateAttackCoolDawn();
     };
@@ -1287,17 +1337,12 @@ var FightingStats = (function (_super) {
     FightingStats.prototype.getLevelUpStat = function (stat) {
         return this.levelUpStats[stat];
     };
-    FightingStats.prototype.getLevelUpClassStats = function (stat) {
-        return this.levelUpClassStats[stat];
-    };
     FightingStats.prototype.setStats = function (to, stat) {
         var container = this.staticStats;
         if (to == "current")
             container = this.currentStats;
         else if (to == "lvlUpStats")
             container = this.levelUpStats;
-        else if (to == "levelUpClassStats")
-            container = this.levelUpClassStats;
         else {
             console.log("Error, no container with name: " + to + ". Error in FightingStats/setStats.");
             return;
@@ -1324,10 +1369,7 @@ var FightingStats = (function (_super) {
         var value = this.parent.getComponent("ExperienceStats");
         if (value != null) {
             for (var key in this.levelUpStats) {
-                var lvlupClassStat = 0;
-                if (!(this.levelUpClassStats[key] === undefined))
-                    lvlupClassStat = this.levelUpClassStats[key];
-                var stat = this.levelUpStats[key] * value.lvl + this.staticStats[key] + lvlupClassStat * value.lvl;
+                var stat = this.levelUpStats[key] * value.lvl + this.staticStats[key];
                 this.currentStats[key] = stat;
             }
         }
@@ -1335,7 +1377,7 @@ var FightingStats = (function (_super) {
             console.log("Error with Level up stats, level = " + value + ". Error in FightingStats/updateStatsWithLevelUp");
     };
     FightingStats.prototype.exportDataToObject = function () {
-        var result = { "currentStats": this.currentStats, "staticStats": this.staticStats, "levelUpStats": this.levelUpStats, "levelUpClassStats": this.levelUpClassStats };
+        var result = { "currentStats": this.currentStats, "staticStats": this.staticStats, "levelUpStats": this.levelUpStats };
         return result;
     };
     FightingStats.prototype.resetStats = function () {

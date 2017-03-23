@@ -1,0 +1,13 @@
+var swordsData = {
+	"longSword": {
+
+	}
+
+	"shortSword": {
+
+	}
+
+	
+
+}
+

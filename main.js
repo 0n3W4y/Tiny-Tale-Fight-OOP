@@ -7,8 +7,9 @@ function initGame(){
 	var journal = "journal";
 	var hb = "helper-block";
 	var el = "enemy-list";
-	game.init( creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, lb, rb, journal, hb, el );
-	game.start();
+	var ob = "orbs";
+	game.init( creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData, lb, rb, journal, hb, el, ob );
+	//game.start();
 }
 
 function toHeroCreater(){
@@ -49,4 +50,8 @@ function toShop(){
 	var inventoryWrapperContainer = document.getElementById( "inventory-wrapper" ).style.display = "none";
 	var shopWrapperContainer = document.getElementById( "shop-wrapper" ).style.display = "block";
 	var welcomeContainer = document.getElementById( "login" ).style.display = "none";
+}
+
+function addOrb(){
+
 }
