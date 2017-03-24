@@ -35,7 +35,7 @@ class EntityRoot {
 	}
 
 	public createEntity( type ):any{
-		if( type != "Player" && type != "Mob" && type != "Helper" && type != "Orb" )
+		if( type != "Player" && type != "Mob" && type != "Helper" && type != "Item" )
 			console.log( "Error, no type with name: " + type + ". Error in EntityRoot/createEntity" );
 
 		var id = this.createId();

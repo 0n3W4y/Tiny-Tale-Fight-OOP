@@ -46,12 +46,28 @@ class EntityParametersGenerator {
 	}
 
 	private generateMob( type, subtype ){
-		
+		var mobRaceContainer = this.creaturesDataArray;
+		var mobRaceData = this.creaturesData;
+		var mobClass = subtype;
+
+		if( subtype == null )
+			var rNum = Math.floor(Math.random()*4);
+
+		if( rNum == 0 )
+			mobClass = "Weak";
+		else if( rNum == 1 )
+			mobClass = "Normal";
+		else if( rNum == 2 )
+			mobClass = "Strong";
+		else
+			mobClass = "Boss";
+
+
 	}
 
 	private generatePlayer( type, subtype ):any{
 		var PlayerRaceContainer = this.humanoidsDataArray;
-		var playerRacedata = this.humanoidsData;
+		var playerRaceData = this.humanoidsData;
 		var playerClassData = this.humanoidsClassData;
 		var playerClassContainer = this.humanoidsClassDataArray;
 		var playerClass;

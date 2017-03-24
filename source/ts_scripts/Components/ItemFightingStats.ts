@@ -72,9 +72,21 @@ class ItemFightingStats extends Component{
 
 	public getStatFrom( from, stat ){
 		var container = this.selfStats;
-		if( from == "addStats" )
-			container = this.addStats;
+		if( from == "extraStats" )
+			container = this.extraStats;
 
 		return container[stat];
+	}
+
+	public exportDataToObject():any{
+		return { 
+			"extraStats": this.extraStats, 
+			"selfStats": this.selfStats, 
+			"typeDamageStats": this.typeDamageStats, 
+			"currentDurability": this.currentDurability, 
+			"staticDurability": this.staticDurability, 
+			"damageType": this.damageType, 
+			"damageTarget": this.damageTarget 
+		};
 	}
 }

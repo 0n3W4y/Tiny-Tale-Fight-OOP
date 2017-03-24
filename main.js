@@ -53,5 +53,5 @@ function toShop(){
 }
 
 function addOrb(){
-
+	game.entityRoot.generateEntity("Item", "Orb", "AttackingOrb");
 }
