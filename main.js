@@ -9,7 +9,7 @@ function initGame(){
 	var el = "enemy-list";
 	var ob = "orbs";
 	game.init( creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData, lb, rb, journal, hb, el, ob );
-	//game.start();
+	game.start();
 }
 
 function toHeroCreater(){
@@ -36,12 +36,19 @@ function toBattle(){
 	var welcomeContainer = document.getElementById( "login" ).style.display = "none";
 }
 
+/*
 function toHome(){
 	var battleContainer = document.getElementById( "batlle-wrapper" ).style.display = "none";
 	var heroCreater = document.getElementById( "hero-creater" ).style.display = "none";
 	var inventoryWrapperContainer = document.getElementById( "inventory-wrapper" ).style.display = "none";
 	var shopWrapperContainer = document.getElementById( "shop-wrapper" ).style.display = "none";
 	var welcomeContainer = document.getElementById( "login" ).style.display = "none";
+}
+*/
+
+function toHome(){ // временная, которая генерирует персонажа, и сразу бросает его в бой.
+	this.toBattle();
+	generate
 }
 
 function toShop(){
@@ -52,6 +59,10 @@ function toShop(){
 	var welcomeContainer = document.getElementById( "login" ).style.display = "none";
 }
 
-function addOrb(){
-	game.entityRoot.generateEntity("Item", "Orb", "AttackingOrb");
+function addAOEOrb(){
+	game.entityRoot.generateEntity("Item", "Orb", "AttackingOrbAOE");
+}
+
+function addSTOrb(){
+	game.entityRoot.generateEntity("Item", "Orb", "AttackingOrbST")
 }

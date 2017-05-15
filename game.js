@@ -10,11 +10,9 @@ var Game = (function () {
     }
     Game.prototype.init = function (creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData, leftBlock, rightBlock, journal, helperBlock, enemylist, orbsBlock) {
         this.commonTick = new CommonTick(this, this.fps);
-        this.entityRoot = new EntityRoot(this);
-        this.entityRoot.init(creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData);
+        this.entityRoot = new EntityRoot(this, creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData);
         this.battle = new Battle(this);
-        this.userInterface = new UserInterface(this);
-        this.userInterface.init(leftBlock, rightBlock, journal, helperBlock, enemylist, orbsBlock);
+        this.userInterface = new UserInterface(this, leftBlock, rightBlock, journal, helperBlock, enemylist, orbsBlock);
     };
     Game.prototype.start = function () {
         this.commonTick.startLoop();
@@ -165,8 +163,9 @@ var Journal = (function () {
     return Journal;
 }());
 var UserInterface = (function () {
-    function UserInterface(parent) {
+    function UserInterface(parent, leftBlock, rightBlock, journal, helperBlock, enemyList, orbsBlock) {
         this.parent = parent;
+        this.init(leftBlock, rightBlock, journal, helperBlock, enemyList, orbsBlock);
     }
     UserInterface.prototype.init = function (leftBlock, rightBlock, journal, helperBlock, enemyList, orbsBlock) {
         this.leftCharacterBlock = document.getElementById(leftBlock);
@@ -447,6 +446,7 @@ var Battle = (function () {
         this.isBattleEnd = false;
         this.entitiesToUpdateInterface = new Array();
         this.whoWin = null;
+        this.currentOrb = null;
     }
     Battle.prototype.update = function (delta) {
         if (this.isFighting) {
@@ -572,8 +572,15 @@ var Battle = (function () {
         var phsysicalPlayerDamage = playerFightStats.getCurrentStat("STR");
         var magicalPlayerDamage = playerFightStats.getCurrentStat("INT");
         // выберем рандомную атаку АОЕ или сингл. 
+        // для ИИ рандом останется пока-что.
         var typeOfDamage = Math.floor(Math.random() * 2); //0 , 1;
         var timesToAttack = 1;
+        //если атакующий - игрок, сомтрим. выбрал ли он орб для атаки.
+        if (player.type == "Player" && this.currentOrb != null) {
+        }
+        else {
+            typeOfDamage = 1;
+        }
         if (typeOfDamage == 0)
             timesToAttack = target.length;
         for (var i = 0; i < timesToAttack; i++) {
@@ -766,14 +773,22 @@ var Battle = (function () {
         var killerName = player.getComponent("FightingStats").killedBy.getComponent("Name").getFullName();
         this.parent.userInterface.journal.kill(killerName, playerName);
     };
+    Battle.prototype.addOrbToBattle = function (orb) {
+        if (this.currentOrb == null) {
+            this.currentOrb = orb;
+            return true;
+        }
+        return false;
+    };
     return Battle;
 }());
 var EntityRoot = (function () {
-    function EntityRoot(parent) {
+    function EntityRoot(parent, creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData) {
         this.entities = new Array();
         this.parent = parent;
         this.entityIdNumber = 0;
         this.deadEntities = new Array();
+        this.init(creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData);
     }
     EntityRoot.prototype.init = function (creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData) {
         this.entityParametersGenerator = new EntityParametersGenerator(creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData);
@@ -785,7 +800,7 @@ var EntityRoot = (function () {
         return entity;
     };
     EntityRoot.prototype.createEntity = function (type) {
-        if (type != "Player" && type != "Mob" && type != "Helper" && type != "Orb")
+        if (type != "Player" && type != "Mob" && type != "Helper" && type != "Item")
             console.log("Error, no type with name: " + type + ". Error in EntityRoot/createEntity");
         var id = this.createId();
         var entity = new Entity(id, type);
@@ -894,10 +909,23 @@ var EntityParametersGenerator = (function () {
     EntityParametersGenerator.prototype.generateItem = function (type, subtype) {
     };
     EntityParametersGenerator.prototype.generateMob = function (type, subtype) {
+        var mobRaceContainer = this.creaturesDataArray;
+        var mobRaceData = this.creaturesData;
+        var mobClass = subtype;
+        if (subtype == null)
+            var rNum = Math.floor(Math.random() * 4);
+        if (rNum == 0)
+            mobClass = "Weak";
+        else if (rNum == 1)
+            mobClass = "Normal";
+        else if (rNum == 2)
+            mobClass = "Strong";
+        else
+            mobClass = "Boss";
     };
     EntityParametersGenerator.prototype.generatePlayer = function (type, subtype) {
         var PlayerRaceContainer = this.humanoidsDataArray;
-        var playerRacedata = this.humanoidsData;
+        var playerRaceData = this.humanoidsData;
         var playerClassData = this.humanoidsClassData;
         var playerClassContainer = this.humanoidsClassDataArray;
         var playerClass;
@@ -1519,4 +1547,90 @@ var ExperienceStats = (function (_super) {
         this.updateFightingStats();
     };
     return ExperienceStats;
+}(Component));
+var InventoryBag = (function (_super) {
+    __extends(InventoryBag, _super);
+    function InventoryBag(parent) {
+        var _this = _super.call(this, "InventoryBag", parent) || this;
+        _this.bagItems = {
+            "slot1": null,
+            "slot2": null,
+            "slot3": null,
+            "slot4": null,
+            "slot5": null,
+            "slot6": null,
+            "slot7": null,
+            "slot8": null,
+            "slot9": null,
+            "slot10": null
+        };
+        _this.bagSlots = 10;
+        _this.freeBagSlots = 10;
+        return _this;
+    }
+    InventoryBag.prototype.init = function (params) {
+    };
+    InventoryBag.prototype.addNewBagSlot = function () {
+        this.bagSlots++;
+        this.bagItems["slot" + this.bagSlots] = null;
+        this.freeBagSlots++;
+    };
+    InventoryBag.prototype.stockItemInBag = function (item) {
+        if (this.freeBagSlots == 0)
+            return false;
+        for (var key in this.bagItems) {
+            if (this.bagItems[key] === null)
+                this.bagItems[key] = item;
+        }
+        this.freeBagSlots--;
+    };
+    InventoryBag.prototype.exportDataToObject = function () {
+        return { "bagItems": this.bagItems, "bagSlots": this.bagSlots, "freeBagSlots": this.freeBagSlots };
+    };
+    return InventoryBag;
+}(Component));
+var InventoryEquip = (function (_super) {
+    __extends(InventoryEquip, _super);
+    function InventoryEquip(parent) {
+        var _this = _super.call(this, "InventoryEquip", parent) || this;
+        _this.equipItems = {
+            "slotHead": null,
+            "slotTorso": null,
+            "slotGloves": null,
+            "slotShoulders": null,
+            "slotBracers": null,
+            "slotPants": null,
+            "slotBelt": null,
+            "slotBoots": null,
+            "slotAmulet": null,
+            "slotLeftRing": null,
+            "slotRightRing": null,
+            "slotLeftHand": null,
+            "slotRightHand": null
+        };
+        return _this;
+    }
+    InventoryEquip.prototype.init = function (params) {
+        for (var key in params) {
+            if (this.equipItems[key] !== undefined)
+                this.equipItems[key] = params[key];
+            else
+                console.log("Error, no name with key: " + key + " in equip inventory. Error in inventoryEquip/init.");
+        }
+    };
+    InventoryEquip.prototype.equipItem = function (item) {
+        var itemSlot = item.getComponent("").equipPlace;
+        if (itemSlot == null)
+            return false;
+        var oldItem = this.getItemInSlot(itemSlot);
+        this.equipItems[itemSlot] = item;
+        return oldItem;
+    };
+    InventoryEquip.prototype.getItemInSlot = function (slot) {
+        return this.equipItems[slot];
+    };
+    InventoryEquip.prototype.exportDataToObject = function () {
+        return { "equipItems": this.equipItems };
+    };
+    return InventoryEquip;
 }(Component));

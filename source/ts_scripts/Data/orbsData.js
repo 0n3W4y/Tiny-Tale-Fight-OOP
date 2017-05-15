@@ -1,5 +1,5 @@
 var orbsData = {
-	"AttackingOrb":{
+	"AttackingOrbST":{
 		"itemType": {
 			type: "orb",
 			subtype: "attacking",

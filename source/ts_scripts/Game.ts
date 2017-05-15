@@ -17,11 +17,9 @@ class Game {
 
 	public init( creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData, leftBlock, rightBlock, journal, helperBlock, enemylist, orbsBlock ){
 		this.commonTick = new CommonTick( this, this.fps );
-		this.entityRoot = new EntityRoot( this );
-		this.entityRoot.init( creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData );
+		this.entityRoot = new EntityRoot( this, creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData );
 		this.battle = new Battle( this );
-		this.userInterface = new UserInterface( this );
-		this.userInterface.init( leftBlock, rightBlock, journal, helperBlock, enemylist, orbsBlock );
+		this.userInterface = new UserInterface( this, leftBlock, rightBlock, journal, helperBlock, enemylist, orbsBlock );
 	}
 
 	public start(){

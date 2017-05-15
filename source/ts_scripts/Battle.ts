@@ -19,6 +19,8 @@ class Battle {
 
 	private parent:any;
 
+	private currentOrb:any;
+
 	constructor( parent ){
 		this.parent = parent;
 		this.isFighting = false;
@@ -32,6 +34,7 @@ class Battle {
 		this.isBattleEnd = false;
 		this.entitiesToUpdateInterface = new Array();
 		this.whoWin = null;
+		this.currentOrb = null;
 	}
 
 	public update( delta ){
@@ -189,8 +192,18 @@ class Battle {
 		var magicalPlayerDamage = playerFightStats.getCurrentStat( "INT" );
 
 		// выберем рандомную атаку АОЕ или сингл. 
+		// для ИИ рандом останется пока-что.
 		var typeOfDamage = Math.floor( Math.random()*2 ); //0 , 1;
 		var timesToAttack = 1;
+
+		//если атакующий - игрок, сомтрим. выбрал ли он орб для атаки.
+		if( player.type == "Player" && this.currentOrb != null ){
+			
+		}else{
+			typeOfDamage = 1;
+		}
+
+		
 
 		if( typeOfDamage == 0 ) //AOE targets;
 			timesToAttack = target.length;
@@ -427,6 +440,15 @@ class Battle {
 		var playerName = player.getComponent( "Name" ).getFullName();
 		var killerName = player.getComponent( "FightingStats" ).killedBy.getComponent( "Name" ).getFullName();
 		this.parent.userInterface.journal.kill( killerName, playerName );
+	}
+
+	public addOrbToBattle( orb ):boolean {
+		if( this.currentOrb == null ){
+			this.currentOrb = orb;
+			return true;
+		}
+
+		return false;
 	}
 
 }

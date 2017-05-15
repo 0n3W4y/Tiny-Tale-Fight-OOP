@@ -14,14 +14,15 @@ class EntityRoot {
 
 	private deadEntities:Array<any>;
 	
-	constructor( parent ){
+	constructor( parent, creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData ){
 		this.entities = new Array();
 		this.parent = parent;
 		this.entityIdNumber = 0;
 		this.deadEntities = new Array();
+		this.init( creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData );
 	}
 
-	public init( creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData ){
+	private init( creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData ){
 		this.entityParametersGenerator = new EntityParametersGenerator( creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData );
 	}
 

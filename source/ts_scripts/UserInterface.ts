@@ -10,11 +10,12 @@ class UserInterface {
 
 	private parent:any;
 
-	constructor( parent ){
+	constructor( parent, leftBlock, rightBlock, journal, helperBlock, enemyList, orbsBlock ){
 		this.parent = parent;
+		this.init( leftBlock, rightBlock, journal, helperBlock, enemyList, orbsBlock );
 	}
 
-	public init( leftBlock, rightBlock, journal, helperBlock, enemyList, orbsBlock ){
+	private init( leftBlock, rightBlock, journal, helperBlock, enemyList, orbsBlock ){
 		this.leftCharacterBlock =  document.getElementById( leftBlock );
 		this.rightCharacterBlock =  document.getElementById( rightBlock);
 		this.leftHelperBlock = document.getElementById( helperBlock );
