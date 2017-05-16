@@ -32,7 +32,7 @@ var Game = (function () {
         }
     };
     Game.prototype.generatePlayer = function () {
-        var player = this.entityRoot.generateEntity("Player", null);
+        var player = this.entityRoot.generateEntity("Player", null, null, {"Name":{ name:"Ostin", surname:"Powers"} } );
         this.battle.addPlayerToFight(1, player);
         var fullName = player.getComponent("Name").getFullName();
         var playerClass = player.getComponent("Type")["class"];
@@ -924,10 +924,10 @@ var EntityParametersGenerator = (function () {
             mobClass = "Boss";
     };
     EntityParametersGenerator.prototype.generatePlayer = function (type, subtype) {
-        var PlayerRaceContainer = this.humanoidsDataArray;
-        var playerRaceData = this.humanoidsData;
-        var playerClassData = this.humanoidsClassData;
-        var playerClassContainer = this.humanoidsClassDataArray;
+        var playerRaceContainer = this.humanoidsDataArray; //names
+        var playerRaceData = this.humanoidsData; // data from names
+        var playerClassData = this.humanoidsClassData; //data from names
+        var playerClassContainer = this.humanoidsClassDataArray; //names
         var playerClass;
         var playerRace;
         if (subtype == null) {
@@ -938,11 +938,11 @@ var EntityParametersGenerator = (function () {
             playerClass = playerClassContainer[type];
         }
         if (type == null) {
-            var randomIndex = Math.floor(Math.random() * (PlayerRaceContainer.length));
-            playerRace = PlayerRaceContainer[randomIndex];
+            var randomIndex = Math.floor(Math.random() * (playerRaceContainer.length));
+            playerRace = playerRaceContainer[randomIndex];
         }
         else {
-            playerRace = PlayerRaceContainer[subtype];
+            playerRace = playerRaceContainer[subtype];
         }
         var params = {
             Name: null,
@@ -953,7 +953,7 @@ var EntityParametersGenerator = (function () {
             InventoryEquip: null,
             InventoryBag: null
         };
-        var creatureParams = PlayerRaceContainer[playerRace];
+        var creatureParams = playerRaceData[playerRace];
         for (var key in params) {
             var value;
             if (key == "Name")

@@ -8,7 +8,7 @@ function initGame(){
 	var hb = "helper-block";
 	var el = "enemy-list";
 	var ob = "orbs";
-	game.init( creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData, lb, rb, journal, hb, el, ob );
+	game.init( creaturesData, creatureClassData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData, lb, rb, journal, hb, el, ob );
 	game.start();
 }
 
@@ -48,7 +48,7 @@ function toHome(){
 
 function toHome(){ // временная, которая генерирует персонажа, и сразу бросает его в бой.
 	this.toBattle();
-	generate
+	game.preStart();
 }
 
 function toShop(){

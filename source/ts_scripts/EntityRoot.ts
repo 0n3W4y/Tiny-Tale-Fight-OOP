@@ -14,23 +14,23 @@ class EntityRoot {
 
 	private deadEntities:Array<any>;
 	
-	constructor( parent, creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData ){
+	constructor( parent, creaturesData, creatureClassData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData ){
 		this.entities = new Array();
 		this.parent = parent;
 		this.entityIdNumber = 0;
 		this.deadEntities = new Array();
-		this.init( creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData );
+		this.init( creaturesData, creatureClassData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData );
 	}
 
-	private init( creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData ){
-		this.entityParametersGenerator = new EntityParametersGenerator( creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData );
+	private init( creaturesData, creatureClassData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData ){
+		this.entityParametersGenerator = new EntityParametersGenerator( creaturesData, creatureClassData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData );
 	}
 
-	public generateEntity( entityType, type, subtype ):any{
+	public generateEntity( entityType, type, subtype, params ):any{
 
 		var entity = this.createEntity( entityType );
-		var params = this.entityParametersGenerator.generate( entityType, type, subtype );
-		entity.createComponentsWithParams( params );
+		var newParams = this.entityParametersGenerator.generate( entityType, type, subtype, params );
+		entity.createComponentsWithParams( newParams );
 
 		return entity;
 	}

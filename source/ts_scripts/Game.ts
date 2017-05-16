@@ -15,9 +15,9 @@ class Game {
 		this.preStartDone = false;
 	}
 
-	public init( creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData, leftBlock, rightBlock, journal, helperBlock, enemylist, orbsBlock ){
+	public init( creaturesData, creatureClassData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData, leftBlock, rightBlock, journal, helperBlock, enemylist, orbsBlock ){
 		this.commonTick = new CommonTick( this, this.fps );
-		this.entityRoot = new EntityRoot( this, creaturesData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData );
+		this.entityRoot = new EntityRoot( this, creaturesData, creatureClassData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData );
 		this.battle = new Battle( this );
 		this.userInterface = new UserInterface( this, leftBlock, rightBlock, journal, helperBlock, enemylist, orbsBlock );
 	}

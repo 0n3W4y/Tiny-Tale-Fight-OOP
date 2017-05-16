@@ -1,9 +1,5 @@
 var humanoidsData = {
 	"Human":{
-		Name: {
-			name: "Ostin", 
-			surname: "Powers"
-		},
 		Type: {
 			sex: ["Man", "Woman"], 
 			race: "Human",
