@@ -3,7 +3,6 @@ var humanoidsData = {
 		Type: {
 			sex: ["Man", "Woman"], 
 			race: "Human",
-			class: [ "Barbarian", "Paladin", "Archer", "Crossbowman", "Mage", "Cliric" ]
 		},
 		AgeStats: {
 			age:[14, 100], 

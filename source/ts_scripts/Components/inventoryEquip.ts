@@ -1,6 +1,6 @@
 class InventoryEquip extends Component{
 
-	private equipItems;
+	private equipItems:any;
 
 	constructor( parent ){
 	 	super( "InventoryEquip", parent );

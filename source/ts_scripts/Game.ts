@@ -46,7 +46,7 @@ class Game {
 	}
 
 	public generatePlayer(){
-		var player = this.entityRoot.generateEntity( "Player", null );
+		var player = this.entityRoot.generateEntity( "Player", null, null, {Name:{ name:"Ostin", surname:"Powers"}} );
 		this.battle.addPlayerToFight( 1,  player );
 		var fullName = player.getComponent( "Name" ).getFullName();
 		var playerClass = player.getComponent( "Type" ).class;
@@ -57,7 +57,7 @@ class Game {
 	}
 
 	public generateMob(){
-		var entityList = this.entityRoot.getListOfEntities();
+		//var entityList = this.entityRoot.getListOfEntities();
 		var lvl = 1;
 
 		lvl = this.player.getComponent( "ExperienceStats" ).lvl;
@@ -79,7 +79,7 @@ class Game {
 	}
 
 	private generateHelper(){
-		var helper = this.entityRoot.generateEntity( "Helper", null );
+		var helper = this.entityRoot.generateEntity( "Helper", null, null, {Name:{ name:"Super", surname:"Helper"}} );
 		this.battle.addPlayerToFight( 1,  helper );
 		var fullName = helper.getComponent( "Name" ).getFullName();
 		var playerClass = helper.getComponent( "Type" ).class;

@@ -42,7 +42,7 @@ var creaturesClassData = {
 
 		FightingStats: {
 			stats: {
-				HP:30, 
+				HP:60, 
 				STR:1, 
 				AGI:1, 
 				INT:1, 
@@ -78,7 +78,7 @@ var creaturesClassData = {
 
 		FightingStats: {
 			stats: {
-				HP:30, 
+				HP:90, 
 				STR:1, 
 				AGI:1, 
 				INT:1, 
@@ -114,7 +114,7 @@ var creaturesClassData = {
 
 		FightingStats: {
 			stats: {
-				HP:30, 
+				HP:200, 
 				STR:1, 
 				AGI:1, 
 				INT:1, 

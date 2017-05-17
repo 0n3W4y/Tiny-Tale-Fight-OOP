@@ -1,37 +1,79 @@
 var humanoidsClassData = {
 	"Barbarian":{
-		STR:3,
-		AGI:2,
-		INT:1
+		Type: {
+			class:"Barbarian"
+		},
+		FightingStats: {
+			lvlup: {
+				STR:3,
+				AGI:2,
+				INT:1
+			}
+		}
 	},
 
 	"Paladin": {
-		STR:3,
-		AGI:1,
-		INT:2
+		Type: {
+			class:"Paladin"
+		},
+		FightingStats: {
+			lvlup: {
+				STR:3,
+				AGI:1,
+				INT:2
+			}
+		}
 	}, 
 
 	"Archer":{
-		STR:1,
-		AGI:3,
-		INT:2
+		Type: {
+			class:"Archer"
+		},
+		FightingStats: {
+			lvlup: {
+				STR:1,
+				AGI:3,
+				INT:2
+			}
+		}
 	}, 
 
 	"Crossbowman":{
-		STR:2,
-		AGI:3,
-		INT:1
+		Type: {
+			class:"Crossbowman"
+		},
+		FightingStats: {
+			lvlup: {
+				STR:2,
+				AGI:3,
+				INT:1
+			}
+		}
 	},
 
 	"Mage":{
-		STR:1,
-		AGI:2,
-		INT:3
+		Type: {
+			class:"Mage"
+		},
+		FightingStats: {
+			lvlup: {
+				STR:1,
+				AGI:2,
+				INT:3
+			}
+		}
 	}, 
 
 	"Cliric":{
-		STR:2,
-		AGI:1,
-		INT:3		
+		Type: {
+			class:"Cliric"
+		},
+		FightingStats: {
+			lvlup: {
+				STR:2,
+				AGI:1,
+				INT:3
+			}
+		}		
 	}
 }

@@ -47,72 +47,6 @@ class EntityParametersGenerator {
 
 	}
 
-
-	// зачем разделил функции генерации игрока и моба. хз, TODO: объединить.
-	// возможно дял игрока планировал save\load;
-
-	private generateMob( type, subtype, params ){
-		var mobRaceContainer = this.creaturesDataArray;
-		var mobRaceData = this.creaturesData;
-		var mobClass = subtype;
-		var mobType = type;
-
-		if( subtype == null ){
-			var rNum = Math.floor(Math.random()*4);
-			if( rNum == 0 )
-				mobClass = "Weak";
-			else if( rNum == 1 )
-				mobClass = "Normal";
-			else if( rNum == 2 )
-				mobClass = "Strong";
-			else
-				mobClass = "Boss";
-		}
-
-		if( type == null ){
-			var rIndex = Math.floor( Math.random()*( mobRaceContainer.length ) );
-			mobType = mobRaceContainer[rIndex];
-		}
-
-		var newParams = {
-			Name:null,
-			Type:null,
-			AgeStats:null,
-			FightingStats:null,
-			ExperienceStats:null,
-			InventoryEquip:null,
-			InventoryBag:null
-		}
-
-
-		var creatureParams = mobRaceData[mobType];
-		creatureParams = creatureParams[mobClass];
-
-		for( var key in newParams ){
-			var value;
-			if( key == "Name" )
-				value = this.generateName( creatureParams[key], params[key] );
-			else if( key == "Type" )
-				value = this.generateType( creatureParams[key], params[key], mobClass );
-			else if( key == "AgeStats" )
-				value = this.generateAgeStats( creatureParams[key], params[key] );
-			else if( key == "FightingStats" )
-				value = this.generateFightingStats( creatureParams[key], params[key], mobClass );
-			else if( key == "ExperienceStats" )
-				value = this.generateExperienceStats( creatureParams[key], params[key] );
-			else if( key == "InventoryEquip" )
-				value = this.generateInventoryEquip( creatureParams[key], params[key] );
-			else if( key == "InventoryBag" )
-				value = this.generateInventoryBag( creatureParams[key], params[key] );
-			else
-				console.log( "Error key with name: " + key + " not found. Error in EntityParametersGenerator/generate." );
-
-			newParams[key] = value;
-		}
-
-		return newParams;
-	}
-
 	private generateCreature( entityType, type, subtype, params ):any{
 
 		var creatureRaceContainer; //names
@@ -135,24 +69,26 @@ class EntityParametersGenerator {
 		}else if( entityType == "Mob" ){
 			creatureRaceContainer = this.creaturesDataArray;
 			creatureRaceData = this.creaturesData;
-			creatureClassData = 
-			creatureClassContainer =
+			creatureClassData = this.creatureClassData;
+			creatureClassContainer = this.creatureClassDataArray;
 		}else{
-			console.log(" Error, entity type " + entityType + " not found. Error in EntityParametersGenerator/generateCreature." );
+			console.log( "Error, entity type " + entityType + " not found. Error in EntityParametersGenerator/generateCreature." );
 		}
 
 		if( subtype == null ){
-			var rIndex = Math.floor( Math.random()*( playerClassContainer.length ) );
-			playerClass = playerClassContainer[rIndex];
+			var rIndex = Math.floor( Math.random()*( creatureClassContainer.length ) );
+			var creatureClassName = creatureClassContainer[rIndex];
+			creatureClass = creatureClassData[creatureClassName];
 		}else{
-			playerClass = playerClassContainer[type];
+			creatureClass = creatureClassData[type];
 		}
 
 		if( type == null ){
-			var randomIndex = Math.floor( Math.random()*( playerRaceContainer.length ) );
-			playerRace = playerRaceContainer[randomIndex];
+			var randomIndex = Math.floor( Math.random()*( creatureRaceContainer.length ) );
+			var creatureRaceName = creatureRaceContainer[randomIndex];
+			creatureRace = creatureClassData[creatureRaceName];
 		}else{
-			playerRace = playerRaceContainer[subtype];
+			creatureRace = creatureClassData[subtype];
 		}
 
 		var newParams = {
@@ -164,25 +100,31 @@ class EntityParametersGenerator {
 			InventoryEquip:null,
 			InventoryBag:null
 		}
-		
-		var creatureParams = playerRaceData[playerRace];
+
+		//делаем присвоение параметров в текущие параметры, для дальнейшей генерации.
+		if( params != null ){
+			for( var num in params ){
+				if( newParams[num] !== undefined )
+					newParams[num] = params[num];
+			}
+		}
 
 		for( var key in newParams ){
 			var value;
 			if( key == "Name" )
-				value = this.generateName( creatureParams[key], params[key] );
+				value = this.generateName( creatureRace[key], creatureClass[key], newParams[key] );
 			else if( key == "Type" )
-				value = this.generateType( creatureParams[key], params[key], playerClass );
+				value = this.generateType( creatureRace[key], creatureClass[key], newParams[key] );
 			else if( key == "AgeStats" )
-				value = this.generateAgeStats( creatureParams[key], params[key] );
+				value = this.generateAgeStats( creatureRace[key], creatureClass[key], newParams[key] );
 			else if( key == "FightingStats" )
-				value = this.generateFightingStats( creatureParams[key], params[key], playerClass );
+				value = this.generateFightingStats( creatureRace[key], creatureClass[key], newParams[key] );
 			else if( key == "ExperienceStats" )
-				value = this.generateExperienceStats( creatureParams[key], params[key] );
+				value = this.generateExperienceStats( creatureRace[key], creatureClass[key], newParams[key] );
 			else if( key == "InventoryEquip" )
-				value = this.generateInventoryEquip( creatureParams[key], params[key] );
+				value = this.generateInventoryEquip( creatureRace[key], creatureClass[key], newParams[key] );
 			else if( key == "InventoryBag" )
-				value = this.generateInventoryBag( creatureParams[key], params[key] );
+				value = this.generateInventoryBag( creatureRace[key], creatureClass[key], newParams[key] );
 			else
 				console.log( "Error key with name: " + key + " not found. Error in EntityParametersGenerator/generate." );
 
@@ -192,125 +134,243 @@ class EntityParametersGenerator {
 		return newParams;
 	}
 
-	private generateName( object, params ):any{
+	private generateName( raceObject, classObject, params ):any{
 		// Генерируем имя entity, оно состоит из объекта несущего информацию об имени и фамилии, в процессе может придти как стринг, так и аррей.
 		var name = "NoName";
 		var surname = "NoSurname";
 
-		for( var key in object ){
-			var container = object[key];
-			if( key == "name" ){
-				if( typeof container === "string" ) //проверяем, с каким типом данных мы работает, либо это строка. либо массив из строк.
-					name = container;
-				else{
-					var rnum = Math.floor( Math.random()*container.length ); // выбираем рандомное значение из массива.
-					name = container[rnum];
-				}
-			}
-			else if( key == "surname" ){
-				if( typeof container === "string" )
-					surname = container;
-				else{
-					var rnum = Math.floor( Math.random()*container.length );
-					surname = container[rnum];
-				}
-			}
-			else
-				console.log( "Error, no key with name: " + key + ". Error in EntityParametersGenerator/generateName." );
+		// приоритет отдам race, если там не находится необходимый параметр, применяю class.
+		var nameObject;
+		var skipGenerateName = false;
+
+		if( params["name"] !== undefined ){
+			name = params["name"];
+			skipGenerateName = true;
 		}
+		else if( raceObject["name"] !== undefined )
+			nameObject = raceObject["name"];
+		else if( classObject["name"] !== undefined )
+			nameObject = classObject["name"];
+		else
+			console.log( "Error, no name. Error in EntityParametersGenerator/generateName." );
+
+		if( !skipGenerateName ){
+			if( typeof nameObject === "string" ) //проверяем, с каким типом данных мы работает, либо это строка. либо массив из строк.
+				name = nameObject;
+			else{
+				var rnum = Math.floor( Math.random()*nameObject.length ); // выбираем рандомное значение из массива.
+				name = nameObject[rnum];
+			}
+		}
+
+		var surnameObject;
+		var skipGenerateSurname = false;
+
+		if( params["surname"] !== undefined ){
+			surname = params["surname"];
+			skipGenerateSurname = true;
+		}
+		else if( raceObject["surname"] !== undefined )
+			surnameObject = raceObject["surname"];
+		else if( classObject["surname"] !== undefined )
+			surnameObject = classObject["surname"];
+		else
+			console.log( "Error, no surname. Error in EntityParametersGenerator/generateName." );
+		
+		if( !skipGenerateSurname ){
+			if( typeof surnameObject === "string" )
+				surname = surnameObject;
+			else{
+				var rnum = Math.floor( Math.random()*surnameObject.length );
+				surname = surnameObject[rnum];
+			}
+		}
+
 		var result = { "name": name, "surname": surname };
 		return result;
 	}
 
-	private generateType( object, params, playerClass ):any{
+	private generateType( raceObject, classObject, params ):any{
 		var sex = "NoSex";
 		var race = "NoRace";
-		var creatureClass = playerClass || "NoClass";
+		var creatureClass = "NoClass";
 
-		for( var key in object ){
-			var container = object[key];
-			if( key == "sex" ){
-				if( typeof container === "string" )
-					sex = container;
-				else{
-					var rnum = Math.floor( Math.random()*container.length );
-					sex = container[rnum];
-				}
-			}
-			else if( key == "race" ){
-				if( typeof container === "string" )
-					race = container;
-				else{
-					var rnum = Math.floor( Math.random()*container.length );
-					race = container[rnum];
-				}
-			}
-			else if( key == "class" ){
-				if( creatureClass == "NoClass" ){
-					var rnum = Math.floor( Math.random()*container.length );
-					creatureClass = container[rnum];
-				}
-			}
-			else
-				console.log( "Error, no key with name: " + key + ". Error in EntityParametersGenerator/generateType." );
+		var sexObject;
+		var skipGenerateSex = false;
+
+		if( params["sex"] !== undefined ){
+			sex = params["sex"];
+			skipGenerateSex = true;
 		}
+		else if( raceObject["sex"] !== undefined )
+			sexObject = raceObject["sex"];
+		else if( classObject["sex"] !== undefined )
+			sexObject = classObject["sex"];
+		else
+			console.log( "Error, no sex. Error in EntityParametersGenerator/generateType." );
+
+		if( !skipGenerateSex ){
+			if( typeof sexObject === "string" ) //проверяем, с каким типом данных мы работает, либо это строка. либо массив из строк.
+				sex = sexObject;
+			else{
+				var rnum = Math.floor( Math.random()*sexObject.length ); // выбираем рандомное значение из массива.
+				sex = sexObject[rnum];
+			}
+		}
+
+		var raceNameObject;
+		var skipGenerateRace = false;
+
+		if( params["race"] !== undefined ){
+			race = params["race"];
+			skipGenerateRace = true;
+		}
+		else if( raceObject["race"] !== undefined )
+			raceNameObject = raceObject["race"];
+		else if( classObject["race"] !== undefined )
+			raceNameObject = classObject["race"];
+		else
+			console.log( "Error, no race. Error in EntityParametersGenerator/generateType." );
+
+		if( !skipGenerateRace ){
+			if( typeof raceNameObject === "string" ) //проверяем, с каким типом данных мы работает, либо это строка. либо массив из строк.
+				race = raceNameObject;
+			else{
+				var rnum = Math.floor( Math.random()*raceNameObject.length ); // выбираем рандомное значение из массива.
+				race = raceNameObject[rnum];
+			}
+		}
+
+		var classNameObject;
+		var skipGenerateClass = false;
+
+		if( params["class"] !== undefined ){
+			creatureClass = params["class"];
+			skipGenerateClass = true;
+		}
+		else if( raceObject["class"] !== undefined )
+			classNameObject = raceObject["class"];
+		else if( classObject["class"] !== undefined )
+			classNameObject = classObject["class"];
+		else
+			console.log( "Error, no class. Error in EntityParametersGenerator/generateType." );
+
+		if( !skipGenerateClass ){
+			if( typeof classNameObject === "string" ) //проверяем, с каким типом данных мы работает, либо это строка. либо массив из строк.
+				creatureClass = classNameObject;
+			else{
+				var rnum = Math.floor( Math.random()*classNameObject.length ); // выбираем рандомное значение из массива.
+				creatureClass = classNameObject[rnum];
+			}
+		}
+
 		var result = { "sex": sex, "race": race, "class": creatureClass };
 		return result;
 	}
 
-	private generateAgeStats( object, params ):any{
+	private generateAgeStats( raceObject, classObject, params ):any{
 		var min;
 		var max;
 		var age = 0;
 		var month = 0;
 		var day = 1;
 
-		for( var key in object ){
-			var container = object[key];
-			if( key == "age" ){
-				if( typeof container === "number" )
-					age = container;
-				else{
-					min = container[0];
-					max = container[1];
-					var rnum = Math.floor( min + Math.random()*(max - min + 1) );
-					age = rnum;
-				}
-			}
-			else if( key == "month" ){
-				if( typeof container === "number" )
-					month = container;
-				else{
-					min = container[0];
-					max = container[1];
-					var rnum = Math.floor( min + Math.random()*(max - min + 1) );
-					month = rnum;
-				}
-			}
-			else if( key == "day" ){
-				if( typeof container === "number" )
-					day = container;
-				else{
-					min = container[0];
-					max = container[1];
-					var rnum = Math.floor( min + Math.random()*(max - min + 1) );
-					day = rnum;
-				}
-			}
-			else
-				console.log( "Error, no key with name: " + key + ". Error in EntityParametersGenerator/generateAgeStats." );
+		var ageObject;
+		var skipGenerateAge = false;
+
+		if( params["age"] !== undefined ){
+			age = params["age"];
+			skipGenerateAge = true;
 		}
+		else if( raceObject["age"] !== undefined )
+			ageObject = raceObject["age"];
+		else if( classObject["age"] !== undefined )
+			ageObject = classObject["age"];
+		else
+			console.log( "Error, no age. Error in EntityParametersGenerator/generateAgeStats." );
+
+		if( !skipGenerateAge ){
+			if( typeof ageObject === "number" ) //проверяем, с каким типом данных мы работает, либо это строка. либо массив из строк.
+				age = ageObject;
+			else{
+				min = ageObject[0];
+				max = ageObject[1];
+				var rnum = Math.floor( min + Math.random()*(max - min + 1) ); // выбираем рандомное значение из массива.
+				age = rnum; 
+			}
+		}
+
+		var monthObject;
+		var skipGenerateMonth = false;
+
+		if( params["month"] !== undefined ){
+			month = params["month"];
+			skipGenerateMonth = true;
+		}
+		else if( raceObject["month"] !== undefined )
+			monthObject = raceObject["month"];
+		else if( classObject["month"] !== undefined )
+			monthObject = classObject["month"];
+		else
+			console.log( "Error, no month. Error in EntityParametersGenerator/generateAgeStats." );
+
+		if( !skipGenerateMonth ){
+			if( typeof monthObject === "number" ) //проверяем, с каким типом данных мы работает, либо это строка. либо массив из строк.
+				month = monthObject;
+			else{
+				min = monthObject[0];
+				max = monthObject[1];
+				var rnum = Math.floor( min + Math.random()*(max - min + 1) ); // выбираем рандомное значение из массива.
+				month = rnum; 
+			}
+		}
+
+		var dayObject;
+		var skipGenerateDay = false;
+
+		if( params["day"] !== undefined ){
+			day = params["day"];
+			skipGenerateDay = true;
+		}
+		else if( raceObject["day"] !== undefined )
+			dayObject = raceObject["day"];
+		else if( classObject["day"] !== undefined )
+			dayObject = classObject["day"];
+		else
+			console.log( "Error, no day. Error in EntityParametersGenerator/generateAgeStats." );
+
+		if( !skipGenerateDay ){
+			if( typeof dayObject === "number" ) //проверяем, с каким типом данных мы работает, либо это строка. либо массив из строк.
+				day = dayObject;
+			else{
+				min = dayObject[0];
+				max = dayObject[1];
+				var rnum = Math.floor( min + Math.random()*(max - min + 1) ); // выбираем рандомное значение из массива.
+				day = rnum; 
+			}
+		}
+
 		var result = { "age": age, "month": month, "day": day };
 		return result;
 	}
 
-	private generateFightingStats( object, params, playerClass ):any{
-		var stats = {};
-		var lvlup = {};
-		var lvlupClass = { STR:0, AGI:0, INT:0 };
-		var creatureClassParams;
-		var min;
-		var max;
+	private generateFightingStats( raceObject, classObject, params ):any{
+		var stats = { HP:0, STR:0, AGI:0, INT:0, ASPD:0, DDG:0, BLK:0, PDEF:0, MDEF:0 };
+		var lvlup = { HP:0, STR:0, AGI:0, INT:0, ASPD:0, DDG:0, BLK:0, PDEF:0, MDEF:0 };
+		var paramsStats;
+		var paramsStats;
+
+		var raceObjectStats = raceObject["stats"];
+		var classObjectStats = classObject["stats"];
+		
+		var raceObjectLvlup = raceObject["lvlup"];
+		var classObjectStats = classObject["lvlup"];
+
+		if( params != null ){
+			paramsStats = params["stats"];
+			paramsStats = params["lvlup"];
+		}
+		
 
 		creatureClassParams = this.humanoidsClassData[playerClass];
 		for( var newKey in creatureClassParams ){
@@ -365,7 +425,7 @@ class EntityParametersGenerator {
 		return result;
 	}
 
-	private generateExperienceStats( object, params ):any{
+	private generateExperienceStats( raceObject, classObject, params ):any{
 		var lvl = 1; //default;
 		var exp = 0; //default;
 		var bounty = 0; //default;
@@ -380,54 +440,91 @@ class EntityParametersGenerator {
 		получение лута будет функция перебора внутреннего инвентаря и сопосталвение шанса + шанс игрока на получение предмета.
 		*/
 
-		for( var key in object ){
-			var container = object[key];
-			if( key == "exp" ){
-				if( typeof container === "number" )
-					exp = container;
-				else{
-					min = container[0];
-					max = container[1];
-					var rnum = Math.floor( min + Math.random()*(max - min + 1) );
-					exp = rnum;
-				}
-			}
-			else if( key == "lvl" ){
-				if( typeof container === "number" )
-					lvl = container;
-				else{
-					min = container[0];
-					max = container[1];
-					var rnum = Math.floor( min + Math.random()*(max - min + 1) );
-					lvl = rnum;
-				}
-			}
-			else if( key == "bounty" ){
-				if( typeof container === "number" )
-					bounty = container;
-				else{
-					min = container[0];
-					max = container[1];
-					var rnum = Math.floor( min + Math.random()*(max - min + 1) );
-					bounty = rnum;
-				}
-			}
-			else
-				console.log( "Error, no key with name: " + key + ". Error in EntityParametersGenerator/generateExperienceStats." );
+		var lvlObject;
+		var skipGenerateLvl = false;
+
+		if( params["lvl"] !== undefined ){
+			lvl = params["lvl"];
+			skipGenerateLvl = true;
 		}
+		if( raceObject["lvl"] !== undefined )
+			lvlObject = raceObject["lvl"];
+		else if( classObject["lvl"] !== undefined )
+			lvlObject = classObject["lvl"];
+		else
+			console.log( "Error, no lvl. Error in EntityParametersGenerator/generateExperienceStats." );
+
+		if( !skipGenerateLvl ){
+			if( typeof lvlObject === "number" ) //проверяем, с каким типом данных мы работает, либо это строка. либо массив из строк.
+				lvl = lvlObject;
+			else{
+				min = lvlObject[0];
+				max = lvlObject[1];
+				var rnum = Math.floor( min + Math.random()*(max - min + 1) ); // выбираем рандомное значение из массива.
+				lvl = rnum; 
+			}
+		}
+
+		var expObject;
+		var skipGenerateExp = false;
+
+		if( params["exp"] !== undefined ){
+			exp = params["exp"];
+			skipGenerateExp = true;
+		}
+		if( raceObject["exp"] !== undefined )
+			expObject = raceObject["exp"];
+		else if( classObject["exp"] !== undefined )
+			expObject = classObject["exp"];
+		else
+			console.log( "Error, no exp. Error in EntityParametersGenerator/generateExperienceStats." );
+
+		if( !skipGenerateExp ){
+			if( typeof expObject === "number" ) //проверяем, с каким типом данных мы работает, либо это строка. либо массив из строк.
+				exp = expObject;
+			else{
+				min = expObject[0];
+				max = expObject[1];
+				var rnum = Math.floor( min + Math.random()*(max - min + 1) ); // выбираем рандомное значение из массива.
+				exp = rnum; 
+			}
+		}
+
+		var bountyObject;
+		var skipGenerateBounty = false;
+
+		if( params["bounty"] !== undefined ){
+			bounty = params["bounty"];
+			skipGenerateBounty = true;
+		}
+		if( raceObject["bounty"] !== undefined )
+			bountyObject = raceObject["bounty"];
+		else if( classObject["bounty"] !== undefined )
+			bountyObject = classObject["bounty"];
+		else
+			console.log( "Error, no bounty. Error in EntityParametersGenerator/generateExperienceStats." );
+
+		if( !skipGenerateBounty ){
+			if( typeof bountyObject === "number" ) //проверяем, с каким типом данных мы работает, либо это строка. либо массив из строк.
+				bounty = bountyObject;
+			else{
+				min = bountyObject[0];
+				max = bountyObject[1];
+				var rnum = Math.floor( min + Math.random()*(max - min + 1) ); // выбираем рандомное значение из массива.
+				bounty = rnum; 
+			}
+		}
+
 		var result = { "lvl": lvl, "exp": exp, "bounty": bounty };
 		return result;
 	}
 
-	private generateInventoryEquip( object, params ):any{
+	private generateInventoryEquip(raceObject, classObject, params ):any{
 		var result;
-		for( var key in object ){
-
-		}
 		return result;
 	}
 
-	private generateInventoryBag( object, params ):any{
+	private generateInventoryBag( raceObject, classObject, params ):any{
 		var result;
 		return result;
 	}

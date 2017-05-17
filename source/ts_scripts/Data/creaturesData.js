@@ -15,7 +15,6 @@ var creaturesData = {
 				month:[1, 12],
 				day:[1,30]
 			},
-			// [ min, max ];
 			FightingStats: {
 				stats: {
 					HP:30, 
