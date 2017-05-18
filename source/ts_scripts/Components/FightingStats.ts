@@ -54,10 +54,9 @@ class FightingStats extends Component{
 			var container = params[key];
 			if( key == "stats" ){
 				for( var newKey in container ){
-					if ( !( this.currentStats[newKey] === undefined) ){
+					if ( !( this.currentStats[newKey] === undefined) )
 						this.currentStats[newKey] = container[newKey];
-						this.staticStats[newKey] = container[newKey];
-					}else
+					else
 						console.log( "Error, no key with name: " + newKey + ". Error in FightingStats/init." );
 				}
 			}
@@ -69,7 +68,7 @@ class FightingStats extends Component{
 						console.log( "Error, no key with name: " + newKey + ". Error in FightingStats/init." );
 				}
 			}
-			else if( key == "levelUpStats" ){
+			else if( key == "lvlup" ){
 				for( var newKey in container ){
 					if ( !( this.levelUpStats[newKey] === undefined) ){
 						this.levelUpStats[newKey] = container[newKey];

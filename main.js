@@ -8,7 +8,7 @@ function initGame(){
 	var hb = "helper-block";
 	var el = "enemy-list";
 	var ob = "orbs";
-	game.init( creaturesData, creatureClassData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData, lb, rb, journal, hb, el, ob );
+	game.init( creaturesData, creaturesClassData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData, lb, rb, journal, hb, el, ob );
 	game.start();
 }
 

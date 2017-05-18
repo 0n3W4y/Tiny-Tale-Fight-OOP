@@ -1,16 +1,12 @@
 var humanoidsHelperData = {
 	"Human": {
-		Name: {
-			name: "Tyller", 
-			surname: "Swift"
-		},
 		Type: {
 			sex: ["Man", "Woman"], 
 			race: "Human"
 		},
 		AgeStats: {
 			age:[14, 100], 
-			month:[1, 12] ,
+			month:[1, 12],
 			day: [1, 30]
 		},
 		FightingStats: { 

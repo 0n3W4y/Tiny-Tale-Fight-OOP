@@ -72,7 +72,7 @@ class Game {
 			max = 100;
 
 		var mobLevel = Math.floor( Math.random()*(max - min + 1) + min );
-		var mob = this.entityRoot.generateEntity( "Mob", "Creature" );
+		var mob = this.entityRoot.generateEntity( "Mob", null, null, null );
 		mob.getComponent( "ExperienceStats" ).lvl = mobLevel;
 		mob.getComponent( "ExperienceStats" ).updateComponent();
 		this.battle.addPlayerToFight( 2, mob );

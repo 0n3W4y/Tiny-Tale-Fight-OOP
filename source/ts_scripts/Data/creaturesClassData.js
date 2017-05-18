@@ -67,7 +67,7 @@ var creaturesClassData = {
 		},
 
 		ExperienceStats: {
-			bounty:1 
+			bounty:2 
 		} 
 	},
 
@@ -103,7 +103,7 @@ var creaturesClassData = {
 		},
 
 		ExperienceStats: {
-			bounty:1 
+			bounty:3 
 		} 
 	},
 
@@ -139,7 +139,7 @@ var creaturesClassData = {
 		},
 
 		ExperienceStats: {
-			bounty:1 
+			bounty:6 
 		} 
 	}
 }
