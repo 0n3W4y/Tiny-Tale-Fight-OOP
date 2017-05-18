@@ -3,7 +3,6 @@ var orbsData = {
 		"itemType": {
 			type: "orb",
 			subtype: "attacking",
-			rarity: 0,
 			equipSlot: "belt"
 		},
 
@@ -27,7 +26,6 @@ var orbsData = {
 		"itemType": {
 			type: "orb",
 			subtype: "attacking",
-			rarity: 0,
 			equipSlot: "belt"
 		},
 
@@ -40,8 +38,8 @@ var orbsData = {
 			damageTarget: "AOE",
 			durability: 0,
 			selfStats: {
-				PDMG: 30,
-				MDMG: 30
+				PDMG: 10,
+				MDMG: 10
 			}
 
 		}

@@ -6,6 +6,7 @@ class EntityParametersGenerator {
 	private humanoidsClassData:Array<any>;
 	private humanoidsHelperData:Array<any>;
 	private orbsData:Array<any>;
+	private orbsClassData:Array<any>;
 
 	private creaturesClassDataArray:Array<any>;
 	private creaturesDataArray:Array<any>;
@@ -13,20 +14,23 @@ class EntityParametersGenerator {
 	private humanoidsClassDataArray:Array<any>;
 	private humanoidsHelperDataArray:Array<any>;
 	private orbsDataArray:Array<any>;
+	private orbsClassDataArray:Array<any>;
 
-	constructor( creaturesData, creaturesClassData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData ){
+	constructor( creaturesData, creaturesClassData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData, orbsClassData ){
 		this.creaturesData = creaturesData;
 		this.creaturesClassData = creaturesClassData;
 		this.humanoidsData = humanoidsData;
 		this.humanoidsClassData = humanoidsClassData;
 		this.humanoidsHelperData = humanoidsHelperData;
 		this.orbsData = orbsData;
+		this.orbsClassData = orbsClassData;
 		this.creaturesDataArray = new Array();
 		this.creaturesClassDataArray = new Array();
 		this.humanoidsDataArray = new Array();
 		this.humanoidsClassDataArray = new Array();
 		this.humanoidsHelperDataArray = new Array();
 		this.orbsDataArray = new Array();
+		this.orbsClassDataArray = new Array();
 		this.storeObjKeysInArray();
 	}
 
@@ -35,15 +39,100 @@ class EntityParametersGenerator {
 
 		if( entityType == "Player" || entityType == "Helper" || entityType == "Mob" )
 			newParams = this.generateCreature( entityType, type, subtype, params );
-		else if( entityType == "Item" )
-			newParams = this.generateItem( type, subtype, params );
+		else if( entityType == "Orb" )
+			newParams = this.generateItem( entityType, type, subtype, params );
 		else
 			console.log( "Errorm no Entity Type : " + entityType + ". Error in EntityParametersGenerator/generate." );
 
 		return newParams;
 	}
 
-	private generateItem( type, subtype, params ){
+	private generateItem( entityType, type, subtype, params ){
+		var itemTypeData;
+		var itemTypeDataContainer;
+		var itemClassData;
+		var itemClassDataContainer;
+		var itemClass;
+		var itemType;
+
+		if( entityType == "Orb" ){
+			itemTypeData = this.orbsData;
+			itemTypeDataContainer = this.orbsDataArray;
+			itemClassData = this.orbsClassData;
+			itemClassDataContainer = this.orbsClassDataArray;
+		}else{
+			console.log( "Error, entity type " + entityType + " not found. Error in EntityParametersGenerator/generateItem." );
+		}
+
+		if( subtype == null ){
+			var rIndex = Math.floor( Math.random()*( itemClassDataContainer.length ) );
+			var creatureClassName = itemClassDataContainer[rIndex];
+			itemClass = itemClassData[creatureClassName];
+		}else{
+			itemClass = itemClassData[type];
+		}
+
+		if( type == null ){
+			var randomIndex = Math.floor( Math.random()*( itemTypeDataContainer.length ) );
+			var creatureRaceName = itemTypeDataContainer[randomIndex];
+			itemType = itemTypeData[creatureRaceName];
+		}else{
+			itemType = itemTypeData[subtype];
+		}
+
+		var newParams = {
+			ItemName:{},
+			ItemType:{},
+			ItemFightingStats:{}
+		}
+
+		//делаем присвоение параметров в текущие параметры, для дальнейшей генерации.
+		if( params != null ){
+			for( var num in params ){
+				if( newParams[num] !== undefined )
+					newParams[num] = params[num];
+			}
+		}
+
+		for( var key in newParams ){
+			var value;
+			var itemTypeObject = {};
+			var itemClassObject = {};
+			var itemParamsObject = {};
+
+			if( itemTypeData[key] !== undefined )
+				itemTypeObject = itemTypeData[key];
+
+			if( itemClassData[key] !== undefined )
+				itemClassObject = itemClassData[key];
+
+			if( newParams[key] !== undefined )
+				itemParamsObject = newParams[key];
+
+			if( key == "ItemName" )
+				value = this.generateItemName( itemTypeObject, itemClassObject, itemParamsObject );
+			else if( key == "ItemType" )
+				value = this.generateItemType( itemTypeObject, itemClassObject, itemParamsObject );
+			else if( key == "ItemFightingStats" )
+				value = this.generateItemFightingStats( itemTypeObject, itemClassObject, itemParamsObject );
+			else
+				console.log( "Error key with name: " + key + " not found. Error in EntityParametersGenerator/generateItem." );
+
+			newParams[key] = value;
+		}
+
+		return newParams;
+	}
+
+	private generateItemName( typeObject, classObject, paramsObject ){
+
+	}
+
+	private generateItemType( typeObject, classObject, paramsObject ){
+
+	}
+
+	private generateItemFightingStats( typeObject, classObject, paramsObject ){
 
 	}
 
@@ -139,7 +228,7 @@ class EntityParametersGenerator {
 			else if( key == "InventoryBag" )
 				value = this.generateInventoryBag( creatureRaceObject, creatureClassObject, creatureParamsObject );
 			else
-				console.log( "Error key with name: " + key + " not found. Error in EntityParametersGenerator/generate." );
+				console.log( "Error key with name: " + key + " not found. Error in EntityParametersGenerator/generateCreature." );
 
 			newParams[key] = value;
 		}
@@ -563,6 +652,10 @@ class EntityParametersGenerator {
 
 		for( var key in this.creaturesClassData ){
 			this.creaturesClassDataArray.push( key );
+		}
+
+		for( var key in this.orbsClassData ){
+			this.orbsClassDataArray.push( key );
 		}
 	}
 }

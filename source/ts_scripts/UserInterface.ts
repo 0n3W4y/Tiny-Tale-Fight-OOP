@@ -297,10 +297,10 @@ class UserInterface {
 		hpBar.style.width = hpWidth + "%";
 	}
 
-	public addOrbToBlock( id ){
+	public addOrbToBlock( item ){
 		var container = this.orbsBlock;
 		var child = document.createElement( "li" );
-		child.id = id;
+		//child.id = id;
 		container.appendChild( child );
 	}
 
@@ -318,6 +318,19 @@ class UserInterface {
 
 		return orb;
 		
+	}
+
+	public addOrb( item ){
+
+	}
+
+	public removeOrb( id ){
+		var list = this.orbsBlock.children;
+		for( var i = 0; i <= list.childNodes.length; i++ ){
+			var child = list.childNodes[0];
+			if( child.id == id )
+				list.removeChild(list.childNodes[i]);
+		}
 	}
 
 	public createToolTip( entity ){

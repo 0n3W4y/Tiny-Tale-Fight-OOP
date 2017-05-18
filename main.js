@@ -60,9 +60,13 @@ function toShop(){
 }
 
 function addAOEOrb(){
-	game.entityRoot.generateEntity("Item", "Orb", "AttackingOrbAOE");
+	var item = game.entityRoot.generateEntity("Orb", "AttackingOrbAOE", null, null);
+	console.log( item );
+	//game.userInterface.addOrb( item );
 }
 
 function addSTOrb(){
-	game.entityRoot.generateEntity("Item", "Orb", "AttackingOrbST")
+	var item = game.entityRoot.generateEntity("Orb", "AttackingOrbST", null, null);
+	console.log( item );
+	//game.userInterface.addOrb( item );
 }
