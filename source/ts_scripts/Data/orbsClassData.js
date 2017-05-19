@@ -5,7 +5,7 @@ var orbsClassData = {
 		},
 
 		"itemName": {
-			ratityName: "Common"
+			rarityName: "Common"
 		},
 
 		"itemFightingStats": {
@@ -45,7 +45,7 @@ var orbsClassData = {
 		},
 
 		"itemName": {
-			ratityName: "Rare"
+			rarityName: "Rare"
 		},
 
 		"itemFightingStats": {
@@ -65,7 +65,7 @@ var orbsClassData = {
 		},
 
 		"itemName": {
-			ratityName: "Mythical"
+			rarityName: "Mythical"
 		},
 
 		"itemFightingStats": {
@@ -85,7 +85,7 @@ var orbsClassData = {
 		},
 
 		"itemName": {
-			ratityName: "Legendary"
+			rarityName: "Legendary"
 		},
 
 		"itemFightingStats": {
@@ -105,7 +105,7 @@ var orbsClassData = {
 		},
 
 		"itemName": {
-			ratityName: "Ancient"
+			rarityName: "Ancient"
 		},
 
 		"itemFightingStats": {
@@ -125,7 +125,7 @@ var orbsClassData = {
 		},
 
 		"itemName": {
-			ratityName: "Immortal"
+			rarityName: "Immortal"
 		},
 
 		"itemFightingStats": {
@@ -145,7 +145,7 @@ var orbsClassData = {
 		},
 
 		"itemName": {
-			ratityName: "Arcane"
+			rarityName: "Arcane"
 		},
 
 		"itemFightingStats": {

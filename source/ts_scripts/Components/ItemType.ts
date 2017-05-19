@@ -3,7 +3,7 @@ class ItemType extends Component{
 	public type:string;
 	public subType:string;
 	private rarity:number; // 0 - common;
-	private equipSlot:string; // equip, belt. // eqip & inventory, belt & inventory, all others only inventory;
+	private equipSlot:string; // equip, belt. // equip & inventory, belt & inventory, all others only inventory;
 
 	constructor( parent ){
 		super( "ItemType", parent );

@@ -8,9 +8,9 @@ var Game = (function () {
         this.fps = fps;
         this.preStartDone = false;
     }
-    Game.prototype.init = function (creaturesData, creatureClassData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData, leftBlock, rightBlock, journal, helperBlock, enemylist, orbsBlock) {
+    Game.prototype.init = function (creaturesData, creatureClassData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData, orbsClassData, leftBlock, rightBlock, journal, helperBlock, enemylist, orbsBlock) {
         this.commonTick = new CommonTick(this, this.fps);
-        this.entityRoot = new EntityRoot(this, creaturesData, creatureClassData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData);
+        this.entityRoot = new EntityRoot(this, creaturesData, creatureClassData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData, orbsClassData);
         this.battle = new Battle(this);
         this.userInterface = new UserInterface(this, leftBlock, rightBlock, journal, helperBlock, enemylist, orbsBlock);
     };
@@ -405,10 +405,10 @@ var UserInterface = (function () {
         hpBar.innerHTML = currentHPStat + "/" + staticHp;
         hpBar.style.width = hpWidth + "%";
     };
-    UserInterface.prototype.addOrbToBlock = function (id) {
+    UserInterface.prototype.addOrbToBlock = function (item) {
         var container = this.orbsBlock;
         var child = document.createElement("li");
-        child.id = id;
+        //child.id = id;
         container.appendChild(child);
     };
     UserInterface.prototype.removeOrbFromBlock = function (id) {
@@ -423,6 +423,16 @@ var UserInterface = (function () {
             }
         }
         return orb;
+    };
+    UserInterface.prototype.addOrb = function (item) {
+    };
+    UserInterface.prototype.removeOrb = function (id) {
+        var list = this.orbsBlock.children;
+        for (var i = 0; i <= list.childNodes.length; i++) {
+            var child = list.childNodes[0];
+            if (child.id == id)
+                list.removeChild(list.childNodes[i]);
+        }
     };
     UserInterface.prototype.createToolTip = function (entity) {
     };
@@ -783,15 +793,15 @@ var Battle = (function () {
     return Battle;
 }());
 var EntityRoot = (function () {
-    function EntityRoot(parent, creaturesData, creatureClassData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData) {
+    function EntityRoot(parent, creaturesData, creatureClassData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData, orbsClassData) {
         this.entities = new Array();
         this.parent = parent;
         this.entityIdNumber = 0;
         this.deadEntities = new Array();
-        this.init(creaturesData, creatureClassData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData);
+        this.init(creaturesData, creatureClassData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData, orbsClassData);
     }
-    EntityRoot.prototype.init = function (creaturesData, creatureClassData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData) {
-        this.entityParametersGenerator = new EntityParametersGenerator(creaturesData, creatureClassData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData);
+    EntityRoot.prototype.init = function (creaturesData, creatureClassData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData, orbsClassData) {
+        this.entityParametersGenerator = new EntityParametersGenerator(creaturesData, creatureClassData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData, orbsClassData);
     };
     EntityRoot.prototype.generateEntity = function (entityType, type, subtype, params) {
         var entity = this.createEntity(entityType);
@@ -881,32 +891,216 @@ var CommonTick = (function () {
     return CommonTick;
 }());
 var EntityParametersGenerator = (function () {
-    function EntityParametersGenerator(creaturesData, creaturesClassData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData) {
+    function EntityParametersGenerator(creaturesData, creaturesClassData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData, orbsClassData) {
         this.creaturesData = creaturesData;
         this.creaturesClassData = creaturesClassData;
         this.humanoidsData = humanoidsData;
         this.humanoidsClassData = humanoidsClassData;
         this.humanoidsHelperData = humanoidsHelperData;
         this.orbsData = orbsData;
+        this.orbsClassData = orbsClassData;
         this.creaturesDataArray = new Array();
         this.creaturesClassDataArray = new Array();
         this.humanoidsDataArray = new Array();
         this.humanoidsClassDataArray = new Array();
         this.humanoidsHelperDataArray = new Array();
         this.orbsDataArray = new Array();
+        this.orbsClassDataArray = new Array();
         this.storeObjKeysInArray();
     }
     EntityParametersGenerator.prototype.generate = function (entityType, type, subtype, params) {
         var newParams;
         if (entityType == "Player" || entityType == "Helper" || entityType == "Mob")
             newParams = this.generateCreature(entityType, type, subtype, params);
-        else if (entityType == "Item")
-            newParams = this.generateItem(type, subtype, params);
+        else if (entityType == "Orb")
+            newParams = this.generateItem(entityType, type, subtype, params);
         else
             console.log("Errorm no Entity Type : " + entityType + ". Error in EntityParametersGenerator/generate.");
         return newParams;
     };
-    EntityParametersGenerator.prototype.generateItem = function (type, subtype, params) {
+    EntityParametersGenerator.prototype.generateItem = function (entityType, type, subtype, params) {
+        var itemTypeData;
+        var itemTypeDataContainer;
+        var itemClassData;
+        var itemClassDataContainer;
+        var itemClass;
+        var itemType;
+        if (entityType == "Orb") {
+            itemTypeData = this.orbsData;
+            itemTypeDataContainer = this.orbsDataArray;
+            itemClassData = this.orbsClassData;
+            itemClassDataContainer = this.orbsClassDataArray;
+        }
+        else {
+            console.log("Error, entity type " + entityType + " not found. Error in EntityParametersGenerator/generateItem.");
+        }
+        if (subtype == null) {
+            var rIndex = Math.floor(Math.random() * (itemClassDataContainer.length));
+            var itemClassName = itemClassDataContainer[rIndex];
+            itemClass = itemClassData[itemClassName];
+        }
+        else {
+            itemClass = itemClassData[subtype];
+        }
+        if (type == null) {
+            var randomIndex = Math.floor(Math.random() * (itemTypeDataContainer.length));
+            var itemTypeName = itemTypeDataContainer[randomIndex];
+            itemType = itemTypeData[itemTypeName];
+        }
+        else {
+            itemType = itemTypeData[type];
+        }
+        var newParams = {
+            itemName: {},
+            itemType: {},
+            itemFightingStats: {}
+        };
+        //делаем присвоение параметров в текущие параметры, для дальнейшей генерации.
+        if (params != null) {
+            for (var num in params) {
+                if (newParams[num] !== undefined)
+                    newParams[num] = params[num];
+            }
+        }
+        for (var key in newParams) {
+            var value;
+            var itemTypeObject = {};
+            var itemClassObject = {};
+            var itemParamsObject = {};
+            if (itemType[key] !== undefined)
+                itemTypeObject = itemType[key];
+            if (itemClass[key] !== undefined)
+                itemClassObject = itemClass[key];
+            if (newParams[key] !== undefined)
+                itemParamsObject = newParams[key];
+            if (key == "itemName")
+                value = this.generateItemName(itemTypeObject, itemClassObject, itemParamsObject);
+            else if (key == "itemType")
+                value = this.generateItemType(itemTypeObject, itemClassObject, itemParamsObject);
+            else if (key == "itemFightingStats")
+                value = this.generateItemFightingStats(itemTypeObject, itemClassObject, itemParamsObject);
+            else
+                console.log("Error key with name: " + key + " not found. Error in EntityParametersGenerator/generateItem.");
+            newParams[key] = value;
+        }
+        return newParams;
+    };
+    EntityParametersGenerator.prototype.generateItemName = function (typeObject, classObject, paramsObject) {
+        // Генерируем имя entity, оно состоит из объекта несущего информацию об имени и фамилии, в процессе может придти как стринг, так и аррей.
+        var name = "NoName";
+        var rarityName = "n/a";
+        // приоритет отдам race, если там не находится необходимый параметр, применяю class.
+        var nameObject;
+        var skipGenerateName = false;
+        if (paramsObject["name"] !== undefined) {
+            name = paramsObject["name"];
+            skipGenerateName = true;
+        }
+        else if (typeObject["name"] !== undefined)
+            nameObject = typeObject["name"];
+        else if (classObject["name"] !== undefined)
+            nameObject = classObject["name"];
+        else
+            console.log("Error, no name. Error in EntityParametersGenerator/generateItemName.");
+        if (!skipGenerateName) {
+            if (typeof nameObject === "string")
+                name = nameObject;
+            else {
+                var rnum = Math.floor(Math.random() * nameObject.length); // выбираем рандомное значение из массива.
+                name = nameObject[rnum];
+            }
+        }
+        var rarityNameObject;
+        var skipGenerateRarityName = false;
+        if (paramsObject["rarityName"] !== undefined) {
+            rarityName = paramsObject["rarityName"];
+            skipGenerateRarityName = true;
+        }
+        else if (typeObject["rarityName"] !== undefined)
+            rarityNameObject = typeObject["rarityName"];
+        else if (classObject["rarityName"] !== undefined)
+            rarityNameObject = classObject["rarityName"];
+        else
+            console.log("Error, no rarity name. Error in EntityParametersGenerator/generateItemName.");
+        if (!skipGenerateRarityName) {
+            if (typeof rarityNameObject === "string")
+                rarityName = rarityNameObject;
+            else {
+                var rnum = Math.floor(Math.random() * rarityNameObject.length); // выбираем рандомное значение из массива.
+                rarityName = rarityNameObject[rnum];
+            }
+        }
+        var result = { "name": name, "rarityName": rarityName };
+        return result;
+    };
+    EntityParametersGenerator.prototype.generateItemType = function (typeObject, classObject, paramsObject) {
+        var type = "No Type";
+        var subtype = "n/a";
+        var rarity = 0;
+        var equipSlot = "inventory";
+        var typeStingObject;
+        var skipGenerateType = false;
+        if (paramsObject["type"] !== undefined) {
+            type = paramsObject["type"];
+            skipGenerateType = true;
+        }
+        else if (typeObject["type"] !== undefined)
+            typeStingObject = typeObject["type"];
+        else if (classObject["type"] !== undefined)
+            typeStingObject = classObject["type"];
+        else
+            console.log("Error, no type. Error in EntityParametersGenerator/generateItemType.");
+        if (!skipGenerateType) {
+            if (typeof typeStingObject === "string")
+                type = typeStingObject;
+            else {
+                var rnum = Math.floor(Math.random() * typeStingObject.length); // выбираем рандомное значение из массива.
+                type = typeStingObject[rnum];
+            }
+        }
+        var subTypeObject;
+        var skipGenerateSubType = false;
+        if (paramsObject["subtype"] !== undefined) {
+            subtype = paramsObject["subtype"];
+            skipGenerateType = true;
+        }
+        else if (typeObject["subtype"] !== undefined)
+            subTypeObject = typeObject["subtype"];
+        else if (classObject["subtype"] !== undefined)
+            subTypeObject = classObject["subtype"];
+        else
+            console.log("Error, no subtype. Error in EntityParametersGenerator/generateItemType.");
+        if (!skipGenerateSubType) {
+            if (typeof subTypeObject === "string")
+                subtype = subTypeObject;
+            else {
+                var rnum = Math.floor(Math.random() * subTypeObject.length); // выбираем рандомное значение из массива.
+                subtype = subTypeObject[rnum];
+            }
+        }
+        var rarityObject;
+        if (paramsObject["rarity"] !== undefined)
+            rarity = paramsObject["rarity"];
+        else if (typeObject["rarity"] !== undefined)
+            rarityObject = typeObject["rarity"];
+        else if (classObject["rarity"] !== undefined)
+            rarityObject = classObject["rarity"];
+        else
+            console.log("Error, no rarity. Error in EntityParametersGenerator/generateItemType.");
+        rarity = rarityObject;
+        var equipSlotObject;
+        if (paramsObject["equipSlot"] !== undefined)
+            equipSlot = paramsObject["equipSlot"];
+        else if (typeObject["equipSlot"] !== undefined)
+            equipSlotObject = typeObject["equipSlot"];
+        else if (classObject["equipSlot"] !== undefined)
+            equipSlotObject = classObject["equipSlot"];
+        else
+            console.log("Error, no equipSlot. Error in EntityParametersGenerator/generateItemType.");
+        equipSlot = subTypeObject;
+        var result = { "type": type, "subtype": subtype, "rarity": rarity, "equipSlot": equipSlot };
+    };
+    EntityParametersGenerator.prototype.generateItemFightingStats = function (typeObject, classObject, paramsObject) {
     };
     EntityParametersGenerator.prototype.generateCreature = function (entityType, type, subtype, params) {
         var creatureRaceContainer; //names
@@ -994,7 +1188,7 @@ var EntityParametersGenerator = (function () {
             else if (key == "InventoryBag")
                 value = this.generateInventoryBag(creatureRaceObject, creatureClassObject, creatureParamsObject);
             else
-                console.log("Error key with name: " + key + " not found. Error in EntityParametersGenerator/generate.");
+                console.log("Error key with name: " + key + " not found. Error in EntityParametersGenerator/generateCreature.");
             newParams[key] = value;
         }
         return newParams;
@@ -1352,6 +1546,9 @@ var EntityParametersGenerator = (function () {
         }
         for (var key in this.creaturesClassData) {
             this.creaturesClassDataArray.push(key);
+        }
+        for (var key in this.orbsClassData) {
+            this.orbsClassDataArray.push(key);
         }
     };
     return EntityParametersGenerator;

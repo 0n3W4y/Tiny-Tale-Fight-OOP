@@ -66,24 +66,24 @@ class EntityParametersGenerator {
 
 		if( subtype == null ){
 			var rIndex = Math.floor( Math.random()*( itemClassDataContainer.length ) );
-			var creatureClassName = itemClassDataContainer[rIndex];
-			itemClass = itemClassData[creatureClassName];
+			var itemClassName = itemClassDataContainer[rIndex];
+			itemClass = itemClassData[itemClassName];
 		}else{
-			itemClass = itemClassData[type];
+			itemClass = itemClassData[subtype];
 		}
 
 		if( type == null ){
 			var randomIndex = Math.floor( Math.random()*( itemTypeDataContainer.length ) );
-			var creatureRaceName = itemTypeDataContainer[randomIndex];
-			itemType = itemTypeData[creatureRaceName];
+			var itemTypeName = itemTypeDataContainer[randomIndex];
+			itemType = itemTypeData[itemTypeName];
 		}else{
-			itemType = itemTypeData[subtype];
+			itemType = itemTypeData[type];
 		}
 
 		var newParams = {
-			ItemName:{},
-			ItemType:{},
-			ItemFightingStats:{}
+			itemName:{},
+			itemType:{},
+			itemFightingStats:{}
 		}
 
 		//делаем присвоение параметров в текущие параметры, для дальнейшей генерации.
@@ -100,20 +100,20 @@ class EntityParametersGenerator {
 			var itemClassObject = {};
 			var itemParamsObject = {};
 
-			if( itemTypeData[key] !== undefined )
-				itemTypeObject = itemTypeData[key];
+			if( itemType[key] !== undefined )
+				itemTypeObject = itemType[key];
 
-			if( itemClassData[key] !== undefined )
-				itemClassObject = itemClassData[key];
+			if( itemClass[key] !== undefined )
+				itemClassObject = itemClass[key];
 
 			if( newParams[key] !== undefined )
 				itemParamsObject = newParams[key];
 
-			if( key == "ItemName" )
+			if( key == "itemName" )
 				value = this.generateItemName( itemTypeObject, itemClassObject, itemParamsObject );
-			else if( key == "ItemType" )
+			else if( key == "itemType" )
 				value = this.generateItemType( itemTypeObject, itemClassObject, itemParamsObject );
-			else if( key == "ItemFightingStats" )
+			else if( key == "itemFightingStats" )
 				value = this.generateItemFightingStats( itemTypeObject, itemClassObject, itemParamsObject );
 			else
 				console.log( "Error key with name: " + key + " not found. Error in EntityParametersGenerator/generateItem." );
@@ -125,10 +125,140 @@ class EntityParametersGenerator {
 	}
 
 	private generateItemName( typeObject, classObject, paramsObject ){
+		// Генерируем имя entity, оно состоит из объекта несущего информацию об имени и фамилии, в процессе может придти как стринг, так и аррей.
+		var name = "NoName";
+		var rarityName = "n/a";
 
+		// приоритет отдам race, если там не находится необходимый параметр, применяю class.
+		var nameObject;
+		var skipGenerateName = false;
+
+		if( paramsObject["name"] !== undefined ){
+			name = paramsObject["name"];
+			skipGenerateName = true;
+		}
+		else if( typeObject["name"] !== undefined )
+			nameObject = typeObject["name"];
+		else if( classObject["name"] !== undefined )
+			nameObject = classObject["name"];
+		else
+			console.log( "Error, no name. Error in EntityParametersGenerator/generateItemName." );
+
+		if( !skipGenerateName ){
+			if( typeof nameObject === "string" ) //проверяем, с каким типом данных мы работает, либо это строка. либо массив из строк.
+				name = nameObject;
+			else{
+				var rnum = Math.floor( Math.random()*nameObject.length ); // выбираем рандомное значение из массива.
+				name = nameObject[rnum];
+			}
+		}
+
+		var rarityNameObject;
+		var skipGenerateRarityName = false;
+
+		if( paramsObject["rarityName"] !== undefined ){
+			rarityName = paramsObject["rarityName"];
+			skipGenerateRarityName = true;
+		}
+		else if( typeObject["rarityName"] !== undefined )
+			rarityNameObject = typeObject["rarityName"];
+		else if( classObject["rarityName"] !== undefined )
+			rarityNameObject = classObject["rarityName"];
+		else
+			console.log( "Error, no rarity name. Error in EntityParametersGenerator/generateItemName." );
+
+		if( !skipGenerateRarityName ){
+			if( typeof rarityNameObject === "string" ) //проверяем, с каким типом данных мы работает, либо это строка. либо массив из строк.
+				rarityName = rarityNameObject;
+			else{
+				var rnum = Math.floor( Math.random()*rarityNameObject.length ); // выбираем рандомное значение из массива.
+				rarityName = rarityNameObject[rnum];
+			}
+		}
+
+		var result = { "name": name, "rarityName": rarityName };
+		return result;
 	}
 
 	private generateItemType( typeObject, classObject, paramsObject ){
+		var type = "No Type";
+		var subtype = "n/a";
+		var rarity = 0;
+		var equipSlot = "inventory";
+
+		var typeStingObject;
+		var skipGenerateType = false;
+
+		if( paramsObject["type"] !== undefined ){
+			type = paramsObject["type"];
+			skipGenerateType = true;
+		}
+		else if( typeObject["type"] !== undefined )
+			typeStingObject = typeObject["type"];
+		else if( classObject["type"] !== undefined )
+			typeStingObject = classObject["type"];
+		else
+			console.log( "Error, no type. Error in EntityParametersGenerator/generateItemType." );
+
+		if( !skipGenerateType ){
+			if( typeof typeStingObject === "string" ) //проверяем, с каким типом данных мы работает, либо это строка. либо массив из строк.
+				type = typeStingObject;
+			else{
+				var rnum = Math.floor( Math.random()*typeStingObject.length ); // выбираем рандомное значение из массива.
+				type = typeStingObject[rnum];
+			}
+		}
+
+		var subTypeObject;
+		var skipGenerateSubType = false;
+
+		if( paramsObject["subtype"] !== undefined ){
+			subtype = paramsObject["subtype"];
+			skipGenerateType = true;
+		}
+		else if( typeObject["subtype"] !== undefined )
+			subTypeObject = typeObject["subtype"];
+		else if( classObject["subtype"] !== undefined )
+			subTypeObject = classObject["subtype"];
+		else
+			console.log( "Error, no subtype. Error in EntityParametersGenerator/generateItemType." );
+
+		if( !skipGenerateSubType ){
+			if( typeof subTypeObject === "string" ) //проверяем, с каким типом данных мы работает, либо это строка. либо массив из строк.
+				subtype = subTypeObject;
+			else{
+				var rnum = Math.floor( Math.random()*subTypeObject.length ); // выбираем рандомное значение из массива.
+				subtype = subTypeObject[rnum];
+			}
+		}
+
+		var rarityObject;
+
+		if( paramsObject["rarity"] !== undefined )
+			rarity = paramsObject["rarity"];
+		else if( typeObject["rarity"] !== undefined )
+			rarityObject = typeObject["rarity"];
+		else if( classObject["rarity"] !== undefined )
+			rarityObject = classObject["rarity"];
+		else
+			console.log( "Error, no rarity. Error in EntityParametersGenerator/generateItemType." );
+
+		rarity = rarityObject;
+
+		var equipSlotObject;
+
+		if( paramsObject["equipSlot"] !== undefined )
+			equipSlot = paramsObject["equipSlot"];
+		else if( typeObject["equipSlot"] !== undefined )
+			equipSlotObject = typeObject["equipSlot"];
+		else if( classObject["equipSlot"] !== undefined )
+			equipSlotObject = classObject["equipSlot"];
+		else
+			console.log( "Error, no equipSlot. Error in EntityParametersGenerator/generateItemType." );
+
+		equipSlot = subTypeObject;
+
+		var result = { "type": type, "subtype": subtype, "rarity": rarity, "equipSlot": equipSlot}
 
 	}
 

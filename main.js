@@ -8,8 +8,9 @@ function initGame(){
 	var hb = "helper-block";
 	var el = "enemy-list";
 	var ob = "orbs";
-	game.init( creaturesData, creaturesClassData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData, lb, rb, journal, hb, el, ob );
-	game.start();
+	game.init( creaturesData, creaturesClassData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData, orbsClassData, lb, rb, journal, hb, el, ob );
+	//game.start();
+	addAOEOrb();
 }
 
 function toHeroCreater(){
