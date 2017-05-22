@@ -36,7 +36,7 @@ class EntityRoot {
 	}
 
 	public createEntity( type ):any{
-		if( type != "Player" && type != "Mob" && type != "Helper" && type != "Item" )
+		if( type != "Player" && type != "Mob" && type != "Helper" && type != "Orb" )
 			console.log( "Error, no type with name: " + type + ". Error in EntityRoot/createEntity" );
 
 		var id = this.createId();
@@ -67,14 +67,26 @@ class EntityRoot {
 	}
 
 	public collectDataFromEntity( entity ):any{
-		var name = entity.getComponent( "Name" ).exportDataToObject();
-		var type = entity.getComponent( "Type" ).exportDataToObject();
-		var fightingStats = entity.getComponent( "FightingStats" ).exportDataToObject();
-		var experienceStats = entity.getComponent( "ExperienceStats" ).exportDataToObject();
-		var ageStats = entity.getComponent( "AgeStats" ).exportDataToObject();
+		var name;
+		var type;
+		var fightingStats;
+		var experienceStats;
+		var ageStats;
+		var data;
 
-		//if params == null, collect all data;
-		var data = { "Name": name, "Type": type, "FightingStats": fightingStats, "ExperienceStats": experienceStats, "AgeStats": ageStats };
+		if( entity.type == "Player" || entity.type == "Helper" ){
+			name = entity.getComponent( "Name" ).exportDataToObject();
+			type = entity.getComponent( "Type" ).exportDataToObject();
+			fightingStats = entity.getComponent( "FightingStats" ).exportDataToObject();
+			experienceStats = entity.getComponent( "ExperienceStats" ).exportDataToObject();
+			ageStats = entity.getComponent( "AgeStats" ).exportDataToObject();
+			data = { "Name": name, "Type": type, "FightingStats": fightingStats, "ExperienceStats": experienceStats, "AgeStats": ageStats };
+		}else if( entity.type == "Orb" ){
+			name = entity.getComponent( "ItemName" ).exportDataToObject();
+			type = entity.getComponent( "ItemType" ).exportDataToObject();
+			fightingStats = entity.getComponent( "ItemFightingStats" ).exportDataToObject();
+			data = { "ItemName": name, "ItemType": type, "ItemFightingStats": fightingStats };
+		}
 
 		return data;
 	}

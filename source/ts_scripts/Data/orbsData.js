@@ -1,16 +1,16 @@
 var orbsData = {
 	"AttackingOrbST":{
-		"itemType": {
+		"ItemType": {
 			type: "orb",
 			subtype: "attacking",
 			equipSlot: "belt"
 		},
 
-		"itemName": {
+		"ItemName": {
 			name: "Attacking Orb"
 		},
 
-		"itemFightingStats": {
+		"ItemFightingStats": {
 			damageType: "flat",
 			damageTarget: "single",
 			durability: 0,
@@ -23,17 +23,17 @@ var orbsData = {
 	},
 
 	"AttackingOrbAOE": {
-		"itemType": {
+		"ItemType": {
 			type: "orb",
 			subtype: "attacking",
 			equipSlot: "belt"
 		},
 
-		"itemName": {
+		"ItemName": {
 			name: "Attacking Orb AOE"
 		},
 
-		"itemFightingStats": {
+		"ItemFightingStats": {
 			damageType: "flat",
 			damageTarget: "AOE",
 			durability: 0,

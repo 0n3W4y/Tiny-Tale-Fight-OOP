@@ -27,6 +27,12 @@ class Entity {
 			component = new InventoryBag( this );
 		else if( name == "InventoryEquip" )
 			component = new InventoryEquip( this );
+		else if( name == "ItemName" )
+			component = new ItemName( this );
+		else if( name == "ItemType" )
+			component = new ItemType( this );
+		else if( name == "ItemFightingStats" )
+			component = new ItemFightingStats( this );
 		else
 			console.log( "Error with add components, component with name: " + name + " not found. Erorr in Entity/createComponent." );
 
@@ -52,7 +58,7 @@ class Entity {
 				component.init( params[key] );				
 			}
 			else
-				console.log( "Error in Entity/createComponentsWithParams" );
+				console.log( "Error component = null! Error in Entity/createComponentsWithParams" );
 		}
 
 

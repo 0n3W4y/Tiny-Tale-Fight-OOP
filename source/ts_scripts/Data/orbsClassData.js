@@ -1,14 +1,14 @@
 var orbsClassData = {
 	"common":{
-		"itemType": {
+		"ItemType": {
 			rarity: 0,
 		},
 
-		"itemName": {
+		"ItemName": {
 			rarityName: "Common"
 		},
 
-		"itemFightingStats": {
+		"ItemFightingStats": {
 			durability: 0,
 			selfStats: {
 				PDMG: 10,
@@ -19,16 +19,16 @@ var orbsClassData = {
 	},
 
 	"uncommon": {
-		"itemType": {
+		"ItemType": {
 			rarity: 1,
 			equipSlot: "belt"
 		},
 
-		"itemName": {
-			ratityName: "Uncommon"
+		"ItemName": {
+			rarityName: "Uncommon"
 		},
 
-		"itemFightingStats": {
+		"ItemFightingStats": {
 			durability: 0,
 			selfStats: {
 				PDMG: 25,
@@ -39,16 +39,16 @@ var orbsClassData = {
 	},
 
 	"rare": {
-		"itemType": {
+		"ItemType": {
 			rarity: 2,
 			equipSlot: "belt"
 		},
 
-		"itemName": {
+		"ItemName": {
 			rarityName: "Rare"
 		},
 
-		"itemFightingStats": {
+		"ItemFightingStats": {
 			durability: 0,
 			selfStats: {
 				PDMG: 40,
@@ -59,16 +59,16 @@ var orbsClassData = {
 	},
 
 	"mythical": {
-		"itemType": {
+		"ItemType": {
 			rarity: 3,
 			equipSlot: "belt"
 		},
 
-		"itemName": {
+		"ItemName": {
 			rarityName: "Mythical"
 		},
 
-		"itemFightingStats": {
+		"ItemFightingStats": {
 			durability: 0,
 			selfStats: {
 				PDMG: 60,
@@ -79,16 +79,16 @@ var orbsClassData = {
 	},
 
 	"legendary": {
-		"itemType": {
+		"ItemType": {
 			rarity: 4,
 			equipSlot: "belt"
 		},
 
-		"itemName": {
+		"ItemName": {
 			rarityName: "Legendary"
 		},
 
-		"itemFightingStats": {
+		"ItemFightingStats": {
 			durability: 0,
 			selfStats: {
 				PDMG: 85,
@@ -99,16 +99,16 @@ var orbsClassData = {
 	},
 
 	"ancient": {
-		"itemType": {
+		"ItemType": {
 			rarity: 5,
 			equipSlot: "belt"
 		},
 
-		"itemName": {
+		"ItemName": {
 			rarityName: "Ancient"
 		},
 
-		"itemFightingStats": {
+		"ItemFightingStats": {
 			durability: 0,
 			selfStats: {
 				PDMG: 110,
@@ -119,16 +119,16 @@ var orbsClassData = {
 	},
 
 	"immortal": {
-		"itemType": {
+		"ItemType": {
 			rarity: 6,
 			equipSlot: "belt"
 		},
 
-		"itemName": {
+		"ItemName": {
 			rarityName: "Immortal"
 		},
 
-		"itemFightingStats": {
+		"ItemFightingStats": {
 			durability: 0,
 			selfStats: {
 				PDMG: 140,
@@ -139,16 +139,16 @@ var orbsClassData = {
 	},
 
 	"arcane": {
-		"itemType": {
+		"ItemType": {
 			rarity: 7,
 			equipSlot: "belt"
 		},
 
-		"itemName": {
+		"ItemName": {
 			rarityName: "Arcane"
 		},
 
-		"itemFightingStats": {
+		"ItemFightingStats": {
 			durability: 0,
 			selfStats: {
 				PDMG: 180,

@@ -9,9 +9,11 @@ class ItemName extends Component{
 
 	public init( params ){
 		for( var key in params ){
-			if( this[key] !== undefined )
+			if( key == "name" || key == "rarityName" )
 				this[key] = params[key];
-		} 
+			else
+				console.log( "Error, no key with name: " + key + ". Error in ItemName/init." );
+		}
 	}
 
 	public getFullName():string{

@@ -11,10 +11,11 @@ class ItemType extends Component{
 
 	public init( params ){
 		for( var key in params ){
-			if( this[key] !== undefined )
+			if( key == "type" || key == "subType" || key == "rarity" || key == "equipSlot" )
 				this[key] = params[key];
-		} 
-	}
+			else
+				console.log( "Error, no key with name: " + key + ". Error in TypeName/init." );
+		}	}
 
 	public getRarity(){
 		return this.rarity;

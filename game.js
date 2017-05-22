@@ -810,7 +810,7 @@ var EntityRoot = (function () {
         return entity;
     };
     EntityRoot.prototype.createEntity = function (type) {
-        if (type != "Player" && type != "Mob" && type != "Helper" && type != "Item")
+        if (type != "Player" && type != "Mob" && type != "Helper" && type != "Orb")
             console.log("Error, no type with name: " + type + ". Error in EntityRoot/createEntity");
         var id = this.createId();
         var entity = new Entity(id, type);
@@ -834,13 +834,26 @@ var EntityRoot = (function () {
         }
     };
     EntityRoot.prototype.collectDataFromEntity = function (entity) {
-        var name = entity.getComponent("Name").exportDataToObject();
-        var type = entity.getComponent("Type").exportDataToObject();
-        var fightingStats = entity.getComponent("FightingStats").exportDataToObject();
-        var experienceStats = entity.getComponent("ExperienceStats").exportDataToObject();
-        var ageStats = entity.getComponent("AgeStats").exportDataToObject();
-        //if params == null, collect all data;
-        var data = { "Name": name, "Type": type, "FightingStats": fightingStats, "ExperienceStats": experienceStats, "AgeStats": ageStats };
+        var name;
+        var type;
+        var fightingStats;
+        var experienceStats;
+        var ageStats;
+        var data;
+        if (entity.type == "Player" || entity.type == "Helper") {
+            name = entity.getComponent("Name").exportDataToObject();
+            type = entity.getComponent("Type").exportDataToObject();
+            fightingStats = entity.getComponent("FightingStats").exportDataToObject();
+            experienceStats = entity.getComponent("ExperienceStats").exportDataToObject();
+            ageStats = entity.getComponent("AgeStats").exportDataToObject();
+            data = { "Name": name, "Type": type, "FightingStats": fightingStats, "ExperienceStats": experienceStats, "AgeStats": ageStats };
+        }
+        else if (entity.type == "Orb") {
+            name = entity.getComponent("ItemName").exportDataToObject();
+            type = entity.getComponent("ItemType").exportDataToObject();
+            fightingStats = entity.getComponent("ItemFightingStats").exportDataToObject();
+            data = { "ItemName": name, "ItemType": type, "ItemFightingStats": fightingStats };
+        }
         return data;
     };
     return EntityRoot;
@@ -951,9 +964,9 @@ var EntityParametersGenerator = (function () {
             itemType = itemTypeData[type];
         }
         var newParams = {
-            itemName: {},
-            itemType: {},
-            itemFightingStats: {}
+            ItemName: {},
+            ItemType: {},
+            ItemFightingStats: {}
         };
         //делаем присвоение параметров в текущие параметры, для дальнейшей генерации.
         if (params != null) {
@@ -973,11 +986,11 @@ var EntityParametersGenerator = (function () {
                 itemClassObject = itemClass[key];
             if (newParams[key] !== undefined)
                 itemParamsObject = newParams[key];
-            if (key == "itemName")
+            if (key == "ItemName")
                 value = this.generateItemName(itemTypeObject, itemClassObject, itemParamsObject);
-            else if (key == "itemType")
+            else if (key == "ItemType")
                 value = this.generateItemType(itemTypeObject, itemClassObject, itemParamsObject);
-            else if (key == "itemFightingStats")
+            else if (key == "ItemFightingStats")
                 value = this.generateItemFightingStats(itemTypeObject, itemClassObject, itemParamsObject);
             else
                 console.log("Error key with name: " + key + " not found. Error in EntityParametersGenerator/generateItem.");
@@ -1097,8 +1110,9 @@ var EntityParametersGenerator = (function () {
             equipSlotObject = classObject["equipSlot"];
         else
             console.log("Error, no equipSlot. Error in EntityParametersGenerator/generateItemType.");
-        equipSlot = subTypeObject;
+        equipSlot = equipSlotObject;
         var result = { "type": type, "subtype": subtype, "rarity": rarity, "equipSlot": equipSlot };
+        return result;
     };
     EntityParametersGenerator.prototype.generateItemFightingStats = function (typeObject, classObject, paramsObject) {
     };
@@ -1575,6 +1589,12 @@ var Entity = (function () {
             component = new InventoryBag(this);
         else if (name == "InventoryEquip")
             component = new InventoryEquip(this);
+        else if (name == "ItemName")
+            component = new ItemName(this);
+        else if (name == "ItemType")
+            component = new ItemType(this);
+        else if (name == "ItemFightingStats")
+            component = new ItemFightingStats(this);
         else
             console.log("Error with add components, component with name: " + name + " not found. Erorr in Entity/createComponent.");
         return component;
@@ -1596,7 +1616,7 @@ var Entity = (function () {
                 component.init(params[key]);
             }
             else
-                console.log("Error in Entity/createComponentsWithParams");
+                console.log("Error component = null! Error in Entity/createComponentsWithParams");
         }
     };
     Entity.prototype.getComponent = function (name) {
@@ -1966,4 +1986,117 @@ var InventoryEquip = (function (_super) {
         return { "equipItems": this.equipItems };
     };
     return InventoryEquip;
+}(Component));
+var ItemName = (function (_super) {
+    __extends(ItemName, _super);
+    function ItemName(parent) {
+        return _super.call(this, "ItemName", parent) || this;
+    }
+    ItemName.prototype.init = function (params) {
+        for (var key in params) {
+            if (key == "name" || key == "rarityName")
+                this[key] = params[key];
+            else
+                console.log("Error, no key with name: " + key + ". Error in ItemName/init.");
+        }
+    };
+    ItemName.prototype.getFullName = function () {
+        return this.rarityName + " " + this.name;
+    };
+    return ItemName;
+}(Component));
+var ItemType = (function (_super) {
+    __extends(ItemType, _super);
+    function ItemType(parent) {
+        return _super.call(this, "ItemType", parent) || this;
+    }
+    ItemType.prototype.init = function (params) {
+        for (var key in params) {
+            if (key == "type" || key == "subType" || key == "rarity" || key == "equipSlot")
+                this[key] = params[key];
+            else
+                console.log("Error, no key with name: " + key + ". Error in TypeName/init.");
+        }
+    };
+    ItemType.prototype.getRarity = function () {
+        return this.rarity;
+    };
+    ItemType.prototype.getEquipdSlot = function () {
+        return this.equipSlot;
+    };
+    return ItemType;
+}(Component));
+var ItemFightingStats = (function (_super) {
+    __extends(ItemFightingStats, _super);
+    function ItemFightingStats(parent) {
+        var _this = _super.call(this, "ItemFightingStats", parent) || this;
+        _this.extraStats = {
+            HP: 0,
+            STR: 0,
+            AGI: 0,
+            INT: 0,
+            ASPD: 0,
+            DDG: 0,
+            BLK: 0,
+            PDEF: 0,
+            MDEF: 0
+        };
+        _this.selfStats = {
+            PDMG: 0,
+            MDMG: 0,
+            PDEF: 0,
+            MDEF: 0,
+            BLK: 0,
+            DDG: 0
+        };
+        _this.typeDamageStats = {};
+        _this.currentDurability = 0;
+        _this.staticDurability = 0;
+        _this.damageType = "flat";
+        _this.damageTarget = "single";
+        return _this;
+    }
+    ItemFightingStats.prototype.init = function (params) {
+        for (var key in params) {
+            var container = params[key];
+            if (key == "extraStats") {
+                for (var newKey in container) {
+                    this.extraStats[key] = container[key];
+                }
+            }
+            else if (key == "selfStats") {
+                this.selfStats[key] = container[key];
+            }
+            else if (key == "currentDurability" || key == "staticDurability" || key == "damageType") {
+                this[key] = container;
+            }
+            else if (key == "durability") {
+                this.currentDurability = container;
+                this.staticDurability = container;
+            }
+            else
+                console.log("Error, no nkey with name: " + key + ". Error in ItemFightingStats/init.");
+        }
+    };
+    ItemFightingStats.prototype.getStaticDurability = function () {
+        return this.staticDurability;
+    };
+    ItemFightingStats.prototype.getStatFrom = function (from, stat) {
+        var container = this.selfStats;
+        if (from == "extraStats")
+            container = this.extraStats;
+        return container[stat];
+    };
+    ItemFightingStats.prototype.exportDataToObject = function () {
+        return {
+            "extraStats": this.extraStats,
+            "selfStats": this.selfStats,
+            "typeDamageStats": this.typeDamageStats,
+            "currentDurability": this.currentDurability,
+            "staticDurability": this.staticDurability,
+            "damageType": this.damageType,
+            "damageTarget": this.damageTarget
+        };
+    };
+    return ItemFightingStats;
 }(Component));

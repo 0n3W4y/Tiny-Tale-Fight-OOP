@@ -81,9 +81,9 @@ class EntityParametersGenerator {
 		}
 
 		var newParams = {
-			itemName:{},
-			itemType:{},
-			itemFightingStats:{}
+			ItemName:{},
+			ItemType:{},
+			ItemFightingStats:{}
 		}
 
 		//делаем присвоение параметров в текущие параметры, для дальнейшей генерации.
@@ -109,11 +109,11 @@ class EntityParametersGenerator {
 			if( newParams[key] !== undefined )
 				itemParamsObject = newParams[key];
 
-			if( key == "itemName" )
+			if( key == "ItemName" )
 				value = this.generateItemName( itemTypeObject, itemClassObject, itemParamsObject );
-			else if( key == "itemType" )
+			else if( key == "ItemType" )
 				value = this.generateItemType( itemTypeObject, itemClassObject, itemParamsObject );
-			else if( key == "itemFightingStats" )
+			else if( key == "ItemFightingStats" )
 				value = this.generateItemFightingStats( itemTypeObject, itemClassObject, itemParamsObject );
 			else
 				console.log( "Error key with name: " + key + " not found. Error in EntityParametersGenerator/generateItem." );
@@ -256,10 +256,10 @@ class EntityParametersGenerator {
 		else
 			console.log( "Error, no equipSlot. Error in EntityParametersGenerator/generateItemType." );
 
-		equipSlot = subTypeObject;
+		equipSlot = equipSlotObject;
 
-		var result = { "type": type, "subtype": subtype, "rarity": rarity, "equipSlot": equipSlot}
-
+		var result = { "type": type, "subType": subtype, "rarity": rarity, "equipSlot": equipSlot }
+		return result;
 	}
 
 	private generateItemFightingStats( typeObject, classObject, paramsObject ){
