@@ -1,3 +1,4 @@
+var addOrbToBattle;
 class UserInterface {
 
 	public journal:any;
@@ -299,8 +300,10 @@ class UserInterface {
 
 	public addOrbToBlock( item ){
 		var container = this.orbsBlock;
+		var id = item.id;
 		var child = document.createElement( "li" );
-		//child.id = id;
+		child.id = id;
+		child.onclick = addOrbToBattle;
 		container.appendChild( child );
 	}
 

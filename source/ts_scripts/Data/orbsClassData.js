@@ -10,7 +10,7 @@ var orbsClassData = {
 
 		"ItemFightingStats": {
 			durability: 0,
-			selfStats: {
+			extraStats: {
 				PDMG: 10,
 				MDMG: 10
 			}
@@ -30,7 +30,7 @@ var orbsClassData = {
 
 		"ItemFightingStats": {
 			durability: 0,
-			selfStats: {
+			extraStats: {
 				PDMG: 25,
 				MDMG: 25
 			}
@@ -50,7 +50,7 @@ var orbsClassData = {
 
 		"ItemFightingStats": {
 			durability: 0,
-			selfStats: {
+			extraStats: {
 				PDMG: 40,
 				MDMG: 40
 			}
@@ -70,7 +70,7 @@ var orbsClassData = {
 
 		"ItemFightingStats": {
 			durability: 0,
-			selfStats: {
+			extraStats: {
 				PDMG: 60,
 				MDMG: 60
 			}
@@ -90,7 +90,7 @@ var orbsClassData = {
 
 		"ItemFightingStats": {
 			durability: 0,
-			selfStats: {
+			extraStats: {
 				PDMG: 85,
 				MDMG: 85
 			}
@@ -110,7 +110,7 @@ var orbsClassData = {
 
 		"ItemFightingStats": {
 			durability: 0,
-			selfStats: {
+			extraStats: {
 				PDMG: 110,
 				MDMG: 110
 			}
@@ -130,7 +130,7 @@ var orbsClassData = {
 
 		"ItemFightingStats": {
 			durability: 0,
-			selfStats: {
+			extraStats: {
 				PDMG: 140,
 				MDMG: 140
 			}
@@ -150,7 +150,7 @@ var orbsClassData = {
 
 		"ItemFightingStats": {
 			durability: 0,
-			selfStats: {
+			extraStats: {
 				PDMG: 180,
 				MDMG: 180
 			}

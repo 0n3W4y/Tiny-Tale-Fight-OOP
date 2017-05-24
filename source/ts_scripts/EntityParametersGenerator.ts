@@ -263,6 +263,124 @@ class EntityParametersGenerator {
 	}
 
 	private generateItemFightingStats( typeObject, classObject, paramsObject ){
+		var damageType;
+		var damageTarget;
+		var currentDurability;
+		var durability;
+		var extraStats = { HP:0, STR:0, AGI:0, INT:0, ASPD:0, DDG:0, BLK:0, PDEF:0, MDEF:0, PDMG:0, MDMG:0 };
+		var selfStats = { HP:0, STR:0, AGI:0, INT:0, ASPD:0, DDG:0, BLK:0, PDEF:0, MDEF:0, PDMG:0, MDMG:0 };
+		var typeDamageStats = {};
+
+		var result = {
+			"damageType": damageType,
+			"damageTarget": damageTarget,
+			"durability": durability,
+			"currentDurability": currentDurability,
+			"extraStats": extraStats,
+			"selfStats": selfStats,
+			"typeDamageStats": typeDamageStats
+		}
+
+		for( var key in result ){
+			var resultContainer = result[key];
+			if( key == "damageType" ){
+				if( paramsObject[key] !== undefined )
+					result[key] = paramsObject[key];
+				else if( typeObject[key] !== undefined )
+					result[key] = typeObject[key];
+				else if( classObject[key] !== undefined )
+					result[key] = classObject[key];
+				else
+					console.log( "Error, no damage type, Error in EntityParametersGenerator/generateItemFightingStats." );
+			}
+			else if( key == "damageTarget" ){
+				if( paramsObject[key] !== undefined )
+					result[key] = paramsObject[key];
+				else if( typeObject[key] !== undefined )
+					result[key] = typeObject[key];
+				else if( classObject[key] !== undefined )
+					result[key] = classObject[key];
+				else
+					console.log( "Error, no damage target, Error in EntityParametersGenerator/generateItemFightingStats." );
+			}
+			else if( key == "durability" ){ //static durability;
+				if( paramsObject[key] !== undefined )
+					result[key] = paramsObject[key];
+				else if( typeObject[key] !== undefined ){
+					result[key] = typeObject[key];
+					if( classObject[key] !== undefined )
+					result[key] += classObject[key];
+				}
+				else
+					console.log( "Error, no static durability, Error in EntityParametersGenerator/generateItemFightingStats" );
+			}
+			else if( key == "currentDurability" ){
+				if( paramsObject[key] !== undefined )
+					result[key] = paramsObject[key];
+				else if( result["durability"] !== undefined )
+					 result[key] = result["durability"];
+				else
+					console.log( "Error, no current durability, Error in EntityParametersGenerator/generateItemFightingStats." );
+			}
+			else if( key == "extraStats" ){
+				var container;
+				if( paramsObject[key] !== undefined ){
+					container = paramsObject[key];
+					resultContainer = result[key];
+					for( var newKey in resultContainer ){
+						resultContainer[newKey] = container[newKey];
+					}
+				}
+				else{
+					if( typeObject[key] !== undefined ){
+						container = typeObject[key];
+						for( var newKey in resultContainer ){
+							if( container[newKey] !== undefined )
+								resultContainer[newKey]  = container[newKey];
+						}
+					}else if( classObject[key] !== undefined ){
+						container = classObject[key];
+						for( var newKey in resultContainer ){
+							if( container[newKey] !== undefined )
+								resultContainer[newKey] += container[newKey];
+						}
+					}else
+						console.log( "Error, no params in extra stats. Error in EntityParametersGenerator/generateItemFightingStats." );
+				}
+			}
+			else if( key == "selfStats" ){
+				var container;
+				if( paramsObject[key] !== undefined ){
+					container = paramsObject[key];
+					for( var newKey in resultContainer ){
+						resultContainer[newKey] = container[newKey];
+					}
+				}
+				else{
+					if( typeObject[key] !== undefined ){
+						container = typeObject[key];
+						for( var newKey in resultContainer ){
+							if( container[newKey] !== undefined )
+								resultContainer[newKey]  = container[newKey];
+						}
+					}else if( classObject[key] !== undefined ){
+						container = classObject[key];
+						for( var newKey in resultContainer ){
+							if( container[newKey] !== undefined )
+								resultContainer[newKey] += container[newKey];
+						}
+					}else
+						console.log( "Error, no params in self stats. Error in EntityParametersGenerator/generateItemFightingStats." );
+				}
+			}else if( key == "typeDamageStats" ){
+
+			}else{
+				console.log( "Error, no key with name: " + key + ". Error in EntityParametersGenerator/generateItemFightingStats." );
+			}
+			
+		}
+
+		return result;
 
 	}
 

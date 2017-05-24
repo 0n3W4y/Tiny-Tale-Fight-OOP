@@ -162,6 +162,7 @@ var Journal = (function () {
     };
     return Journal;
 }());
+var addOrbToBattle;
 var UserInterface = (function () {
     function UserInterface(parent, leftBlock, rightBlock, journal, helperBlock, enemyList, orbsBlock) {
         this.parent = parent;
@@ -407,8 +408,10 @@ var UserInterface = (function () {
     };
     UserInterface.prototype.addOrbToBlock = function (item) {
         var container = this.orbsBlock;
+        var id = item.id;
         var child = document.createElement("li");
-        //child.id = id;
+        child.id = id;
+        child.onclick = addOrbToBattle;
         container.appendChild(child);
     };
     UserInterface.prototype.removeOrbFromBlock = function (id) {
@@ -1111,10 +1114,129 @@ var EntityParametersGenerator = (function () {
         else
             console.log("Error, no equipSlot. Error in EntityParametersGenerator/generateItemType.");
         equipSlot = equipSlotObject;
-        var result = { "type": type, "subtype": subtype, "rarity": rarity, "equipSlot": equipSlot };
+        var result = { "type": type, "subType": subtype, "rarity": rarity, "equipSlot": equipSlot };
         return result;
     };
     EntityParametersGenerator.prototype.generateItemFightingStats = function (typeObject, classObject, paramsObject) {
+        var damageType;
+        var damageTarget;
+        var currentDurability;
+        var durability;
+        var extraStats = { HP: 0, STR: 0, AGI: 0, INT: 0, ASPD: 0, DDG: 0, BLK: 0, PDEF: 0, MDEF: 0, PDMG: 0, MDMG: 0 };
+        var selfStats = { HP: 0, STR: 0, AGI: 0, INT: 0, ASPD: 0, DDG: 0, BLK: 0, PDEF: 0, MDEF: 0, PDMG: 0, MDMG: 0 };
+        var typeDamageStats = {};
+        var result = {
+            "damageType": damageType,
+            "damageTarget": damageTarget,
+            "durability": durability,
+            "currentDurability": currentDurability,
+            "extraStats": extraStats,
+            "selfStats": selfStats,
+            "typeDamageStats": typeDamageStats
+        };
+        for (var key in result) {
+            var resultContainer = result[key];
+            if (key == "damageType") {
+                if (paramsObject[key] !== undefined)
+                    result[key] = paramsObject[key];
+                else if (typeObject[key] !== undefined)
+                    result[key] = typeObject[key];
+                else if (classObject[key] !== undefined)
+                    result[key] = classObject[key];
+                else
+                    console.log("Error, no damage type, Error in EntityParametersGenerator/generateItemFightingStats.");
+            }
+            else if (key == "damageTarget") {
+                if (paramsObject[key] !== undefined)
+                    result[key] = paramsObject[key];
+                else if (typeObject[key] !== undefined)
+                    result[key] = typeObject[key];
+                else if (classObject[key] !== undefined)
+                    result[key] = classObject[key];
+                else
+                    console.log("Error, no damage target, Error in EntityParametersGenerator/generateItemFightingStats.");
+            }
+            else if (key == "durability") {
+                if (paramsObject[key] !== undefined)
+                    result[key] = paramsObject[key];
+                else if (typeObject[key] !== undefined) {
+                    result[key] = typeObject[key];
+                    if (classObject[key] !== undefined)
+                        result[key] += classObject[key];
+                }
+                else
+                    console.log("Error, no static durability, Error in EntityParametersGenerator/generateItemFightingStats");
+            }
+            else if (key == "currentDurability") {
+                if (paramsObject[key] !== undefined)
+                    result[key] = paramsObject[key];
+                else if (result["durability"] !== undefined)
+                    result[key] = result["durability"];
+                else
+                    console.log("Error, no current durability, Error in EntityParametersGenerator/generateItemFightingStats.");
+            }
+            else if (key == "extraStats") {
+                var container;
+                if (paramsObject[key] !== undefined) {
+                    container = paramsObject[key];
+                    resultContainer = result[key];
+                    for (var newKey in resultContainer) {
+                        resultContainer[newKey] = container[newKey];
+                    }
+                }
+                else {
+                    if (typeObject[key] !== undefined) {
+                        container = typeObject[key];
+                        for (var newKey in resultContainer) {
+                            if (container[newKey] !== undefined)
+                                resultContainer[newKey] = container[newKey];
+                        }
+                    }
+                    else if (classObject[key] !== undefined) {
+                        container = classObject[key];
+                        for (var newKey in resultContainer) {
+                            if (container[newKey] !== undefined)
+                                resultContainer[newKey] += container[newKey];
+                        }
+                    }
+                    else
+                        console.log("Error, no params in extra stats. Error in EntityParametersGenerator/generateItemFightingStats.");
+                }
+            }
+            else if (key == "selfStats") {
+                var container;
+                if (paramsObject[key] !== undefined) {
+                    container = paramsObject[key];
+                    for (var newKey in resultContainer) {
+                        resultContainer[newKey] = container[newKey];
+                    }
+                }
+                else {
+                    if (typeObject[key] !== undefined) {
+                        container = typeObject[key];
+                        for (var newKey in resultContainer) {
+                            if (container[newKey] !== undefined)
+                                resultContainer[newKey] = container[newKey];
+                        }
+                    }
+                    else if (classObject[key] !== undefined) {
+                        container = classObject[key];
+                        for (var newKey in resultContainer) {
+                            if (container[newKey] !== undefined)
+                                resultContainer[newKey] += container[newKey];
+                        }
+                    }
+                    else
+                        console.log("Error, no params in self stats. Error in EntityParametersGenerator/generateItemFightingStats.");
+                }
+            }
+            else if (key == "typeDamageStats") {
+            }
+            else {
+                console.log("Error, no key with name: " + key + ". Error in EntityParametersGenerator/generateItemFightingStats.");
+            }
+        }
+        return result;
     };
     EntityParametersGenerator.prototype.generateCreature = function (entityType, type, subtype, params) {
         var creatureRaceContainer; //names
@@ -2050,10 +2172,10 @@ var ItemFightingStats = (function (_super) {
             DDG: 0
         };
         _this.typeDamageStats = {};
-        _this.currentDurability = 0;
+        _this.durability = 0;
         _this.staticDurability = 0;
-        _this.damageType = "flat";
-        _this.damageTarget = "single";
+        _this.damageType = "m/a";
+        _this.damageTarget = "n/a";
         return _this;
     }
     ItemFightingStats.prototype.init = function (params) {
@@ -2061,21 +2183,34 @@ var ItemFightingStats = (function (_super) {
             var container = params[key];
             if (key == "extraStats") {
                 for (var newKey in container) {
-                    this.extraStats[key] = container[key];
+                    this.extraStats[newKey] = container[newKey];
                 }
             }
             else if (key == "selfStats") {
-                this.selfStats[key] = container[key];
+                for (var newKey in container) {
+                    this.selfStats[newKey] = container[newKey];
+                }
             }
-            else if (key == "currentDurability" || key == "staticDurability" || key == "damageType") {
+            else if (key == "typeDamageStats") {
+                for (var newKey in container) {
+                    this.typeDamageStats = container[newKey];
+                }
+            }
+            else if (key == "damageType") {
+                this[key] = container;
+            }
+            else if (key == "damageTarget") {
                 this[key] = container;
             }
             else if (key == "durability") {
-                this.currentDurability = container;
+                this.durability = container;
                 this.staticDurability = container;
             }
+            else if (key == "currentDurability") {
+                this.durability = container;
+            }
             else
-                console.log("Error, no nkey with name: " + key + ". Error in ItemFightingStats/init.");
+                console.log("Error, no key with name: " + key + ". Error in ItemFightingStats/init.");
         }
     };
     ItemFightingStats.prototype.getStaticDurability = function () {
@@ -2092,7 +2227,7 @@ var ItemFightingStats = (function (_super) {
             "extraStats": this.extraStats,
             "selfStats": this.selfStats,
             "typeDamageStats": this.typeDamageStats,
-            "currentDurability": this.currentDurability,
+            "currentDurability": this.durability,
             "staticDurability": this.staticDurability,
             "damageType": this.damageType,
             "damageTarget": this.damageTarget

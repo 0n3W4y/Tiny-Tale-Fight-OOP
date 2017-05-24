@@ -3,7 +3,7 @@ class ItemFightingStats extends Component{
 	public damageType:string; // flat, heal, vampirizme, armor penetration, and other other otherl
 	public damageTarget:string; // "single", "aoe";
 
-	public currentDurability:number;
+	public durability:number;
 	private staticDurability:number;
 	private extraStats:any;
 	private selfStats:any;
@@ -13,7 +13,7 @@ class ItemFightingStats extends Component{
 	constructor( parent ){
 		super( "ItemFightingStats", parent );
 		this.extraStats = {
-			HP:0, 
+			HP:0,
 			STR:0, 
 			AGI:0, 
 			INT:0, 
@@ -37,10 +37,10 @@ class ItemFightingStats extends Component{
 
 		}
 
-		this.currentDurability = 0;
+		this.durability = 0;
 		this.staticDurability = 0;
-		this.damageType = "flat";
-		this.damageTarget = "single";
+		this.damageType = "m/a";
+		this.damageTarget = "n/a";
 	}
 
 	public init( params ){
@@ -48,21 +48,34 @@ class ItemFightingStats extends Component{
 			var container = params[key];
 			if( key == "extraStats" ){
 				for( var newKey in container ){
-					this.extraStats[key] = container[key];
+					this.extraStats[newKey] = container[newKey];
 				}
 			}
 			else if( key == "selfStats" ){
-				this.selfStats[key] = container[key];
+				for( var newKey in container ){
+					this.selfStats[newKey] = container[newKey];
+				}
 			}
-			else if( key == "currentDurability" || key == "staticDurability" || key == "damageType" ){
+			else if( key == "typeDamageStats" ){
+				for( var newKey in container ){
+					this.typeDamageStats = container[newKey];
+				}
+			}
+			else if( key == "damageType" ){
+				this[key] = container;
+			}
+			else if( key == "damageTarget" ){
 				this[key] = container;
 			}
 			else if( key == "durability" ){
-				this.currentDurability = container;
+				this.durability = container;
 				this.staticDurability = container;
 			}
+			else if( key == "currentDurability" ){
+				this.durability = container;
+			}
 			else
-				console.log("Error, no nkey with name: " + key + ". Error in ItemFightingStats/init.");
+				console.log("Error, no key with name: " + key + ". Error in ItemFightingStats/init.");
 		}
 	}
 
@@ -83,7 +96,7 @@ class ItemFightingStats extends Component{
 			"extraStats": this.extraStats, 
 			"selfStats": this.selfStats, 
 			"typeDamageStats": this.typeDamageStats, 
-			"currentDurability": this.currentDurability, 
+			"currentDurability": this.durability, 
 			"staticDurability": this.staticDurability, 
 			"damageType": this.damageType, 
 			"damageTarget": this.damageTarget 

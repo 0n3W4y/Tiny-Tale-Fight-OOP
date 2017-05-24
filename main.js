@@ -10,7 +10,6 @@ function initGame(){
 	var ob = "orbs";
 	game.init( creaturesData, creaturesClassData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData, orbsClassData, lb, rb, journal, hb, el, ob );
 	//game.start();
-	addAOEOrb();
 }
 
 function toHeroCreater(){
@@ -63,11 +62,18 @@ function toShop(){
 function addAOEOrb(){
 	var item = game.entityRoot.generateEntity("Orb", "AttackingOrbAOE", null, null);
 	console.log( item );
-	//game.userInterface.addOrb( item );
+	game.userInterface.addOrbToBlock( item );
 }
 
 function addSTOrb(){
 	var item = game.entityRoot.generateEntity("Orb", "AttackingOrbST", null, null);
 	console.log( item );
-	//game.userInterface.addOrb( item );
+	game.userInterface.addOrbToBlock( item );
+}
+
+function addOrbToBattle( e ){
+	var currentTarget = e.currentTarget;
+	var id = currentTarget.id;
+	console.log( id );
+
 }
