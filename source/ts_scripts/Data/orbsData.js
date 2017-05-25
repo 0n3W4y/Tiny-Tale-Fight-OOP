@@ -12,7 +12,7 @@ var orbsData = {
 
 		"ItemFightingStats": {
 			damageType: "flat",
-			damageTarget: "single",
+			damageTarget: 1,
 			durability: 0,
 			selfStats: {
 				PDMG: 30,
@@ -35,7 +35,7 @@ var orbsData = {
 
 		"ItemFightingStats": {
 			damageType: "flat",
-			damageTarget: "AOE",
+			damageTarget: 0,
 			durability: 0,
 			selfStats: {
 				PDMG: 10,

@@ -314,7 +314,7 @@ class UserInterface {
 		for( var i = 0; i < list.length; i++ ){
 			if ( list[i].id == id ){
 				orb = list[i];
-				list.removeChild( list[i] );
+				container.removeChild( list[i] );
 				break;
 			}
 		}
@@ -325,15 +325,6 @@ class UserInterface {
 
 	public addOrb( item ){
 
-	}
-
-	public removeOrb( id ){
-		var list = this.orbsBlock.children;
-		for( var i = 0; i <= list.childNodes.length; i++ ){
-			var child = list.childNodes[0];
-			if( child.id == id )
-				list.removeChild(list.childNodes[i]);
-		}
 	}
 
 	public createToolTip( entity ){

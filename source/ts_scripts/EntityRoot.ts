@@ -72,15 +72,19 @@ class EntityRoot {
 		var fightingStats;
 		var experienceStats;
 		var ageStats;
+		var inventoryBag;
+		var inventoryEquip;
 		var data;
 
-		if( entity.type == "Player" || entity.type == "Helper" ){
+		if( entity.type == "Player" || entity.type == "Helper" || entity.type == "Mob"){
 			name = entity.getComponent( "Name" ).exportDataToObject();
 			type = entity.getComponent( "Type" ).exportDataToObject();
 			fightingStats = entity.getComponent( "FightingStats" ).exportDataToObject();
 			experienceStats = entity.getComponent( "ExperienceStats" ).exportDataToObject();
 			ageStats = entity.getComponent( "AgeStats" ).exportDataToObject();
-			data = { "Name": name, "Type": type, "FightingStats": fightingStats, "ExperienceStats": experienceStats, "AgeStats": ageStats };
+			inventoryBag = entity.getComponent( "InventoryBag" ).exportDataToObject();
+			inventoryEquip = entity.getComponent( "InventoryEquip" ).exportDataToObject();
+			data = { "Name": name, "Type": type, "FightingStats": fightingStats, "ExperienceStats": experienceStats, "AgeStats": ageStats, "InventoryBag": inventoryBag, "InventoryEquip": inventoryEquip };
 		}else if( entity.type == "Orb" ){
 			name = entity.getComponent( "ItemName" ).exportDataToObject();
 			type = entity.getComponent( "ItemType" ).exportDataToObject();

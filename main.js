@@ -9,7 +9,7 @@ function initGame(){
 	var el = "enemy-list";
 	var ob = "orbs";
 	game.init( creaturesData, creaturesClassData, humanoidsData, humanoidsClassData, humanoidsHelperData, orbsData, orbsClassData, lb, rb, journal, hb, el, ob );
-	//game.start();
+	game.start();
 }
 
 function toHeroCreater(){
@@ -75,5 +75,17 @@ function addOrbToBattle( e ){
 	var currentTarget = e.currentTarget;
 	var id = currentTarget.id;
 	console.log( id );
+	var list = game.entityRoot.getListOfEntities();
+	var orb;
+	for( var i = 0; i < list.length; i++ ){
+		var item = list[i];
+		if( item.id == id ){
+			orb = list[i];
+			break;
+		}
+	}
 
+	if( game.battle.addOrbToBattle( orb ) ){
+		game.userInterface.removeOrbFromBlock( id );
+	}
 }

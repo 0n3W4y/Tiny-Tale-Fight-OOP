@@ -196,11 +196,19 @@ class Battle {
 		var typeOfDamage = Math.floor( Math.random()*2 ); //0 , 1;
 		var timesToAttack = 1;
 
-		//если атакующий - игрок, сомтрим. выбрал ли он орб для атаки.
+		var orbMDamage;
+		var orbPDamage;
+		//если атакующий - игрок, сомтрим: выбрал ли он орб для атаки.
 		if( player.type == "Player" && this.currentOrb != null ){
-			
+			var orbStats = this.currentOrb.getComponent("ItemFightingStats");
+			typeOfDamage = orbStats.damageTarget;
+			orbMDamage = orbStats.selfStats.MDMG + orbStats.extraStats.MDMG;
+			orbPDamage = orbStats.selfStats.PDMG + orbStats.extraStats.PDMG;
+			this.currentOrb = null;
 		}else{
 			typeOfDamage = 1;
+			orbMDamage = 0;
+		 	orbPDamage = 0;
 		}
 
 		
@@ -210,7 +218,7 @@ class Battle {
 
 		for( var i = 0; i < timesToAttack; i++ ){
 			var newTarget = target[i];
-			if( timesToAttack == 1 ){ 
+			if( timesToAttack == 1 ){
 				if( player.type == "Mob" ){ // для игрока это будет тот, который стоит первым. Он же отображен в оснвоном интерфейсе в главном фрейме. Его индекс 0
 					var rnum = Math.floor( Math.random()*target.length );
 					newTarget = target[rnum];
@@ -240,8 +248,8 @@ class Battle {
 				return;
 			}
 			
-			phsysicalPlayerDamage -= phsysicalPlayerDamage * ( targetPhysicsDefense / 100 ) / 100;
-			magicalPlayerDamage -= magicalPlayerDamage * ( targetMagicalDefense / 100 ) / 100;
+			phsysicalPlayerDamage -= (phsysicalPlayerDamage + orbPDamage) * ( targetPhysicsDefense / 100 ) / 100;
+			magicalPlayerDamage -= (magicalPlayerDamage + orbMDamage) * ( targetMagicalDefense / 100 ) / 100;
 			var totalDamage = phsysicalPlayerDamage + magicalPlayerDamage;
 
 			// вычислить, получилось ли заблокировать атаку
@@ -250,9 +258,9 @@ class Battle {
 			targetHP -= totalDamage;
 			targetFightStats.setStats( "current", { "HP": targetHP } );
 			if( crit == 0 )
-				this.parent.userInterface.journal.hit( playerName, targetName, totalDamage, phsysicalPlayerDamage, magicalPlayerDamage );
+				this.parent.userInterface.journal.hit( playerName, targetName, totalDamage, phsysicalPlayerDamage, magicalPlayerDamage, orbPDamage, orbMDamage );
 			else
-				this.parent.userInterface.journal.crit( playerName, targetName, totalDamage, phsysicalPlayerDamage, magicalPlayerDamage );
+				this.parent.userInterface.journal.crit( playerName, targetName, totalDamage, phsysicalPlayerDamage, magicalPlayerDamage, orbPDamage, orbMDamage );
 
 			
 

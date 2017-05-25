@@ -126,14 +126,26 @@ var Journal = (function () {
         var string = "<b>" + player + "</b>" + " found new troubles. Prepare to fight!";
         this.addLineToJournal(string);
     };
-    Journal.prototype.hit = function (player, target, damage, pdamage, mdamage) {
-        var string = "<b>" + player + "</b>" + " is attacking " + "<b>" + target + "</b>" + " hitted on " + '<font color="purple"><b>' + Math.round(damage) + "</b></font>" + " ( "
-            + '<font color="red"><b>' + Math.round(pdamage) + "</b></font>" + " + " + '<font color="blue"><b>' + Math.round(mdamage) + "</b></font>" + " ).";
+    Journal.prototype.hit = function (player, target, damage, pdamage, mdamage, orbPDamage, orbMDamage) {
+        if (orbPDamage == 0) {
+            var string = "<b>" + player + "</b>" + " is attacking " + "<b>" + target + "</b>" + " hitted on " + '<font color="purple"><b>' + Math.round(damage) + "</b></font>" + " ( "
+                + '<font color="red"><b>' + Math.round(pdamage) + "</b></font>" + " + " + '<font color="blue"><b>' + Math.round(mdamage) + "</b></font>" + " ).";
+        }
+        else {
+            var string = "<b>" + player + "</b>" + " is attacking " + "<b>" + target + "</b>" + " hitted on " + '<font color="purple"><b>' + Math.round(damage) + "</b></font>" + " ( "
+                + '<font color="red"><b>' + Math.round(pdamage) + "</b></font>" + " + " + '<font color="blue"><b>' + Math.round(mdamage) + "</b></font>" + " ). And Orb: " + orbPDamage + "; " + orbMDamage;
+        }
         this.addLineToJournal(string);
     };
-    Journal.prototype.crit = function (player, target, damage, pdamage, mdamage) {
-        var string = "<b>" + player + "</b>" + " is attacking " + "<b>" + target + "</b>" + " critically hitted on " + '<font color="purple" style="font-size:24px;"><b>' + Math.round(damage) + "</b></font>" + " ( "
-            + '<font color="red" style="font-size:24px;"><b>' + Math.round(pdamage) + "</b></font>" + " + " + '<font color="blue" style="font-size:24px;"><b>' + Math.round(mdamage) + "</b></font>" + " ).";
+    Journal.prototype.crit = function (player, target, damage, pdamage, mdamage, orbPDamage, orbMDamage) {
+        if (orbPDamage == 0) {
+            var string = "<b>" + player + "</b>" + " is attacking " + "<b>" + target + "</b>" + " critically hitted on " + '<font color="purple" style="font-size:24px;"><b>' + Math.round(damage) + "</b></font>" + " ( "
+                + '<font color="red" style="font-size:24px;"><b>' + Math.round(pdamage) + "</b></font>" + " + " + '<font color="blue" style="font-size:24px;"><b>' + Math.round(mdamage) + "</b></font>" + " ).";
+        }
+        else {
+            var string = "<b>" + player + "</b>" + " is attacking " + "<b>" + target + "</b>" + " critically hitted on " + '<font color="purple" style="font-size:24px;"><b>' + Math.round(damage) + "</b></font>" + " ( "
+                + '<font color="red" style="font-size:24px;"><b>' + Math.round(pdamage) + "</b></font>" + " + " + '<font color="blue" style="font-size:24px;"><b>' + Math.round(mdamage) + "</b></font>" + " ). And Orb: " + orbPDamage + "; " + orbMDamage;
+        }
         this.addLineToJournal(string);
     };
     Journal.prototype.evade = function (player, target, chanse) {
@@ -421,21 +433,13 @@ var UserInterface = (function () {
         for (var i = 0; i < list.length; i++) {
             if (list[i].id == id) {
                 orb = list[i];
-                list.removeChild(list[i]);
+                container.removeChild(list[i]);
                 break;
             }
         }
         return orb;
     };
     UserInterface.prototype.addOrb = function (item) {
-    };
-    UserInterface.prototype.removeOrb = function (id) {
-        var list = this.orbsBlock.children;
-        for (var i = 0; i <= list.childNodes.length; i++) {
-            var child = list.childNodes[0];
-            if (child.id == id)
-                list.removeChild(list.childNodes[i]);
-        }
     };
     UserInterface.prototype.createToolTip = function (entity) {
     };
@@ -588,11 +592,20 @@ var Battle = (function () {
         // для ИИ рандом останется пока-что.
         var typeOfDamage = Math.floor(Math.random() * 2); //0 , 1;
         var timesToAttack = 1;
-        //если атакующий - игрок, сомтрим. выбрал ли он орб для атаки.
+        var orbMDamage;
+        var orbPDamage;
+        //если атакующий - игрок, сомтрим: выбрал ли он орб для атаки.
         if (player.type == "Player" && this.currentOrb != null) {
+            var orbStats = this.currentOrb.getComponent("ItemFightingStats");
+            typeOfDamage = orbStats.damageTarget;
+            orbMDamage = orbStats.selfStats.MDMG + orbStats.extraStats.MDMG;
+            orbPDamage = orbStats.selfStats.PDMG + orbStats.extraStats.PDMG;
+            this.currentOrb = null;
         }
         else {
             typeOfDamage = 1;
+            orbMDamage = 0;
+            orbPDamage = 0;
         }
         if (typeOfDamage == 0)
             timesToAttack = target.length;
@@ -626,17 +639,17 @@ var Battle = (function () {
                 this.parent.userInterface.journal.evade(targetName, targetChansePercent);
                 return;
             }
-            phsysicalPlayerDamage -= phsysicalPlayerDamage * (targetPhysicsDefense / 100) / 100;
-            magicalPlayerDamage -= magicalPlayerDamage * (targetMagicalDefense / 100) / 100;
+            phsysicalPlayerDamage -= (phsysicalPlayerDamage + orbPDamage) * (targetPhysicsDefense / 100) / 100;
+            magicalPlayerDamage -= (magicalPlayerDamage + orbMDamage) * (targetMagicalDefense / 100) / 100;
             var totalDamage = phsysicalPlayerDamage + magicalPlayerDamage;
             // вычислить, получилось ли заблокировать атаку
             // и отнять % от блокированного урона из общего урона.
             targetHP -= totalDamage;
             targetFightStats.setStats("current", { "HP": targetHP });
             if (crit == 0)
-                this.parent.userInterface.journal.hit(playerName, targetName, totalDamage, phsysicalPlayerDamage, magicalPlayerDamage);
+                this.parent.userInterface.journal.hit(playerName, targetName, totalDamage, phsysicalPlayerDamage, magicalPlayerDamage, orbPDamage, orbMDamage);
             else
-                this.parent.userInterface.journal.crit(playerName, targetName, totalDamage, phsysicalPlayerDamage, magicalPlayerDamage);
+                this.parent.userInterface.journal.crit(playerName, targetName, totalDamage, phsysicalPlayerDamage, magicalPlayerDamage, orbPDamage, orbMDamage);
             if (targetHP <= 0)
                 targetFightStats.killedBy = player;
             //обновляем UI для каждого актера, котоырй был под атакой.
@@ -842,14 +855,18 @@ var EntityRoot = (function () {
         var fightingStats;
         var experienceStats;
         var ageStats;
+        var inventoryBag;
+        var inventoryEquip;
         var data;
-        if (entity.type == "Player" || entity.type == "Helper") {
+        if (entity.type == "Player" || entity.type == "Helper" || entity.type == "Mob") {
             name = entity.getComponent("Name").exportDataToObject();
             type = entity.getComponent("Type").exportDataToObject();
             fightingStats = entity.getComponent("FightingStats").exportDataToObject();
             experienceStats = entity.getComponent("ExperienceStats").exportDataToObject();
             ageStats = entity.getComponent("AgeStats").exportDataToObject();
-            data = { "Name": name, "Type": type, "FightingStats": fightingStats, "ExperienceStats": experienceStats, "AgeStats": ageStats };
+            inventoryBag = entity.getComponent("InventoryBag").exportDataToObject();
+            inventoryEquip = entity.getComponent("InventoryEquip").exportDataToObject();
+            data = { "Name": name, "Type": type, "FightingStats": fightingStats, "ExperienceStats": experienceStats, "AgeStats": ageStats, "InventoryBag": inventoryBag, "InventoryEquip": inventoryEquip };
         }
         else if (entity.type == "Orb") {
             name = entity.getComponent("ItemName").exportDataToObject();
