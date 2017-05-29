@@ -716,7 +716,7 @@ class EntityParametersGenerator {
 		var classObjectStats = classObject["stats"];
 		
 		var raceObjectLvlup = raceObject["lvlup"];
-		var classObjectStats = classObject["lvlup"];
+		var classObjectLvlup = classObject["lvlup"];
 
 		if( params != null ){
 			paramsStats = params["stats"];
@@ -729,13 +729,14 @@ class EntityParametersGenerator {
 				stats[key] = raceObjectStats[key];
 			}
 
-			if( classObjectStats[key] !== undefined ){
-				stats[key] += classObjectStats[key];
+			if( classObjectStats != undefined ){
+				if( classObjectStats[key] !== undefined )
+					stats[key] += classObjectStats[key];
 			}
 
-			if( paramsStats != null ){
-				if( params[key] !== undefined )
-				stats[key] = params[key];
+			if( paramsStats != undefined ){
+				if( paramsStats[key] !== undefined )
+				stats[key] = paramsStats[key];
 			}
 		}
 
@@ -744,28 +745,30 @@ class EntityParametersGenerator {
 				staticStats[key] = raceObjectStats[key];
 			}
 
-			if( classObjectStats[key] !== undefined ){
-				staticStats[key] += classObjectStats[key];
+			if( classObjectStats != undefined ){
+				if( classObjectStats[key] !== undefined )
+					stats[key] += classObjectStats[key];
 			}
 
-			if( paramsStats != null ){
-				if( params[key] !== undefined )
-				staticStats[key] = params[key];
+			if( paramsStaticStats != null ){
+				if( paramsStaticStats[key] !== undefined )
+				staticStats[key] = paramsStaticStats[key];
 			}
 		}
 
 		for( var key in lvlup ){
-			if( raceObjectStats[key] !== undefined ){
-				lvlup[key] = raceObjectStats[key];
+			if( raceObjectLvlup[key] !== undefined ){
+				lvlup[key] = raceObjectLvlup[key];
 			}
 
-			if( classObjectStats[key] !== undefined ){
-				lvlup[key] += classObjectStats[key];
+			if( classObjectLvlup != undefined ){
+				if( classObjectLvlup[key] !== undefined )
+					lvlup[key] += classObjectLvlup[key];
 			}
 
-			if( paramsStats != null ){
-				if( params[key] !== undefined )
-				lvlup[key] = params[key];
+			if( paramsLvlup != null ){
+				if( paramsLvlup[key] !== undefined )
+				lvlup[key] = paramsLvlup[key];
 			}
 		}
 

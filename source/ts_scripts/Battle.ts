@@ -247,9 +247,11 @@ class Battle {
 				this.parent.userInterface.journal.evade( targetName, targetChansePercent );
 				return;
 			}
-			
-			phsysicalPlayerDamage -= (phsysicalPlayerDamage + orbPDamage) * ( targetPhysicsDefense / 100 ) / 100;
-			magicalPlayerDamage -= (magicalPlayerDamage + orbMDamage) * ( targetMagicalDefense / 100 ) / 100;
+
+			phsysicalPlayerDamage += orbPDamage;
+			magicalPlayerDamage += orbMDamage;
+			phsysicalPlayerDamage -= phsysicalPlayerDamage * ( targetPhysicsDefense / 100 ) / 100;
+			magicalPlayerDamage -= magicalPlayerDamage * ( targetMagicalDefense / 100 ) / 100;
 			var totalDamage = phsysicalPlayerDamage + magicalPlayerDamage;
 
 			// вычислить, получилось ли заблокировать атаку

@@ -61,20 +61,17 @@ function toShop(){
 
 function addAOEOrb(){
 	var item = game.entityRoot.generateEntity("Orb", "AttackingOrbAOE", null, null);
-	console.log( item );
 	game.userInterface.addOrbToBlock( item );
 }
 
 function addSTOrb(){
 	var item = game.entityRoot.generateEntity("Orb", "AttackingOrbST", null, null);
-	console.log( item );
 	game.userInterface.addOrbToBlock( item );
 }
 
 function addOrbToBattle( e ){
 	var currentTarget = e.currentTarget;
 	var id = currentTarget.id;
-	console.log( id );
 	var list = game.entityRoot.getListOfEntities();
 	var orb;
 	for( var i = 0; i < list.length; i++ ){
