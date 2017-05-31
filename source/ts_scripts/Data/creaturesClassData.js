@@ -1,7 +1,11 @@
 var creaturesClassData = {
 	"Weak":{
 		Name: {
-			name: "Weak", 
+			name: "Weak"
+		},
+
+		Type:{
+			class: "Weak"
 		},
 
 		FightingStats: {
@@ -37,7 +41,11 @@ var creaturesClassData = {
 
 	"Medium":{
 		Name: {
-			name: "Medium", 
+			name: "Medium"
+		},
+
+		Type:{
+			class: "Medium"
 		},
 
 		FightingStats: {
@@ -73,7 +81,11 @@ var creaturesClassData = {
 
 	"Strong":{
 		Name: {
-			name: "Strong", 
+			name: "Strong"
+		},
+
+		Type:{
+			class: "Strong"
 		},
 
 		FightingStats: {
@@ -109,7 +121,11 @@ var creaturesClassData = {
 
 	"Boss":{
 		Name: {
-			name: "Boss", 
+			name: "Boss"
+		},
+
+		Type:{
+			class: "Boss"
 		},
 
 		FightingStats: {

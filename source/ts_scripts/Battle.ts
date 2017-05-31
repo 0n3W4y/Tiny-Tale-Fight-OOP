@@ -127,7 +127,7 @@ class Battle {
 		this.teamOneReady.length = 0;
 		this.teamTwoReady.length = 0;
 
-		// заполняем готовых атаковать.
+		// заполняем готовых атаковать для перво команды.
 		for( var j = 0; j < this.teamOneAlive.length; j++ ){
 			p1 = this.teamOneAlive[j];
 			var p1Component = p1.getComponent( "FightingStats" );
@@ -135,7 +135,7 @@ class Battle {
 				this.teamOneReady.push( p1 );
 		}
 		
-		//  заполняем готовых атаковать.
+		//  заполняем готовых атаковать для второй команды.
 		for( var i = 0; i < this.teamTwoAlive.length; i++ ){
 			p2 = this.teamTwoAlive[i];
 			var p2Component = p2.getComponent( "FightingStats" );
@@ -292,7 +292,7 @@ class Battle {
 					return; // only 1 player available, so if he dead - fighting is over;
 				}else{
 					this.killHelper( p1 );
-					// player's mob is dead;
+					// players mob is dead;
 				}
 			}
 		}

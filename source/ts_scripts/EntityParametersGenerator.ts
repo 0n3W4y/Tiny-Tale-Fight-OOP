@@ -909,4 +909,52 @@ class EntityParametersGenerator {
 			this.orbsClassDataArray.push( key );
 		}
 	}
+
+	public getDeployStat( type, entityType, entityClass, lvl, stat ):number{
+		var deployEntityType;
+		var deployEntityClass;
+		var componentName;
+		var result;
+
+		if( type == "Player" ){
+			deployEntityType = this.humanoidsData[entityType];
+			deployEntityClass = this.humanoidsClassData[entityClass];
+			componentName = "FightingStats";
+		}else if( type == "Helper" ){
+			deployEntityType = this.humanoidsHelperData[entityType];
+			deployEntityClass = this.humanoidsClassData[entityClass];
+			componentName = "FightingStats";
+		}else if( type == "Mob" ){
+			deployEntityType = this.creaturesData[entityType];
+			deployEntityClass = this.creaturesClassData[entityClass];
+			componentName = "FightingStats";
+		}else if( type == "Orb" ){
+			deployEntityType = this.orbsData[entityType];
+			deployEntityClass = this.orbsClassData[entityClass];
+			componentName = "ItemFightingStats";
+		}else{
+			console.log( "Error, no type with name: " + type + ". Error in EntityParametersGenerator/getDeployStat." );
+		}
+
+		deployEntityType = deployEntityClass[componentName];
+		deployEntityClass = deployEntityClass[componentName];
+
+		var staticStatType = deployEntityType["stats"];
+		var lvlupStatType = deployEntityType["lvlup"];
+
+		var staticStatClass = deployEntityClass["stats"];
+		var lvlupStatClass = deployEntityClass["lvlup"];
+
+		var statTypeNumber = staticStatType[stat] || 0;
+		var lvlupTypeNumber = lvlupStatType[stat] || 0;
+
+		var statClassNumber = staticStatClass[stat] || 0;
+		var lvlupClassNumber = lvlupStatClass[stat] || 0;
+
+		var resultType = statTypeNumber + lvlupTypeNumber * lvl;
+		var resultClass = statClassNumber + lvlupClassNumber * lvl;
+
+		result = resultType + resultClass;
+		return result;
+	}
 }

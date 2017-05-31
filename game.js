@@ -43,7 +43,8 @@ var Game = (function () {
     Game.prototype.generateMob = function () {
         //var entityList = this.entityRoot.getListOfEntities();
         var lvl = 1;
-        lvl = this.player.getComponent("ExperienceStats").lvl;
+        if (this.player != null)
+            lvl = this.player.getComponent("ExperienceStats").lvl;
         var min = lvl - 2;
         var max = lvl + 2;
         if (min < 1)
@@ -535,14 +536,14 @@ var Battle = (function () {
         //обнуляем массивы, кто может атаковать.
         this.teamOneReady.length = 0;
         this.teamTwoReady.length = 0;
-        // заполняем готовых атаковать.
+        // заполняем готовых атаковать для перво команды.
         for (var j = 0; j < this.teamOneAlive.length; j++) {
             p1 = this.teamOneAlive[j];
             var p1Component = p1.getComponent("FightingStats");
             if (p1Component.checkAttack(time))
                 this.teamOneReady.push(p1);
         }
-        //  заполняем готовых атаковать.
+        //  заполняем готовых атаковать для второй команды.
         for (var i = 0; i < this.teamTwoAlive.length; i++) {
             p2 = this.teamTwoAlive[i];
             var p2Component = p2.getComponent("FightingStats");
@@ -1708,6 +1709,49 @@ var EntityParametersGenerator = (function () {
         for (var key in this.orbsClassData) {
             this.orbsClassDataArray.push(key);
         }
+    };
+    EntityParametersGenerator.prototype.getDeployStat = function (type, entityType, entityClass, stat) {
+        var deployEntityType;
+        var deployEntityClass;
+        var componentName;
+        var result;
+        if (type == "Player") {
+            deployEntityType = this.humanoidsData[entityType];
+            deployEntityClass = this.humanoidsClassData[entityClass];
+            componentName = "FightingStats";
+        }
+        else if (type == "Helper") {
+            deployEntityType = this.humanoidsHelperData[entityType];
+            deployEntityClass = this.humanoidsClassData[entityClass];
+            componentName = "FightingStats";
+        }
+        else if (type == "Mob") {
+            deployEntityType = this.creaturesData[entityType];
+            deployEntityClass = this.creaturesClassData[entityClass];
+            componentName = "FightingStats";
+        }
+        else if (type == "Orb") {
+            deployEntityType = this.orbsData[entityType];
+            deployEntityClass = this.orbsClassData[entityClass];
+            componentName = "ItemFightingStats";
+        }
+        else {
+            console.log("Error, no type with name: " + type + ". Error in EntityParametersGenerator/getDeployStat.");
+        }
+        deployEntityType = deployEntityClass[componentName];
+        deployEntityClass = deployEntityClass[componentName];
+        var staticStatType = deployEntityType["stats"];
+        var lvlupStatType = deployEntityType["lvlup"];
+        var staticStatClass = deployEntityClass["stats"];
+        var lvlupStatClass = deployEntityClass["lvlup"];
+        var statTypeNumber = staticStatType[stat] || 0;
+        var lvlupTypeNumber = lvlupStatType[stat] || 0;
+        var statClassNumber = staticStatClass[stat] || 0;
+        var lvlupClassNumber = lvlupStatClass[stat] || 0;
+        var resultType = statTypeNumber + lvlupTypeNumber;
+        var resultClass = statClassNumber + lvlupClassNumber;
+        result = resultType + resultClass;
+        return result;
     };
     return EntityParametersGenerator;
 }());

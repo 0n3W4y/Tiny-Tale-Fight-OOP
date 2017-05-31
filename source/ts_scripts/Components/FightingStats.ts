@@ -2,8 +2,6 @@ class FightingStats extends Component{
 	public killedBy:any;
 
 	public currentStats:any;
-	public staticStats:any;
-	public levelUpStats:any;
 
 	private timeToNextAttack:number;
 	private attackCoolDawn:number;
@@ -12,31 +10,8 @@ class FightingStats extends Component{
 		super( "FightingStats", parent );
 		this.timeToNextAttack = 0;
 		this.killedBy = null;
+		this.attackCoolDawn = 0;
 		this.currentStats = {
-			HP:0,
-			STR:0,
-			AGI:0,
-			INT:0,
-			ASPD:0,
-			DDG:0,
-			BLK:0,
-			PDEF:0,
-			MDEF:0
-		}
-
-		this.staticStats = {
-			HP:0,
-			STR:0,
-			AGI:0,
-			INT:0,
-			ASPD:0,
-			DDG:0,
-			BLK:0,
-			PDEF:0,
-			MDEF:0
-		}
-
-		this.levelUpStats = {
 			HP:0,
 			STR:0,
 			AGI:0,
@@ -60,22 +35,6 @@ class FightingStats extends Component{
 						console.log( "Error, no key with name: " + newKey + ". Error in FightingStats/init." );
 				}
 			}
-			else if( key == "staticStats" ){
-				for( var newKey in container ){
-					if ( !( this.staticStats[newKey] === undefined) ){
-						this.staticStats[newKey] = container[newKey];
-					}else
-						console.log( "Error, no key with name: " + newKey + ". Error in FightingStats/init." );
-				}
-			}
-			else if( key == "lvlup" ){
-				for( var newKey in container ){
-					if ( !( this.levelUpStats[newKey] === undefined) ){
-						this.levelUpStats[newKey] = container[newKey];
-					}else
-						console.log( "Error, no key with name: " + newKey + ". Error in FightingStats/init." );
-				}
-			}
 			else
 				console.log( "Error, no key with name: " + key + ". Error in FightingStats/init." );
 		}
@@ -87,28 +46,29 @@ class FightingStats extends Component{
 		return this.currentStats[stat];
 	}
 
-	public getStaticStat( stat ){
-		return this.staticStats[stat];
+	public getStat( stat ):number{
+		var deploy = this.parent.entityParametersGenerator;
+		var result;
+		var lvl;
+		var type = this.parent.type;
+		var entityType = this.parent.getComponent("Type").race;
+		var entityClass = this.parent.getComponent("Type").class;
+
+		if( this.parent.getComponent("ExperienceStats") != null )
+			lvl = this.parent.getComponent("ExperienceStats").lvl || 0; //default;
+
+		result = deploy.getDeployStat( type, entityType, entityClass, lvl, stat );
+
+		return result;
+		//TODO: collect data from all equip;
 	}
 
-	public getLevelUpStat( stat ){
-		return this.levelUpStats[stat];
-	}
-
-	public setStats( to, stat ){
-		var container = this.staticStats;
-		if( to == "current" )
-			container = this.currentStats;
-		else if( to == "lvlUpStats" )
-			container = this.levelUpStats;
-		else{
-			console.log( "Error, no container with name: " + to + ". Error in FightingStats/setStats.");
+	public setStat( stat, value ){
+		if( stat == "HP" || stat == "STR" || stat == "AGI" || stat == "INT" || stat == "ASPD" || stat == "DDG" || stat == "BLK" || stat == "PDEF" || stat == "MDEF" ){
+			this.currentStats[stat] = value;
+		}else{
+			console.log( "Error, no stat with name: " + stat + ". Error in FightingStats/setStats." );
 			return;
-		}
-
-		for( var key in stat ){
-			if( !( container[key] === undefined ) )
-				container[key] = stat[key];
 		}
 	}
 
@@ -130,18 +90,20 @@ class FightingStats extends Component{
 	public updateStatsWithLevelUp(){
 
 		var value = this.parent.getComponent( "ExperienceStats" );
+		var lvl = 0; // default;
 
 		if( value != null ){
-			for( var key in this.levelUpStats ){
-				var stat = this.levelUpStats[key] * value.lvl + this.staticStats[key];
-				this.currentStats[key] = stat;
+			lvl = value.lvl;
+			for( var key in this.currentStats ){
+				//TODO: get stat;
 			}
+
 		}else
 			console.log( "Error with Level up stats, level = " + value + ". Error in FightingStats/updateStatsWithLevelUp" );
 	}
 
 	public exportDataToObject():any{
-		var result = { "currentStats": this.currentStats, "staticStats": this.staticStats, "levelUpStats": this.levelUpStats };
+		var result = { "currentStats": this.currentStats, "timeToNextAttack": this.timeToNextAttack, "attackCoolDawn": this.attackCoolDawn };
 		return result;
 	}
 

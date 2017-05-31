@@ -60,7 +60,8 @@ class Game {
 		//var entityList = this.entityRoot.getListOfEntities();
 		var lvl = 1;
 
-		lvl = this.player.getComponent( "ExperienceStats" ).lvl;
+		if( this.player != null )
+			lvl = this.player.getComponent( "ExperienceStats" ).lvl;
 
 		var min = lvl - 2;
 		var max = lvl + 2;
